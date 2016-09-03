@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.administrator.cnmar.R;
 
@@ -13,7 +14,6 @@ import com.example.administrator.cnmar.R;
  * A simple {@link Fragment} subclass.
  */
 public class StockFragment extends Fragment {
-
 
     public StockFragment() {
         // Required empty public constructor

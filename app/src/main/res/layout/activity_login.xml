@@ -4,43 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.administrator.cnmar.LoginActivity">
-<LinearLayout
-    android:id="@+id/linear0"
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:orientation="horizontal"
-    android:background="#319BD9"
-    >
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:layout_gravity="left|center_vertical"
-        android:src="@mipmap/logo"
-        />
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:text="欢迎登陆"
-    android:textColor="#fff"
-    android:layout_gravity="center"
-    android:gravity="center"
-    />
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:layout_gravity="right|center_vertical"
-        android:src="@mipmap/scann"
-        />
-</LinearLayout>
-
+   <include
+       android:id="@+id/top"
+       layout="@layout/top"></include>
     <TextView
         android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linear0"
+        android:layout_below="@id/top"
         android:layout_marginTop="50dp"
         android:gravity="center"
         android:text="中国制造业物联网智能仓储先进先出系统"

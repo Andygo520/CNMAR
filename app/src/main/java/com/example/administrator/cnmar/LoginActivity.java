@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -24,7 +26,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String LOGIN_URL = "http://139.196.104.170:8092/login_commit?username={username}&password={password}";
     public static String strUrl;
 
-
+    private TextView tvTitle;
+    private ImageView ivLeftImage;
     private Button mLoginButton;
     private EditText etUserName, etPassword;
     private CheckBox auto_login;
@@ -38,10 +41,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
 
-
+        tvTitle= (TextView) findViewById(R.id.title);
+        ivLeftImage= (ImageView) findViewById(R.id.left_img);
         etUserName = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
         auto_login= (CheckBox) findViewById(R.id.chkPassword);
+
+        tvTitle.setText("欢迎登陆");
+        ivLeftImage.setImageResource(R.mipmap.text_logo);
         sp=getSharedPreferences("UserInfo",MODE_PRIVATE);
         editor=sp.edit();
         mLoginButton = (Button) findViewById(R.id.btnLogin);

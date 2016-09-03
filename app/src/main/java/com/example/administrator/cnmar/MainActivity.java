@@ -3,12 +3,17 @@ package com.example.administrator.cnmar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.example.administrator.cnmar.fragment.HomeFragment;
 import com.example.administrator.cnmar.fragment.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView tvTitle;
+    private ImageView ivLeftImage;
     private RadioGroup radioGroup;
     private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
@@ -18,8 +23,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTabSelection(0);
+        tvTitle= (TextView) findViewById(R.id.title);
+        ivLeftImage= (ImageView) findViewById(R.id.left_img);
         radioGroup= (RadioGroup) findViewById(R.id.rg);
+
+//      默认选中首页
+        setTabSelection(0);
+
+
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -52,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         switch (index) {
             // 点击主页tab
             case 0:
+                tvTitle.setText("洲马物联");
+                ivLeftImage.setImageResource(R.mipmap.text_logo);
                 if (homeFragment == null) {
                     // 如果HomeFragment为空，则创建一个并添加到界面上
                     homeFragment = new HomeFragment();
@@ -63,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             // 点击我的资料tab
             case 1:
+                tvTitle.setText("我的资料");
+                ivLeftImage.setImageResource(R.mipmap.arrow_left_white);
                 if (profileFragment == null) {
                     // 如果profileFragment为空，则创建一个并添加到界面上
                     profileFragment = new ProfileFragment();

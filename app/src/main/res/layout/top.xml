@@ -5,6 +5,7 @@
     android:background="#319BD9"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <ImageView
+        android:id="@+id/left_img"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
@@ -12,6 +13,7 @@
         android:src="@mipmap/arrow_left_white"
         />
     <TextView
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -21,6 +23,7 @@
         android:gravity="center"
         />
     <ImageView
+        android:id="@+id/scann"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
