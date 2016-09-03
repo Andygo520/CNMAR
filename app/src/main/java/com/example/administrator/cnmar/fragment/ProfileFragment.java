@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.LoginActivity;
@@ -31,7 +31,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvName;
     private TextView tvSex;
     private TextView tvBirthday;
-    private ImageView ivImage;
+    private NetworkImageView ivImage;
     private Button btnLogOff;
 
 
@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
         tvName= (TextView) view.findViewById(R.id.username);
         tvSex= (TextView) view.findViewById(R.id.sex);
         tvBirthday= (TextView) view.findViewById(R.id.birthday);
-        ivImage= (ImageView) view.findViewById(R.id.image);
+        ivImage= (NetworkImageView) view.findViewById(R.id.image);
         btnLogOff= (Button) view.findViewById(R.id.logoff);
 
         btnLogOff.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +89,7 @@ public class ProfileFragment extends Fragment {
                     tvBirthday.setText("未设置");
                 if(userInfor.getData().getImgId()>0){
                     String path="http://139.196.104.170:8090"+"/"+model.getImg().getPath();
+                    VolleyHelper.showImageByUrl(getActivity(),path,ivImage);
 //                    HttpURLConnection con= null;
 //                    try {
 //                        con = (HttpURLConnection)new URL(path).openConnection();
