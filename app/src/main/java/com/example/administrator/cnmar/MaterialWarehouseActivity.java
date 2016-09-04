@@ -68,7 +68,7 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                 tvTitle.setText("原料仓库");
                 if(stockFragment==null){
                     stockFragment=new StockFragment();
-                    transaction.show(stockFragment);
+                    transaction.add(R.id.content,stockFragment);
                 }else
                     transaction.show(stockFragment);
                 break;
@@ -76,7 +76,7 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                 tvTitle.setText("原料仓库——入库单");
                 if(inHouseBillFragment==null){
                     inHouseBillFragment=new InHouseBillFragment();
-                    transaction.show(inHouseBillFragment);
+                    transaction.add(R.id.content,inHouseBillFragment);
                 }else
                     transaction.show(inHouseBillFragment);
                 break;
@@ -84,7 +84,7 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                 tvTitle.setText("原料仓库——出库单");
                 if(outHouseBillFragment==null){
                     outHouseBillFragment=new OutHouseBillFragment();
-                    transaction.show(outHouseBillFragment);
+                    transaction.add(R.id.content,outHouseBillFragment);
                 }else
                     transaction.show(outHouseBillFragment);
                 break;
@@ -92,13 +92,15 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                 tvTitle.setText("原料仓库——盘库");
                 if(checkStockFragment==null){
                     checkStockFragment=new CheckStockFragment();
-                    transaction.show(checkStockFragment);
+                    transaction.add(R.id.content,checkStockFragment);
                 }else
                     transaction.show(checkStockFragment);
                 break;
             default:
                 break;
         }
+
+        transaction.commit();
     }
     public void hideFragment(FragmentTransaction transaction){
         if(stockFragment!=null)
@@ -109,5 +111,6 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
             transaction.hide(outHouseBillFragment);
         if(checkStockFragment!=null)
             transaction.hide(checkStockFragment);
+
     }
 }
