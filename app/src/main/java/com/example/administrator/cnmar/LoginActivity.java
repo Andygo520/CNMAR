@@ -54,10 +54,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginButton = (Button) findViewById(R.id.btnLogin);
 
         if(sp.getBoolean("isChecked",false)){
-//            etUserName.setText(sp.getString("username","Andy"));
-//            etPassword.setText(sp.getString("password","123456"));
-//            onClick(mLoginButton);
-            login();
+            etUserName.setText(sp.getString("username","Andy"));
+            etPassword.setText(sp.getString("password","123456"));
+            auto_login.setChecked(true);
+            onClick(mLoginButton);
         }
         mLoginButton.setOnClickListener(this);
     }
@@ -93,15 +93,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                        Log.d("TAG", s);
                 UserInfor userInfor = JSON.parseObject(VolleyHelper.getJson(s), UserInfor.class);
                 if(userInfor.isStatus()){
-
-                    editor.putString("username", etUserName.getText().toString().trim()).commit();
-                    editor.putString("password", etPassword.getText().toString().trim()).commit();
-
-                    if (auto_login.isChecked())
+                    if (auto_login.isChecked()){
+                        editor.putString("username", etUserName.getText().toString().trim()).commit();
+                        editor.putString("password", etPassword.getText().toString().trim()).commit();
                         editor.putBoolean("isChecked",true).commit();
+                    }
                     else
                         editor.putBoolean("isChecked",false).commit();
-
                     login();
                 }else
                 {
