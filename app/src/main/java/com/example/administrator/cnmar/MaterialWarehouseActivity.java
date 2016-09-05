@@ -65,7 +65,6 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
 
         switch (id){
             case 0:
-                tvTitle.setText("原料仓库");
                 if(stockFragment==null){
                     stockFragment=new StockFragment();
                     transaction.add(R.id.content,stockFragment);
@@ -73,7 +72,6 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                     transaction.show(stockFragment);
                 break;
             case 1:
-                tvTitle.setText("原料仓库——入库单");
                 if(inHouseBillFragment==null){
                     inHouseBillFragment=new InHouseBillFragment();
                     transaction.add(R.id.content,inHouseBillFragment);
@@ -81,7 +79,6 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                     transaction.show(inHouseBillFragment);
                 break;
             case 2:
-                tvTitle.setText("原料仓库——出库单");
                 if(outHouseBillFragment==null){
                     outHouseBillFragment=new OutHouseBillFragment();
                     transaction.add(R.id.content,outHouseBillFragment);
@@ -89,7 +86,6 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
                     transaction.show(outHouseBillFragment);
                 break;
             case 3:
-                tvTitle.setText("原料仓库——盘库");
                 if(checkStockFragment==null){
                     checkStockFragment=new CheckStockFragment();
                     transaction.add(R.id.content,checkStockFragment);

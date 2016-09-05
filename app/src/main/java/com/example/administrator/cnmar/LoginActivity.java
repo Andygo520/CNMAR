@@ -33,6 +33,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CheckBox auto_login;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
+//    private ProgressDialog dialog;
+//    private Handler handler=new Handler(){
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//          if(msg.what==0)
+//              dialog.dismiss();
+//        }
+//    };
 
 
     @Override
@@ -60,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             onClick(mLoginButton);
         }
         mLoginButton.setOnClickListener(this);
+//        dialog.cancel();
     }
 
 //    @Override
@@ -82,40 +92,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        String strUserName = etUserName.getText().toString().trim();
-        String strPassword = etPassword.getText().toString().trim();
-        strUrl = LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword);
-        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
+//        dialog=ProgressDialog.show(this,"","加载中");
+                String strUserName = etUserName.getText().toString().trim();
+                String strPassword = etPassword.getText().toString().trim();
+                strUrl = LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword);
+                RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
-        StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
+                StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
 //                        Log.d("TAG", s);
-                UserInfor userInfor = JSON.parseObject(VolleyHelper.getJson(s), UserInfor.class);
-                if(userInfor.isStatus()){
-                    if (auto_login.isChecked()){
-                        editor.putString("username", etUserName.getText().toString().trim()).commit();
-                        editor.putString("password", etPassword.getText().toString().trim()).commit();
-                        editor.putBoolean("isChecked",true).commit();
-                    }
-                    else
-                        editor.putBoolean("isChecked",false).commit();
-                    login();
-                }else
-                {
-                    Toast.makeText(LoginActivity.this, userInfor.getMsg(), Toast.LENGTH_SHORT).show();
-                    etUserName.setText("");
-                    etPassword.setText("");
-                    auto_login.setChecked(false);
-                }
+                        UserInfor userInfor = JSON.parseObject(VolleyHelper.getJson(s), UserInfor.class);
+                        if(userInfor.isStatus()){
+                            if (auto_login.isChecked()){
+                                editor.putString("username", etUserName.getText().toString().trim()).commit();
+                                editor.putString("password", etPassword.getText().toString().trim()).commit();
+                                editor.putBoolean("isChecked",true).commit();
+                            }
+                            else
+                                editor.putBoolean("isChecked",false).commit();
+                            login();
+                        }else
+                        {
+                            Toast.makeText(LoginActivity.this, userInfor.getMsg(), Toast.LENGTH_SHORT).show();
+                            etUserName.setText("");
+                            etPassword.setText("");
+                            auto_login.setChecked(false);
+                        }
 
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("TAG", volleyError.getMessage(), volleyError);
+                    }
+                });
+                requestQueue.add(stringRequest);
+//              登录操作执行完后，发送取消进度对话框的消息
+//                handler.sendEmptyMessage(0);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e("TAG", volleyError.getMessage(), volleyError);
-            }
-        });
-        requestQueue.add(stringRequest);
-    }
+
 }
