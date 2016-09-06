@@ -3,7 +3,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <LinearLayout
+        android:background="#aaa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+        <EditText
+            android:id="@+id/etSearchInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lines="1"
+            android:gravity="left"
+            android:layout_gravity="left"
+            android:hint="请输入产品编码或名称查找"
+            />
+         <ImageView
+             android:id="@+id/ivSearch"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:src="@mipmap/ic_search"
+             android:layout_gravity="center_vertical"
+             />
+    </LinearLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="3">
+        <TableRow
+            android:id="@+id/stock_list_header_row">
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="原料编码"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="原料名称"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="详情"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="预警最小库存"
+                android:layout_width="50dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="预警最大库存"
+                android:layout_width="50dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:text="操作"
+                android:layout_width="50dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="2dip"
+                />
+            <View
+                android:layout_width="1dp"
+                android:background="#FF909090"
+                android:layout_height="match_parent"
+                />
+        </TableRow>
+    </TableLayout>
     <com.chanven.lib.cptr.PtrClassicFrameLayout
         android:id="@+id/test_list_view_frame"
         xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
@@ -23,10 +130,9 @@
             android:layout_height="match_parent"
             android:background="@android:color/white"
             android:choiceMode="singleChoice"
-            android:divider="#b0b0b0"
-            android:dividerHeight="0.1dp"
+            android:divider="#FF909090"
+            android:dividerHeight="1dp"
             android:fadingEdge="none"
             android:scrollbarStyle="outsideOverlay"/>
     </com.chanven.lib.cptr.PtrClassicFrameLayout>
-
 </LinearLayout>

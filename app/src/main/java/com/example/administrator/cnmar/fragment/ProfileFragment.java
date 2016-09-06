@@ -55,8 +55,12 @@ public class ProfileFragment extends Fragment {
         btnLogOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                LoginActivity.editor.putBoolean("isChecked",false);
+                LoginActivity.editor.clear().commit();
                 Intent intent=new Intent(getActivity(),LoginActivity.class);
                 startActivity(intent);
+                getActivity().finish();
+
             }
         });
         new Thread(new Runnable() {

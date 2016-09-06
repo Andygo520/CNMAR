@@ -3,6 +3,7 @@ package com.example.administrator.cnmar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -10,9 +11,11 @@ import com.example.administrator.cnmar.fragment.CheckStockFragment;
 import com.example.administrator.cnmar.fragment.InHouseBillFragment;
 import com.example.administrator.cnmar.fragment.OutHouseBillFragment;
 import com.example.administrator.cnmar.fragment.StockFragment;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 
 public class MaterialWarehouseActivity extends AppCompatActivity {
     private TextView tvTitle;
+    private ImageView ivLeftArrow,ivScann;
     private StockFragment stockFragment;
     private InHouseBillFragment inHouseBillFragment;
     private OutHouseBillFragment outHouseBillFragment;
@@ -26,6 +29,9 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
 
         tvTitle= (TextView) findViewById(R.id.title);
         rg= (RadioGroup) findViewById(R.id.rg);
+        ivLeftArrow= (ImageView) findViewById(R.id.left_img);
+        UniversalHelper.backToLastActivity(this,ivLeftArrow,new MainActivity());
+        ivScann= (ImageView) findViewById(R.id.scann);
         tvTitle.setText("原料仓库");
 
 //      默认选中库存
@@ -54,6 +60,15 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
         });
     }
 
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if(keyCode==KeyEvent.ACTION_DOWN){
+//            Intent intent=new Intent(this,MainActivity.class);
+//            startActivity(intent);
+//            finish();
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
   /*
   *
   * 设置选中的Fragment,0代表库存,1代表入库单据,2代表出库单据,3代表盘库

@@ -31,8 +31,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button mLoginButton;
     private EditText etUserName, etPassword;
     private CheckBox auto_login;
-    private SharedPreferences sp;
-    private SharedPreferences.Editor editor;
+    public static SharedPreferences sp;
+    public static SharedPreferences.Editor editor;
 //    private ProgressDialog dialog;
 //    private Handler handler=new Handler(){
 //        @Override
@@ -63,8 +63,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginButton = (Button) findViewById(R.id.btnLogin);
 
         if(sp.getBoolean("isChecked",false)){
-            etUserName.setText(sp.getString("username","Andy"));
-            etPassword.setText(sp.getString("password","123456"));
+            etUserName.setText(sp.getString("username",""));
+            etPassword.setText(sp.getString("password",""));
             auto_login.setChecked(true);
             onClick(mLoginButton);
         }
