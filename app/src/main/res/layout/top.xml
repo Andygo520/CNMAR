@@ -1,34 +1,39 @@
-<LinearLayout
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="horizontal"
-    android:background="#319BD9"
+    android:background="@color/colorBase"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView
-        android:id="@+id/left_img"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:layout_gravity="left|center_vertical"
-        android:src="@mipmap/arrow_left_white"
-        />
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="文本"
-        android:lines="1"
-        android:textColor="#fff"
-        android:layout_gravity="center"
-        android:gravity="center"
-        />
-    <ImageView
-        android:id="@+id/scann"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_weight="1"
-        android:layout_gravity="right|center_vertical"
-        android:src="@mipmap/scann"
-        />
-</LinearLayout>
+
+        <ImageView
+            android:id="@+id/left_img"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/arrow_left_white"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            />
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="文本"
+            android:lines="1"
+            android:textColor="#fff"
+            android:layout_centerInParent="true"
+            />
+
+
+        <ImageView
+            android:id="@+id/scann"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/scann"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+
+</RelativeLayout>

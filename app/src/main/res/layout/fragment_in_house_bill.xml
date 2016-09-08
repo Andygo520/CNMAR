@@ -1,13 +1,129 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.administrator.cnmar.fragment.InHouseBillFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:orientation="vertical">
+    <LinearLayout
+        android:background="@drawable/linear_bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="40dp"
+        android:layout_margin="5dp">
+        <EditText
+            android:id="@+id/etSearchInput"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:lines="1"
+            android:background="@null"
+            android:hint="请输入入库单号查询"
+            android:paddingLeft="2dp"
+            android:textColorHint="#fff"
+            android:gravity="left|center_vertical"
+            android:layout_gravity="left"
+            />
+        <ImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_search"
+            android:layout_gravity="center_vertical"
+            />
+    </LinearLayout>
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        >
+
+        <View
+            style="@style/list_item_seperator_layout"
+            />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="3">
+                <TableRow
+                    android:id="@+id/stock_list_header_row">
+                    <View
+                        style="@style/list_item_cell_seperator_layout"
+                        />
+                    <TextView
+                        android:id="@+id/stock_list_header_code"
+                        android:text="入库单号"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:layout_width="60dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        />
+                    <View
+                        style="@style/list_item_cell_seperator_layout"
+                        />
+                    <TextView
+                        android:id="@+id/stock_list_header_symbol"
+                        android:text="到货日期"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        />
+                    <View
+                        style="@style/list_item_cell_seperator_layout"
+                        />
+                    <TextView
+                        android:id="@+id/stock_list_header_last_price"
+                        android:text="入库单状态"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:layout_width="60dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        />
+                    <View
+                        style="@style/list_item_cell_seperator_layout"
+                        />
+                    <TextView
+                        android:id="@+id/stock_list_header_price_change_percentag"
+                        android:text="操作"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold"
+                        android:layout_width="50dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        />
+                    <View
+                        style="@style/list_item_cell_seperator_layout"
+                        />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+        <View
+            style="@style/list_item_seperator_layout"
+            />
+        <ListView
+            android:id="@+id/lvInOrder"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollingCache="true"
+            android:cacheColorHint="#00000000"
+            android:fastScrollEnabled="true"
+            android:focusable="true"
+            android:divider="@color/color_dark_grey"
+            android:dividerHeight="1dip"
+            />
+    </LinearLayout>
+
+</LinearLayout>

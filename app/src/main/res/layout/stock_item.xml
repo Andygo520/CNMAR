@@ -1,95 +1,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
     <TableLayout
-        android:layout_width="match_parent"
+        android:id="@+id/stock_list_item_table_layout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="3">
         <TableRow
-            android:id="@+id/stock_list_header_row">
+            android:id="@+id/stock_list_row">
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/materialCode"
-                android:text="详情"
-                android:layout_width="50dp"
+                android:layout_width="60dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="2dip"
-                />
+                android:layout_gravity="center"
+                android:padding="2dip" />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/materialName"
-                android:text="详情"
-                android:layout_width="50dp"
+                android:layout_width="1dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:padding="2dip"
                 />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
-            <TextView
-                android:id="@+id/stockSum"
-                android:text="详情"
-                android:layout_width="50dp"
+            <TextView android:id="@+id/stockSum"
+                android:layout_width="60dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:padding="2dip"
                 />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/minStock"
-                android:text="详情"
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:padding="2dip"
                 />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/maxStock"
-                android:text="详情"
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:padding="2dip"
                 />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/detail"
-                android:text="详情"
-                android:textColor="#00f"
                 android:layout_width="50dip"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:padding="2dip"
                 />
             <View
-                android:layout_width="1dp"
-                android:background="#FF909090"
-                android:layout_height="match_parent"
+                style="@style/list_item_cell_seperator_layout"
                 />
         </TableRow>
     </TableLayout>

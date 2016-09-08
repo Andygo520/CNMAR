@@ -1,9 +1,12 @@
 package com.example.administrator.cnmar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -21,6 +24,7 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
     private OutHouseBillFragment outHouseBillFragment;
     private CheckStockFragment checkStockFragment;
     private RadioGroup rg;
+    private RadioButton rbStock,rbInOrder,rbOutOrder,rbCheckStock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +64,16 @@ public class MaterialWarehouseActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if(keyCode==KeyEvent.ACTION_DOWN){
-//            Intent intent=new Intent(this,MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            Intent intent=new Intent(this,MainActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
   /*
   *
   * 设置选中的Fragment,0代表库存,1代表入库单据,2代表出库单据,3代表盘库

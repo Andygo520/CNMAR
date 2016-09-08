@@ -26,6 +26,7 @@
             >
             <RadioButton
                 android:id="@+id/home"
+                android:background="@color/colorBase"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -38,6 +39,7 @@
                 />
             <RadioButton
                 android:id="@+id/mProfile"
+                android:background="@color/color_white"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

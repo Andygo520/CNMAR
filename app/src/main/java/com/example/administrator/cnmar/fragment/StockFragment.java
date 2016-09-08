@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,7 +46,9 @@ public class StockFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_stock, container, false);
-        lvStock= (ListView) view.findViewById(R.id.test_list_view);
+        lvStock= (ListView) view.findViewById(R.id.stock_list_view);
+//        lvStock.addHeaderView(new ViewStub(getActivity()));
+        lvStock.addFooterView(new ViewStub(getActivity()));
         ivSearch= (ImageView) view.findViewById(R.id.ivSearch);
         etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
         ivSearch.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +101,6 @@ public class StockFragment extends Fragment {
             this.context = context;
         }
 
-
         @Override
         public int getCount() {
             return list.size();
@@ -106,7 +108,7 @@ public class StockFragment extends Fragment {
 
         @Override
         public Object getItem(int position) {
-            return list.get(position);
+               return list.get(position);
         }
 
         @Override
@@ -132,19 +134,20 @@ public class StockFragment extends Fragment {
 
                 holder.materialCode.setText(list.get(position).getMaterial().getCode());
                 holder.materialName.setText(list.get(position).getMaterial().getName());
-                holder.stockSum.setText(list.get(position).getStock()+list.get(position).getMaterial().getUnit().getName());
+                holder.stockSum.setText(list.get(position).getStock() + list.get(position).getMaterial().getUnit().getName());
                 holder.minStock.setText(String.valueOf(list.get(position).getMaterial().getMinStock()));
                 holder.maxStock.setText(String.valueOf(list.get(position).getMaterial().getMaxStock()));
                 holder.detail.setText("详情");
+                holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
                 holder.detail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(context,StockDetailActivity.class);
-                    intent.putExtra("ID",list.get(position).getId());
-                    context.startActivity(intent);
-                }
-            });
-
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, StockDetailActivity.class);
+                        intent.putExtra("ID", list.get(position).getId());
+                        context.startActivity(intent);
+                    }
+                });
+//            }
             return convertView;
         }
 

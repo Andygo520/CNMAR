@@ -4,9 +4,9 @@ public enum MixTypeVo {
 
 	EMPTY(null, ""),
 	/** 不允许 */
-	ZERO(0, "不允许"),
+	ZERO(1, "不允许"),
 	/** 允许 */
-	ONE(1, "允许");
+	ONE(2, "允许");
 
 	private Integer key;
 	private String value;

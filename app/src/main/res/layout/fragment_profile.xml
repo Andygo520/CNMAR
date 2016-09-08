@@ -137,7 +137,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="图像"
+            android:text="头像"
             android:textSize="17sp"
             android:gravity="center_vertical"
             />

@@ -56,7 +56,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                LoginActivity.editor.putBoolean("isChecked",false);
-                LoginActivity.editor.clear().commit();
+//               注销账号的时候，只保留账号内容
+                LoginActivity.editor.putString("password","");
+                LoginActivity.editor.putBoolean("isChecked",false);
                 Intent intent=new Intent(getActivity(),LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();

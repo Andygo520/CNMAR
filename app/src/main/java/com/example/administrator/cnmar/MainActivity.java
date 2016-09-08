@@ -1,9 +1,13 @@
 package com.example.administrator.cnmar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -15,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTitle;
     private ImageView ivLeftImage;
     private RadioGroup radioGroup;
+    private RadioButton rbHome,rbMyProfile;
     private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
 
@@ -26,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         tvTitle= (TextView) findViewById(R.id.title);
         ivLeftImage= (ImageView) findViewById(R.id.left_img);
         radioGroup= (RadioGroup) findViewById(R.id.rg);
+        rbHome= (RadioButton) findViewById(R.id.home);
+        rbMyProfile= (RadioButton) findViewById(R.id.mProfile);
+
 
 //      默认选中首页
         setTabSelection(0);
@@ -38,16 +46,31 @@ public class MainActivity extends AppCompatActivity {
                 switch (checkedId){
                     case R.id.home:
                         setTabSelection(0);
+                        rbHome.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                        rbMyProfile.setBackgroundColor(getResources().getColor(R.color.color_white));
                         break;
                     case  R.id.mProfile:
                         setTabSelection(1);
+                        rbHome.setBackgroundColor(getResources().getColor(R.color.color_white));
+                        rbMyProfile.setBackgroundColor(getResources().getColor(R.color.colorBase));
                         break;
-                        default:
-                            break;
+                    default:
+                        break;
                 }
             }
         });
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK){
+            Intent intent=new Intent(this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -58,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setTabSelection(int index) {
         // 开启一个Fragment事务
-        FragmentTransaction transaction =getSupportFragmentManager().beginTransaction();
+       FragmentTransaction transaction =getSupportFragmentManager().beginTransaction();
         // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况
         hideFragment(transaction);
         switch (index) {
@@ -79,6 +102,13 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 tvTitle.setText("我的资料");
                 ivLeftImage.setImageResource(R.mipmap.arrow_left_white);
+                ivLeftImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setTabSelection(0);
+                        rbHome.setChecked(true);
+                    }
+                });
                 if (profileFragment == null) {
                     // 如果profileFragment为空，则创建一个并添加到界面上
                     profileFragment = new ProfileFragment();

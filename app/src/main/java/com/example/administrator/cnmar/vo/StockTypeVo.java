@@ -4,9 +4,9 @@ public enum StockTypeVo {
 
 	EMPTY(null, ""),
 	/** 扫描二维码 */
-	ZERO(0, "扫描二维码"),
+	SCAN(1, "扫描二维码"),
 	/** 输入数量 */
-	ONE(1, "输入数量");
+	INPUT(2, "输入数量");
 
 	private Integer key;
 	private String value;

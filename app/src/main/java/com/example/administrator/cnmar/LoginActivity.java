@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.UserInfor;
+import com.example.administrator.cnmar.helper.NetworkHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
@@ -48,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         tvTitle= (TextView) findViewById(R.id.title);
         ivLeftImage= (ImageView) findViewById(R.id.left_img);
@@ -92,9 +92,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
 //        dialog=ProgressDialog.show(this,"","加载中");
-                String strUserName = etUserName.getText().toString().trim();
+              final String strUserName = etUserName.getText().toString().trim();
                 String strPassword = etPassword.getText().toString().trim();
+        //       检查网络连接
+               if(!NetworkHelper.isNetworkConnected(this)){
+                     NetworkHelper.noNetworkToast(this);
+                     return;
+                    }
+               if(strUserName.equals("")&&strPassword.equals("")){
+                Toast.makeText(this,"请输入账号和密码",Toast.LENGTH_SHORT).show();
+                   return;
+               }
+               if(strUserName.equals("")){
+                   Toast.makeText(this,"请输入账号",Toast.LENGTH_SHORT).show();
+                   return;
+               }
+               if(strPassword.equals("")){
+                   Toast.makeText(this,"请输入密码",Toast.LENGTH_SHORT).show();
+                   return;
+               }
+
                 strUrl = LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword);
                 RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
@@ -115,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }else
                         {
                             Toast.makeText(LoginActivity.this, userInfor.getMsg(), Toast.LENGTH_SHORT).show();
-                            etUserName.setText("");
+                            etUserName.setText(strUserName);
                             etPassword.setText("");
                             auto_login.setChecked(false);
                         }
