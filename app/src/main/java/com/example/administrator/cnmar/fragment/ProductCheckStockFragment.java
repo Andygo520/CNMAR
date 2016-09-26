@@ -1,0 +1,99 @@
+package com.example.administrator.cnmar.fragment;
+
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.example.administrator.cnmar.R;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ProductCheckStockFragment extends Fragment {
+    private RadioButton rbManage,rbQuery;
+    private RadioGroup radioGroup;
+    private ProductCheckStockFragmentManage fragmentManage;
+    private ProductCheckStockFragmentQuery fragmentQuery;
+    private FragmentTransaction transaction;
+    //    int sign=0;
+    public ProductCheckStockFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View   view= inflater.inflate(R.layout.fragment_product_check_stock, container, false);
+        radioGroup= (RadioGroup) view.findViewById(R.id.rg);
+//          sign=getArguments().getInt("SIGN");
+//        if(sign==1) {
+//            setSelection(2);
+//        }else
+        setSelection(1);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.rbCheckManage:
+                        setSelection(1);
+                        break;
+                    case R.id.rbCheckQuery:
+                        setSelection(2);
+                        break;
+
+                }
+            }
+        });
+
+        return view;
+    }
+//    i等于1表示选择了库存管理，i等于2表示选择了库存查询
+
+    public void setSelection(int i) {
+//      fragment嵌套里面不能再用getFragmentManager(),要用getChildFragmentManager()
+        transaction=getChildFragmentManager().beginTransaction();
+        switch (i) {
+            case 1:
+                if (fragmentQuery != null) {
+                    transaction.hide(fragmentQuery);
+                }
+                if (fragmentManage == null) {
+                    fragmentManage = new ProductCheckStockFragmentManage();
+                    transaction.add(R.id.content, fragmentManage);
+                } else
+                    transaction.show(fragmentManage);
+                break;
+            case 2:
+                if(fragmentManage!=null){
+                    transaction.hide(fragmentManage);
+                }
+                if(fragmentQuery==null){
+                    fragmentQuery=new ProductCheckStockFragmentQuery(getActivity());
+                    transaction.add(R.id.content,fragmentQuery);
+                }else
+                    transaction.show(fragmentQuery);
+                break;
+            default:
+                break;
+
+        }
+        transaction.commit();
+    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if(sign==1){
+//            setSelection(2);
+//        }
+//    }
+}
