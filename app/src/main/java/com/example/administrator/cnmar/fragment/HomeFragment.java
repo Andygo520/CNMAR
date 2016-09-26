@@ -14,7 +14,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.administrator.cnmar.MaterialWarehouseActivity;
+import com.example.administrator.cnmar.MaterialStockActivity;
+import com.example.administrator.cnmar.ProductStockActivity;
 import com.example.administrator.cnmar.R;
 
 /**
@@ -62,7 +63,7 @@ public class HomeFragment extends Fragment {
                 "成品仓库",
                 "计划管理",
                 "企业管理",
-                "相关管理",
+                "相关方管理",
                 "系统管理"
         };
 
@@ -101,10 +102,12 @@ public class HomeFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     switch (images[position]){
                         case R.mipmap.ylck:
-                            Intent intent=new Intent(getActivity(), MaterialWarehouseActivity.class);
+                            Intent intent=new Intent(getActivity(), MaterialStockActivity.class);
                             startActivity(intent);
                             break;
                         case R.mipmap.cpck:
+                            Intent intent1=new Intent(getActivity(), ProductStockActivity.class);
+                            startActivity(intent1);
                             break;
                         case R.mipmap.jhgl:
                             break;

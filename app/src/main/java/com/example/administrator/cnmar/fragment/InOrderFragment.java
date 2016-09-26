@@ -5,16 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
@@ -22,25 +27,26 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.MaterialInOrderDetailActivity;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.StockDetailActivity;
 import com.example.administrator.cnmar.http.VolleyHelper;
-import com.example.administrator.cnmar.model.MaterialInOrder;
 
 import java.text.DateFormat;
 import java.util.List;
 
+import component.material.model.MaterialInOrder;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InHouseBillFragment extends Fragment {
+public class InOrderFragment extends Fragment {
     private static final String URL_IN_HOUSE_BILL="http://139.196.104.170:8092/material_in_order/list?query.code=&page.num=1";
     private static final String URL_SEARCH_IN_HOUSE_BILL="http://139.196.104.170:8092/material_in_order/list?query.code={query.code}&page.num=1";
     private ListView lvInOrder;
-    private ImageView ivSearch;
+    private LinearLayout llSearch;
     private EditText etSearchInput;
 
-    public InHouseBillFragment() {
+    public InOrderFragment() {
         // Required empty public constructor
     }
 
@@ -52,11 +58,49 @@ public class InHouseBillFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_in_house_bill, container, false);
         lvInOrder= (ListView) view.findViewById(R.id.lvInOrder);
         lvInOrder.addFooterView(new ViewStub(getActivity()));
-//        lvInOrder.addHeaderView(new ViewStub(getActivity()));
 
-        ivSearch= (ImageView) view.findViewById(R.id.ivSearch);
+        llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
-        ivSearch.setOnClickListener(new View.OnClickListener() {
+        etSearchInput.setHint("入库单号查询");
+        etSearchInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode==KeyEvent.KEYCODE_ENTER){
+                    String input=etSearchInput.getText().toString().trim();
+                    if(input.equals("")){
+                        Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
+                    }else{
+                        String urlString=URL_SEARCH_IN_HOUSE_BILL.replace("{query.code}",input);
+                        getInOrderListFromNet(urlString);
+                    }
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm.isActive()) {
+                        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+        });
+        etSearchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().equals(""))
+                    getInOrderListFromNet(URL_IN_HOUSE_BILL);
+            }
+        });
+        llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
@@ -67,7 +111,6 @@ public class InHouseBillFragment extends Fragment {
         getInOrderListFromNet(URL_IN_HOUSE_BILL);
         return view;
     }
-
     public void getInOrderListFromNet(final String url){
         new Thread(new Runnable() {
             @Override
@@ -79,7 +122,7 @@ public class InHouseBillFragment extends Fragment {
                     public void onResponse(String s) {
                         String json= VolleyHelper.getJson(s);
                         Log.d("GGGG",json);
-                        com.example.administrator.cnmar.model.Response response= JSON.parseObject(json, com.example.administrator.cnmar.model.Response.class);
+                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
                         List<MaterialInOrder> list= JSON.parseArray(response.getData().toString(),MaterialInOrder.class );
                         BillAdapter myAdapter=new BillAdapter(list,getActivity());
                         lvInOrder.setAdapter(myAdapter);
@@ -126,7 +169,7 @@ public class InHouseBillFragment extends Fragment {
             ViewHolder holder=null;
             if(convertView==null){
                 holder=new ViewHolder();
-                convertView= LayoutInflater.from(context).inflate(R.layout.in_house_bill_item,parent,false);
+                convertView= LayoutInflater.from(context).inflate(R.layout.in_order_item,parent,false);
                 holder.tvInOrderNo= (TextView) convertView.findViewById(R.id.tvInOrderNo);
                 holder.tvArriveDate= (TextView) convertView.findViewById(R.id.tvArriveDate);
                 holder.tvInOrderStatus= (TextView) convertView.findViewById(R.id.tvInOrderStatus);
@@ -143,8 +186,10 @@ public class InHouseBillFragment extends Fragment {
             holder.detail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, StockDetailActivity.class);
-                    intent.putExtra("ID", list.get(position).getId());
+                    Intent intent = new Intent(context, MaterialInOrderDetailActivity.class);
+                    Bundle bundle=new Bundle();
+                    bundle.putInt("ID", list.get(position).getId());
+                    intent.putExtras(bundle);
                     context.startActivity(intent);
                 }
             });
@@ -159,4 +204,5 @@ public class InHouseBillFragment extends Fragment {
         }
 
     }
+
 }

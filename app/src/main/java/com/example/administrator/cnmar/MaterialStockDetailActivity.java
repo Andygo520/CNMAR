@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,12 +23,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
-import com.example.administrator.cnmar.model.MaterialSpaceStock;
-import com.example.administrator.cnmar.model.MaterialStock;
 
 import java.util.List;
 
-public class StockDetailActivity extends AppCompatActivity {
+import component.material.model.MaterialSpaceStock;
+import component.material.model.MaterialStock;
+
+public class MaterialStockDetailActivity extends AppCompatActivity {
     private static final String URL_STOCK_DETAIL="http://139.196.104.170:8092/material_stock/detail/{id}";
     private TextView tvTitle;
     private ImageView ivLeftArrow,ivScann;
@@ -35,6 +37,8 @@ public class StockDetailActivity extends AppCompatActivity {
                      tvSupplierCode,tvIsMixed,tvStockSum,tvMinStock,tvMaxStock;
     private String strUrl;
     private ListView lvSpace;
+    private LinearLayout llLeftArrow;
+
     private SpaceAdapter myAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ public class StockDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(this,MaterialWarehouseActivity.class);
+            Intent intent=new Intent(this,MaterialStockActivity.class);
             startActivity(intent);
             finish();
             return true;
@@ -62,7 +66,9 @@ public class StockDetailActivity extends AppCompatActivity {
     public void init(){
         tvTitle= (TextView) findViewById(R.id.title);
         ivLeftArrow= (ImageView) findViewById(R.id.left_img);
-        UniversalHelper.backToLastActivity(this,ivLeftArrow,new MaterialWarehouseActivity());
+        llLeftArrow= (LinearLayout) findViewById(R.id.left_arrow);
+        UniversalHelper.backToLastActivity(this,llLeftArrow,new MaterialStockActivity());
+
         ivScann= (ImageView) findViewById(R.id.scann);
         tvTitle.setText("原料仓库-库存");
         tvMaterialCode= (TextView) findViewById(R.id.tvMaterialCode);
@@ -83,16 +89,16 @@ public class StockDetailActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue queue= Volley.newRequestQueue(StockDetailActivity.this);
+                RequestQueue queue= Volley.newRequestQueue(MaterialStockDetailActivity.this);
                 StringRequest stringRequest=new StringRequest(strUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
                         String json= VolleyHelper.getJson(s);
-                        com.example.administrator.cnmar.model.Response response= JSON.parseObject(json, com.example.administrator.cnmar.model.Response.class);
+                        component.common.model.Response response= JSON.parseObject(json,component.common.model.Response.class );
                         MaterialStock materialStock=JSON.parseObject(response.getData().toString(),MaterialStock.class);
 //                        得到列表的数据源
                         List<MaterialSpaceStock> list=materialStock.getSpaceStocks();
-                        myAdapter=new SpaceAdapter(StockDetailActivity.this,list);
+                        myAdapter=new SpaceAdapter(MaterialStockDetailActivity.this,list);
                         lvSpace.setAdapter(myAdapter);
 
                         tvMaterialCode.setText(materialStock.getMaterial().getCode());
@@ -146,7 +152,7 @@ public class StockDetailActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
               ViewHolder holder=null;
             if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.warehouse_item,parent,false);
+                convertView= LayoutInflater.from(context).inflate(R.layout.space_item,parent,false);
                 holder=new ViewHolder();
                 holder.tvSpaceCode= (TextView) convertView.findViewById(R.id.spaceCode);
                 holder.tvSpaceName= (TextView) convertView.findViewById(R.id.spaceName);

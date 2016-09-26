@@ -2,14 +2,19 @@ package com.example.administrator.cnmar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.cnmar.fragment.HomeFragment;
 import com.example.administrator.cnmar.fragment.ProfileFragment;
@@ -22,9 +27,27 @@ public class MainActivity extends AppCompatActivity {
     private RadioButton rbHome,rbMyProfile;
     private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
+    private LinearLayout llLeftArrow;
+    private long exitTime = 0;
+    private Handler handler=new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            if(msg.what==0x101)
+            {
+                iskill=false;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    private boolean iskill=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        if(savedInstanceState!=null){
+//
+//        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -33,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         radioGroup= (RadioGroup) findViewById(R.id.rg);
         rbHome= (RadioButton) findViewById(R.id.home);
         rbMyProfile= (RadioButton) findViewById(R.id.mProfile);
+        llLeftArrow= (LinearLayout) findViewById(R.id.left_arrow);
 
 
 //      默认选中首页
@@ -63,11 +87,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if(homeFragment==null && fragment instanceof HomeFragment){
+            homeFragment= (HomeFragment) fragment;
+        }else if(profileFragment==null && fragment instanceof ProfileFragment){
+            profileFragment= (ProfileFragment) fragment;
+        }
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(this,LoginActivity.class);
-            startActivity(intent);
-            finish();
+//        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+//            if((System.currentTimeMillis()-exitTime) > 2000){
+//                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+//                exitTime = System.currentTimeMillis();
+//            } else {
+//                finish();
+//                System.exit(0);
+//            }
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+        if(keyCode==KeyEvent.KEYCODE_BACK)
+        {
+            if(iskill)
+            {
+                //退出
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                System.exit(0);
+            }
+            else
+            {
+                iskill=true;
+                Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+                handler.sendEmptyMessageDelayed(0x101,2000); //延迟2秒发送消息
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -102,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 tvTitle.setText("我的资料");
                 ivLeftImage.setImageResource(R.mipmap.arrow_left_white);
-                ivLeftImage.setOnClickListener(new View.OnClickListener() {
+                llLeftArrow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         setTabSelection(0);

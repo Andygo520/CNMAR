@@ -21,7 +21,8 @@ import com.example.administrator.cnmar.LoginActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.UserInfor;
 import com.example.administrator.cnmar.http.VolleyHelper;
-import com.example.administrator.cnmar.model.SystemUser;
+
+import component.system.model.SystemUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +59,7 @@ public class ProfileFragment extends Fragment {
 //                LoginActivity.editor.putBoolean("isChecked",false);
 //               注销账号的时候，只保留账号内容
                 LoginActivity.editor.putString("password","");
-                LoginActivity.editor.putBoolean("isChecked",false);
+                LoginActivity.editor.putBoolean("isChecked",true).commit();
                 Intent intent=new Intent(getActivity(),LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -83,7 +84,7 @@ public class ProfileFragment extends Fragment {
             public void onResponse(String s) {
                 String json=VolleyHelper.getJson(s);
                 UserInfor userInfor= JSON.parseObject(json,UserInfor.class);
-                com.example.administrator.cnmar.model.Response response=JSON.parseObject(json,com.example.administrator.cnmar.model.Response.class);
+                component.common.model.Response response=JSON.parseObject(json,component.common.model.Response.class);
                 SystemUser model = JSON.parseObject(response.getData().toString(), SystemUser.class);
 
                 tvAccount.setText(userInfor.getData().getUsername());

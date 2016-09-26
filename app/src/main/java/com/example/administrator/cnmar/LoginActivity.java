@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,8 +28,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String LOGIN_URL = "http://139.196.104.170:8092/login_commit?username={username}&password={password}";
     public static String strUrl;
 
-    private TextView tvTitle;
-    private ImageView ivLeftImage;
     private Button mLoginButton;
     private EditText etUserName, etPassword;
     private CheckBox auto_login;
@@ -50,19 +49,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        tvTitle= (TextView) findViewById(R.id.title);
-        ivLeftImage= (ImageView) findViewById(R.id.left_img);
         etUserName = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
         auto_login= (CheckBox) findViewById(R.id.chkPassword);
 
-        tvTitle.setText("欢迎登陆");
-        ivLeftImage.setImageResource(R.mipmap.text_logo);
         sp=getSharedPreferences("UserInfo",MODE_PRIVATE);
         editor=sp.edit();
         mLoginButton = (Button) findViewById(R.id.btnLogin);
+//
+        etUserName.setText(sp.getString("username",""));
 
-        if(sp.getBoolean("isChecked",false)){
+
+        if(sp.getBoolean("isChecked",false) && !sp.getString("password","").equals("")){
             etUserName.setText(sp.getString("username",""));
             etPassword.setText(sp.getString("password",""));
             auto_login.setChecked(true);
@@ -72,7 +70,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        dialog.cancel();
     }
 
-//    @Override
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+       if (keyCode==KeyEvent.KEYCODE_BACK){
+           finish();
+           System.exit(0);
+       }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //    @Override
 //    protected void onResume() {
 //        super.onResume();
 //        etUserName.setText(sharedHelper.getValueByKey("username"));
@@ -136,7 +143,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, userInfor.getMsg(), Toast.LENGTH_SHORT).show();
                             etUserName.setText(strUserName);
                             etPassword.setText("");
-                            auto_login.setChecked(false);
+                            auto_login.setChecked(true);
                         }
 
                     }
