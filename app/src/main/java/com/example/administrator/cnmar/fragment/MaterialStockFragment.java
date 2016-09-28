@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.MaterialStockDetailActivity;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -39,11 +40,12 @@ import component.material.model.MaterialStock;
  * A simple {@link Fragment} subclass.
  */
 public class MaterialStockFragment extends Fragment {
-    private static final String URL_STOCK="http://139.196.104.170:8092/material_stock/list?query.code=&page.num=1";
-    private static final String URL_SEARCH_STOCK="http://139.196.104.170:8092/material_stock/list?query.code={query.code}&page.num=1";
+    private static final String URL_STOCK="http://benxiao.cnmar.com:8092/material_stock/list?query.code=&page.num=1";
+    private static final String URL_SEARCH_STOCK="http://benxiao.cnmar.com:8092/material_stock/list?query.code={query.code}&page.num=1";
     private ListView lvStock;
     private LinearLayout llSearch;
     private EditText etSearchInput;
+    private String url= UniversalHelper.getTokenUrl(URL_STOCK);
     public MaterialStockFragment() {
         // Required empty public constructor
     }
@@ -67,6 +69,7 @@ public class MaterialStockFragment extends Fragment {
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=URL_SEARCH_STOCK.replace("{query.code}",input);
+                        urlString=UniversalHelper.getTokenUrl(urlString);
                         getStockListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -93,7 +96,7 @@ public class MaterialStockFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals(""))
-                    getStockListFromNet(URL_STOCK);
+                    getStockListFromNet(url);
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
@@ -101,10 +104,11 @@ public class MaterialStockFragment extends Fragment {
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
                 String urlString=URL_SEARCH_STOCK.replace("{query.code}",input);
+                urlString=UniversalHelper.getTokenUrl(urlString);
                 getStockListFromNet(urlString);
             }
         });
-        getStockListFromNet(URL_STOCK);
+        getStockListFromNet(url);
         return view;
     }
 

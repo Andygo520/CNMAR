@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class OutOrderFragment extends Fragment {
     private ListView lvOutOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
+    private String url= UniversalHelper.getTokenUrl(URL_OUT_ORDER);
 
     public OutOrderFragment() {
         // Required empty public constructor
@@ -71,6 +73,7 @@ public class OutOrderFragment extends Fragment {
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=URL_SEARCH_OUT_ORDER.replace("{query.code}",input);
+                        urlString=UniversalHelper.getTokenUrl(urlString);
                         getOutOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -97,7 +100,7 @@ public class OutOrderFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                     if (s.toString().equals(""))
-                        getOutOrderListFromNet(URL_OUT_ORDER);
+                        getOutOrderListFromNet(url);
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
@@ -105,10 +108,11 @@ public class OutOrderFragment extends Fragment {
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
                 String urlString=URL_SEARCH_OUT_ORDER.replace("{query.code}",input);
+                urlString=UniversalHelper.getTokenUrl(urlString);
                 getOutOrderListFromNet(urlString);
             }
         });
-        getOutOrderListFromNet(URL_OUT_ORDER);
+        getOutOrderListFromNet(url);
         return view;
     }
     public void getOutOrderListFromNet(final String url){

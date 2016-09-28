@@ -8,10 +8,8 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -20,6 +18,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
     private static final String URL_CHECK_STOCK="http://benxiao.cnmar.com:8092/material_stock_check/detail/{ID}";
     private TextView tvMaterialCode,tvMaterialName,tvSize,tvUnit,tvRemark,tvProviderCode,tvMixType,tvCheckTime,tvPreCheckNum,tvAfterCheckNum;
     private TextView name1,name2,name3,name4;
-    private ListView lvSpaceInfo;
+    private MyListView lvSpaceInfo;
     private static String strUrl;
     private LinearLayout llLeftArrow;
     private TextView tvTitle;
@@ -44,6 +44,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         init();
         id=getIntent().getIntExtra("ID",0);
         strUrl=URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
+        strUrl=UniversalHelper.getTokenUrl(strUrl);
         getCheckListFromNet();
     }
     public void init(){
@@ -81,8 +82,8 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         tvAfterCheckNum= (TextView) findViewById(R.id.tv52);
 
 
-        lvSpaceInfo= (ListView) findViewById(R.id.lvTable);
-        lvSpaceInfo.addFooterView(new ViewStub(this));
+        lvSpaceInfo= (MyListView) findViewById(R.id.lvTable);
+//        lvSpaceInfo.addFooterView(new ViewStub(this));
     }
 
     public void getCheckListFromNet(){

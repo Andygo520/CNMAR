@@ -8,34 +8,34 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1,3,5,7">
         <TableRow
-            android:id="@+id/stock_list_row">
+            android:id="@+id/stock_list_row"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            >
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/materialCode"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip" />
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/spaceCode"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView android:id="@+id/toBeNum"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="fill_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -46,10 +46,8 @@
                 android:inputType="number"
                 android:background="@null"
                 android:textColor="@android:color/holo_red_light"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
-                android:gravity="right|center_vertical"
+                android:layout_height="fill_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

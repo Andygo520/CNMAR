@@ -9,12 +9,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
     private static final String URL_CHECK_COMMIT="http://benxiao.cnmar.com:8092/product_stock_check_manage/check_commit?stockId={stockId}&spaceStockIds={spaceStockIds}&spaceIds={spaceIds}&beforeStocks={beforeStocks}&afterStocks={afterStocks}";
     private TextView tvCode,tvName,tvSize,tvUnit,tvMixType,tvStockNum;
     private TextView name1,name2,name3,name4;
-    private ListView lvSpaceInfo;
+    private MyListView lvSpaceInfo;
     private static String strUrl;
     private LinearLayout llLeftArrow;
     private Button btnSubmit;
@@ -55,6 +55,8 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
         init();
         id=getIntent().getIntExtra("ID",0);
         strUrl=URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
+        strUrl= UniversalHelper.getTokenUrl(strUrl);
+
         getCheckListFromNet();
     }
 
@@ -89,8 +91,8 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
         tvMixType= (TextView) findViewById(R.id.tv41);
         tvStockNum= (TextView) findViewById(R.id.tv42);
 
-        lvSpaceInfo= (ListView) findViewById(R.id.lvTable);
-        lvSpaceInfo.addFooterView(new ViewStub(this));
+        lvSpaceInfo= (MyListView) findViewById(R.id.lvTable);
+//        lvSpaceInfo.addFooterView(new ViewStub(this));
 
         btnSubmit.setVisibility(View.VISIBLE);
         btnSubmit.setText("提交");
@@ -106,7 +108,7 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
                 }
                 String afterStocks1=afterStocks.substring(0,afterStocks.length()-1);
                 String url=URL_CHECK_COMMIT.replace("{stockId}",String.valueOf(id)).replace("{spaceStockIds}",spaceStockIds1).replace("{spaceIds}",spaceIds1).replace("{beforeStocks}",beforeStocks1).replace("{afterStocks}",afterStocks1);
-//                Log.d("tAGTAG",url);
+                url=UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
             }
         });

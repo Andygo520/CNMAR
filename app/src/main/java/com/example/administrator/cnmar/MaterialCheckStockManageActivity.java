@@ -7,14 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.HashMap;
@@ -37,12 +38,13 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
     private static final String URL_CHECK_COMMIT="http://benxiao.cnmar.com:8092/material_stock_check_manage/check_commit?stockId={stockId}&spaceStockIds={spaceStockIds}&spaceIds={spaceIds}&beforeStocks={beforeStocks}&afterStocks={afterStocks}";
     private TextView tvMaterialCode,tvMaterialName,tvSize,tvUnit,tvRemark,tvProviderCode,tvMixType,tvStockNum;
     private TextView name1,name2,name3,name4;
-    private ListView lvSpaceInfo;
+    private MyListView lvSpaceInfo;
     private static String strUrl;
     private LinearLayout llLeftArrow;
     private Button btnSubmit;
     private TextView tvTitle;
     private int id;
+    private int index=-1;
     private String spaceStockIds="";
     private String spaceIds="";
     private String beforeStocks="";
@@ -55,6 +57,7 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
         init();
         id=getIntent().getIntExtra("ID",0);
         strUrl=URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
+        strUrl= UniversalHelper.getTokenUrl(strUrl);
         getCheckListFromNet();
     }
 
@@ -91,8 +94,8 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
         tvMixType= (TextView) findViewById(R.id.tv41);
         tvStockNum= (TextView) findViewById(R.id.tv42);
 
-        lvSpaceInfo= (ListView) findViewById(R.id.lvTable);
-        lvSpaceInfo.addFooterView(new ViewStub(this));
+        lvSpaceInfo= (MyListView) findViewById(R.id.lvTable);
+//        lvSpaceInfo.addFooterView(new ViewStub(this));
 
         btnSubmit.setVisibility(View.VISIBLE);
         btnSubmit.setText("提交");
@@ -109,6 +112,7 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
                 String afterStocks1=afterStocks.substring(0,afterStocks.length()-1);
                 String url=URL_CHECK_COMMIT.replace("{stockId}",String.valueOf(id)).replace("{spaceStockIds}",spaceStockIds1).replace("{spaceIds}",spaceIds1).replace("{beforeStocks}",beforeStocks1).replace("{afterStocks}",afterStocks1);
 //                Log.d("tAGTAG",url);
+                url=UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
             }
         });
@@ -221,6 +225,17 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
             holder.tvCheckNum.setText("");
 
+
+            holder.tvCheckNum.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        index = position;
+                    }
+                    return false;
+                }
+            });
+
             spaceStockIds+=String.valueOf(list.get(position).getId())+",";
             spaceIds+=String.valueOf(list.get(position).getSpaceId())+",";
             beforeStocks+=String.valueOf(list.get(position).getStock())+",";
@@ -249,6 +264,12 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
                     });
                 }
 
+            holder.tvCheckNum.clearFocus();
+            if (index != -1 && index == position) {
+                // 如果当前的行下标和点击事件中保存的index一致，手动为EditText设置焦点。
+                holder.tvCheckNum.requestFocus();
+            }
+            holder.tvCheckNum.setSelection(holder.tvCheckNum .getText().length());
             return convertView;
         }
 

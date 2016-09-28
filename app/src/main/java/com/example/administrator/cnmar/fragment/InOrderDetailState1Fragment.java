@@ -11,13 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
@@ -27,6 +24,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import component.material.vo.InOrderStatusVo;
 public class InOrderDetailState1Fragment extends Fragment {
     private static final String URL_IN_ORDER_DETAIL="http://benxiao.cnmar.com:8092/material_in_order/detail/{id}";
     private static final String URL_TEST_COMMIT="http://benxiao.cnmar.com:8092/material_in_order/test_commit?inOrderId={inOrderId}&inOrderMaterialIds={inOrderMaterialIds}&res={res}&failNums={failNums}";
-    private ListView listView;
+    private MyListView listView;
     private String strUrl;
     private Button btnSubmit;
     private HashMap<Integer,String> map=new HashMap<>();
@@ -65,14 +64,31 @@ public class InOrderDetailState1Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        View view=inflater.inflate(R.layout.fragment_in_order_detail_state1, container, false);
-           listView= (ListView) view.findViewById(R.id.lvTable);
-            listView.addFooterView(new ViewStub(getActivity()));
-            btnSubmit= (Button) view.findViewById(R.id.btnSubmit);
+       listView= (MyListView) view.findViewById(R.id.lvTable);
+//       listView.addFooterView(new ViewStub(getActivity()));
+       btnSubmit= (Button) view.findViewById(R.id.btnSubmit);
+
         //        取出传递到详情页面的id
         id=getActivity().getIntent().getIntExtra("ID",0);
         strUrl=URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl= UniversalHelper.getTokenUrl(strUrl);
         getMaterialListFromNet(strUrl);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String inOrderMaterialIds1=inOrderMaterialIds.substring(0,inOrderMaterialIds.length()-1);
+                String res1=res.substring(0,res.length()-1);
+                for(int i=0;i<map.size();i++){
+                    failNums+=map.get(i)+",";
+                }
+                String failNums1=failNums.substring(0,failNums.length()-1);
+                String url=URL_TEST_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderMaterialIds}",inOrderMaterialIds1).replace("{res}",res1).replace("{failNums}",failNums1);
+                Log.d("strUrlstrUrlstrUrl",url);
+                url= UniversalHelper.getTokenUrl(url);
 
+                sendRequest(url);
+            }
+        });
 
         return view ;
     }
@@ -95,9 +111,12 @@ public class InOrderDetailState1Fragment extends Fragment {
                             btnSubmit.setVisibility(View.VISIBLE);
                             MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list);
                             listView.setAdapter(myAdapter);
+//                            setListViewHeightBasedOnChildren(listView);
+
                         }else if (materialInOrder.getStatus()== InOrderStatusVo.TEST_FAIL.getKey()){
                             MaterialInfoAdapter1 myAdapter=new MaterialInfoAdapter1(getActivity(),list);
                             listView.setAdapter(myAdapter);
+//                            setListViewHeightBasedOnChildren(listView);
                         }
 
 
@@ -113,7 +132,27 @@ public class InOrderDetailState1Fragment extends Fragment {
             }
         }).start();
     }
-
+//    /**
+//     * 动态设置ListView的高度
+//     * @param listView
+//     */
+//    public static void setListViewHeightBasedOnChildren(ListView listView) {
+//        if(listView == null) return;
+//        ListAdapter listAdapter = listView.getAdapter();
+//        if (listAdapter == null) {
+//            // pre-condition
+//            return;
+//        }
+//        int totalHeight = 0;
+//        for (int i = 0; i < listAdapter.getCount(); i++) {
+//            View listItem = listAdapter.getView(i, null, listView);
+//            listItem.measure(0, 0);
+//            totalHeight += listItem.getMeasuredHeight();
+//        }
+//        ViewGroup.LayoutParams params = listView.getLayoutParams();
+//        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+//        listView.setLayoutParams(params);
+//    }
     public void sendRequest(String url){
         RequestQueue queue=Volley.newRequestQueue(getActivity());
         StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
@@ -180,6 +219,7 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvInvalidateNum.setText("");
 
             inOrderMaterialIds+=list.get(position).getId()+",";
+            Log.d("Tag",String.valueOf(inOrderMaterialIds));
             res+=list.get(position).getStandard().getReNum()+",";
 
 //            if(holder.tvInvalidateNum.getText().toString().equals("0")){
@@ -188,10 +228,6 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvInvalidateNum.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    if(s.toString().equals("0")){
-                        map.put(position,s.toString());
-
-                    }
                 }
 
                 @Override
@@ -210,24 +246,7 @@ public class InOrderDetailState1Fragment extends Fragment {
             });
 //            }
             final ViewHolder finalHolder = holder;
-            btnSubmit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(finalHolder.tvInvalidateNum.getText().toString().equals("")){
-                        Toast.makeText(getActivity(),"请输入不合格数量后再提交",Toast.LENGTH_SHORT).show();
-                    }else{
-                        String inOrderMaterialIds1=inOrderMaterialIds.substring(0,inOrderMaterialIds.length()-1);
-                        String res1=res.substring(0,res.length()-1);
-                        for(int i=0;i<map.size();i++){
-                            failNums+=map.get(i)+",";
-                        }
-                        String failNums1=failNums.substring(0,failNums.length()-1);
-                        String url=URL_TEST_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderMaterialIds}",inOrderMaterialIds1).replace("{res}",res1).replace("{failNums}",failNums1);
-                        Log.d("strUrlstrUrlstrUrl",url);
-                        sendRequest(url);
-                    }
-                }
-            });
+
             return convertView;
         }
 
@@ -296,10 +315,6 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvInvalidateNum.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    if(s.toString().equals("0")){
-                        map.put(position,s.toString());
-
-                    }
                 }
 
                 @Override

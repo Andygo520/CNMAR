@@ -12,12 +12,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +27,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.ProductCheckStockDetailActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -42,10 +42,11 @@ public class ProductCheckStockFragmentQuery extends Fragment {
     private Context context;
     private static final String URL_CHECK_QUERY="http://benxiao.cnmar.com:8092/product_stock_check/list?query.code=&page.num=1";
     private static final String URL_SEARCH_CHECK_QUERY="http://benxiao.cnmar.com:8092/product_stock_check/list?query.code={query.code}&page.num=1";
-    private ListView lvCheckQuery;
+    private MyListView lvCheckQuery;
     private LinearLayout llSearch;
     private EditText etSearchInput;
     private TextView tvField1,tvField2,tvField3,tvField4;
+    private String url= UniversalHelper.getTokenUrl(URL_CHECK_QUERY);
 
     public ProductCheckStockFragmentQuery(Context context) {
         this.context=context;
@@ -57,8 +58,8 @@ public class ProductCheckStockFragmentQuery extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_product_check_stock_fragment_query, container, false);
-        lvCheckQuery= (ListView) view.findViewById(R.id.lvTable);
-        lvCheckQuery.addFooterView(new ViewStub(context));
+        lvCheckQuery= (MyListView) view.findViewById(R.id.lvTable);
+//        lvCheckQuery.addFooterView(new ViewStub(context));
 
         llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         tvField1= (TextView) view.findViewById(R.id.column1);
@@ -82,6 +83,7 @@ public class ProductCheckStockFragmentQuery extends Fragment {
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
+                        urlString=UniversalHelper.getTokenUrl(urlString);
                         getCheckStockQueryListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -108,7 +110,7 @@ public class ProductCheckStockFragmentQuery extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals(""))
-                    getCheckStockQueryListFromNet(URL_CHECK_QUERY);
+                    getCheckStockQueryListFromNet(url);
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
@@ -116,10 +118,11 @@ public class ProductCheckStockFragmentQuery extends Fragment {
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
                 String urlString=URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
+                urlString=UniversalHelper.getTokenUrl(urlString);
                 getCheckStockQueryListFromNet(urlString);
             }
         });
-        getCheckStockQueryListFromNet(URL_CHECK_QUERY);
+        getCheckStockQueryListFromNet(url);
         return view;
     }
     public void getCheckStockQueryListFromNet(final String url){

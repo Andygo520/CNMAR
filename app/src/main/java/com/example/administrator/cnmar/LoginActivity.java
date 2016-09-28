@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -22,10 +20,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.UserInfor;
 import com.example.administrator.cnmar.helper.NetworkHelper;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
-    public static final String LOGIN_URL = "http://139.196.104.170:8092/login_commit?username={username}&password={password}";
+    public static final String LOGIN_URL = "http://benxiao.cnmar.com:8092/login_commit?username={username}&password={password}";
     public static String strUrl;
 
     private Button mLoginButton;
@@ -121,8 +120,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                    return;
                }
 
-                strUrl = LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword);
-                RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
+                strUrl = UniversalHelper.getTokenUrl(LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword));
+
+        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
                 StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
                     @Override

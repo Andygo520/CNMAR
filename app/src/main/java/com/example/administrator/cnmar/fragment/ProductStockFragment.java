@@ -29,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.ProductStockDetailActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class ProductStockFragment extends Fragment {
     private ListView lvStock;
     private LinearLayout llSearch;
     private EditText etSearchInput;
+    private String url= UniversalHelper.getTokenUrl(URL_STOCK);
     public ProductStockFragment() {
         // Required empty public constructor
     }
@@ -67,6 +69,7 @@ public class ProductStockFragment extends Fragment {
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=URL_SEARCH_STOCK.replace("{query.code}",input);
+                        urlString=UniversalHelper.getTokenUrl(urlString);
                         getStockListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -93,7 +96,7 @@ public class ProductStockFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals(""))
-                    getStockListFromNet(URL_STOCK);
+                    getStockListFromNet(url);
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
@@ -101,10 +104,11 @@ public class ProductStockFragment extends Fragment {
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
                 String urlString=URL_SEARCH_STOCK.replace("{query.code}",input);
+                urlString=UniversalHelper.getTokenUrl(urlString);
                 getStockListFromNet(urlString);
             }
         });
-        getStockListFromNet(URL_STOCK);
+        getStockListFromNet(url);
         return view;
     }
 

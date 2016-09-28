@@ -11,11 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +25,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class InOrderDetailState2Fragment extends Fragment {
     private static final String URL_IN_ORDER_COMMIT="http://benxiao.cnmar.com:8092/material_in_order/in_stock_commit?inOrderId={inOrderId}&inOrderSpaceIds={inOrderSpaceIds}&preInStocks={preInStocks}&inStocks={inStocks}";
     private String strUrl;
     private TextView name1,name2,name3,name4;
-    private ListView listView;
+    private MyListView listView;
     private Button btnSubmit;
     private HashMap<Integer,String> map=new HashMap<>();
     private int id;
@@ -75,8 +75,8 @@ public class InOrderDetailState2Fragment extends Fragment {
         name4= (TextView) view.findViewById(R.id.column4);
         btnSubmit= (Button) view.findViewById(R.id.btnSubmit);
 
-        listView= (ListView) view.findViewById(R.id.lvTable);
-        listView.addFooterView(new ViewStub(getActivity()));
+        listView= (MyListView) view.findViewById(R.id.lvTable);
+//        listView.addFooterView(new ViewStub(getActivity()));
         name1.setText("原料编码");
         name2.setText("仓位编码");
         name3.setText("待入库数量");
@@ -85,6 +85,8 @@ public class InOrderDetailState2Fragment extends Fragment {
         //        取出传递到详情页面的id
         id=getActivity().getIntent().getIntExtra("ID",0);
         strUrl=URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl= UniversalHelper.getTokenUrl(strUrl);
+
         getMaterialListFromNet(strUrl);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,16 +103,22 @@ public class InOrderDetailState2Fragment extends Fragment {
                            if (inStocks.length()>0){
                                 inStocks1=inStocks.substring(0,inStocks.length()-1);
                             }
-                if(inStocks1.startsWith(",")){
-                    inStocks1=inStocks1.substring(1);
-                 }else if (inStocks1.endsWith(",")){
-                    inStocks1=inStocks1.substring(0,inStocks1.length()-1);
+               String[] str= inStocks1.split(",");
+                String inStocks2="";
+                for(int i=0;i<str.length;i++){
+                    if(!str[i].equals("")){
+                        inStocks2+=str[i]+",";
+                    }
                 }
-                           Log.d("UrlstrUrlstrUrl",inStocks1);
+                if (inStocks2.length()>0){
+                    inStocks2=inStocks2.substring(0,inStocks2.length()-1);
+                }
+                 Log.d("inStocks2",inStocks2);
 
-                String url=URL_IN_ORDER_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderSpaceIds}",inOrderSpaceIds1).replace("{preInStocks}",preInStocks1).replace("{inStocks}",inStocks1);
-                            Log.d("UrlstrUrlstrUrl",url);
-                            sendRequest(url);
+                String url=URL_IN_ORDER_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderSpaceIds}",inOrderSpaceIds1).replace("{preInStocks}",preInStocks1).replace("{inStocks}",inStocks2);
+                url= UniversalHelper.getTokenUrl(url);
+
+                sendRequest(url);
             }
         });
 
@@ -166,9 +174,12 @@ public class InOrderDetailState2Fragment extends Fragment {
                             btnSubmit.setText("提交入库");
                            MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list1);
                             listView.setAdapter(myAdapter);
+//                            setListViewHeightBasedOnChildren(listView);
+
                         }else if (materialInOrder.getStatus()== InOrderStatusVo.IN_STOCK.getKey()){
                             MaterialInfoAdapter1 myAdapter=new MaterialInfoAdapter1(getActivity(),list1);
                             listView.setAdapter(myAdapter);
+//                            setListViewHeightBasedOnChildren(listView);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -182,6 +193,28 @@ public class InOrderDetailState2Fragment extends Fragment {
             }
         }).start();
     }
+//    /**
+//     * 动态设置ListView的高度
+//     * @param listView
+//     */
+//    public static void setListViewHeightBasedOnChildren(ListView listView) {
+//        if(listView == null) return;
+//        ListAdapter listAdapter = listView.getAdapter();
+//        if (listAdapter == null) {
+//            // pre-condition
+//            return;
+//        }
+//        int totalHeight = 0;
+//        for (int i = 0; i < listAdapter.getCount(); i++) {
+//            View listItem = listAdapter.getView(i, null, listView);
+//            listItem.measure(0, 0);
+//            totalHeight += listItem.getMeasuredHeight();
+//        }
+//        ViewGroup.LayoutParams params = listView.getLayoutParams();
+//        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+//        listView.setLayoutParams(params);
+//    }
+
 
     public class MaterialInfoAdapter extends BaseAdapter {
         private Context context;
@@ -264,6 +297,7 @@ public class InOrderDetailState2Fragment extends Fragment {
 
             }else{
                 inOrderSpaceIds+=list.get(position).getId()+",";
+                Log.d("inOrderSpaceIds",String.valueOf(inOrderSpaceIds));
                 preInStocks+=list.get(position).getPreInStock()+",";
                 holder.tvInNum.setText("");
                 holder.tvInNum.addTextChangedListener(new TextWatcher() {

@@ -1,41 +1,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
     <TableLayout
         android:id="@+id/stock_list_item_table_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="1,3,5,7">
         <TableRow
-            android:id="@+id/stock_list_row">
+            android:id="@+id/stock_list_row"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            >
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/column1"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/column2"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView android:id="@+id/column3"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -43,12 +44,11 @@
             <EditText
                 android:id="@+id/column4"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:textColor="@color/color_red"
-                android:background="@null"
                 android:inputType="number"
+                android:background="@null"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

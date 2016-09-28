@@ -4,6 +4,7 @@ package com.example.administrator.cnmar.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,8 +28,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.chanven.lib.cptr.PtrClassicFrameLayout;
+import com.chanven.lib.cptr.PtrDefaultHandler;
+import com.chanven.lib.cptr.PtrFrameLayout;
 import com.example.administrator.cnmar.MaterialInOrderDetailActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.text.DateFormat;
@@ -40,12 +45,15 @@ import component.material.model.MaterialInOrder;
  * A simple {@link Fragment} subclass.
  */
 public class InOrderFragment extends Fragment {
-    private static final String URL_IN_HOUSE_BILL="http://139.196.104.170:8092/material_in_order/list?query.code=&page.num=1";
-    private static final String URL_SEARCH_IN_HOUSE_BILL="http://139.196.104.170:8092/material_in_order/list?query.code={query.code}&page.num=1";
+    private static final String URL_IN_HOUSE_BILL="http://benxiao.cnmar.com:8092/material_in_order/list?query.code=&page.num=1";
+    private static final String URL_SEARCH_IN_HOUSE_BILL="http://benxiao.cnmar.com:8092/material_in_order/list?query.code={query.code}&page.num=1";
     private ListView lvInOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
-
+    private PtrClassicFrameLayout ptrFrame;
+    private Handler handler=new Handler();
+    private String strUrl=UniversalHelper.getTokenUrl(URL_IN_HOUSE_BILL);
+    int page=0;
     public InOrderFragment() {
         // Required empty public constructor
     }
@@ -59,6 +67,69 @@ public class InOrderFragment extends Fragment {
         lvInOrder= (ListView) view.findViewById(R.id.lvInOrder);
         lvInOrder.addFooterView(new ViewStub(getActivity()));
 
+        ptrFrame= (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
+        ptrFrame.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               ptrFrame.autoRefresh(true);
+            }
+        },150);
+        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page = 0;
+//                        mData.clear();
+//                        for (int i = 0; i < 17; i++) {
+//                            mData.add(new String("  ListView item  -" + i));
+//                        }
+//                        mAdapter.notifyDataSetChanged();
+                        getInOrderListFromNet(strUrl);
+                        ptrFrame.refreshComplete();
+                        ptrFrame.setLoadMoreEnable(true);
+                    }
+                }, 1000);
+            }
+        });
+//        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void loadMore() {
+//                handler.postDelayed(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+////                        mData.add(new String("  ListView item  - add " + page));
+////                        mAdapter.notifyDataSetChanged();
+//                        getInOrderListFromNet(strUrl);
+//                        ptrFrame.loadMoreComplete(true);
+//                        page++;
+//                        Toast.makeText(getActivity(), "load more complete", Toast.LENGTH_SHORT)
+//                                .show();
+//                    }
+//                }, 1000);
+//            }
+//        });
+//        ptrFrame.setLoadMoreHandler(new LoadMoreHandler() {
+//
+//            @Override
+//            public void loadMore() {
+//                handler.postDelayed(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+////                        mData.add(new String("  ListView item  - add " + page));
+////                        mAdapter.notifyDataSetChanged();
+//                        ptrFrame.loadMoreComplete(true);
+//                        page++;
+//                        Toast.makeText(getActivity(), "load more complete", Toast.LENGTH_SHORT)
+//                                .show();
+//                    }
+//                }, 1000);
+//            }
+//        });
+
         llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("入库单号查询");
@@ -71,6 +142,7 @@ public class InOrderFragment extends Fragment {
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=URL_SEARCH_IN_HOUSE_BILL.replace("{query.code}",input);
+                        urlString=UniversalHelper.getTokenUrl(urlString);
                         getInOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -97,7 +169,8 @@ public class InOrderFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals(""))
-                    getInOrderListFromNet(URL_IN_HOUSE_BILL);
+
+                getInOrderListFromNet(strUrl);
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
@@ -105,10 +178,12 @@ public class InOrderFragment extends Fragment {
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
                 String urlString=URL_SEARCH_IN_HOUSE_BILL.replace("{query.code}",input);
+                urlString=UniversalHelper.getTokenUrl(urlString);
+
                 getInOrderListFromNet(urlString);
             }
         });
-        getInOrderListFromNet(URL_IN_HOUSE_BILL);
+        getInOrderListFromNet(strUrl);
         return view;
     }
     public void getInOrderListFromNet(final String url){
@@ -139,7 +214,18 @@ public class InOrderFragment extends Fragment {
             }
         }).start();
     }
-
+//    class MyPtrHandler implements PtrHandler{
+//
+//        @Override
+//        public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+//            return false;
+//        }
+//
+//        @Override
+//        public void onRefreshBegin(PtrFrameLayout frame) {
+//            getInOrderListFromNet(strUrl);
+//        }
+//    }
     class BillAdapter extends BaseAdapter {
         private Context context;
         private List<MaterialInOrder> list=null;

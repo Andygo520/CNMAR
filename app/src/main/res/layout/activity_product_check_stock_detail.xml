@@ -5,6 +5,15 @@
     android:orientation="vertical"
     >
     <include layout="@layout/top"></include>
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -259,4 +268,6 @@
         />
     <include layout="@layout/table_list"></include>
 
+</LinearLayout>
+    </ScrollView>
 </LinearLayout>

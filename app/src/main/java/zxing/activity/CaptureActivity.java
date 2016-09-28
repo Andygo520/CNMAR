@@ -71,6 +71,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private ImageView scanLine;
     private LinearLayout llReturn;
     private CaptureActivityHandler mHandler;
+//    private Button btnGoOn;
 
     private Rect mCropRect = null;
     private boolean isHasSurface = false;
@@ -90,7 +91,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_capture);
-
+//        btnGoOn= (Button) findViewById(R.id.btnGoon);
         scanPreview = (SurfaceView) findViewById(R.id.capture_preview);
         scanContainer = (RelativeLayout) findViewById(R.id.capture_container);
         scanCropView = (RelativeLayout) findViewById(R.id.capture_crop_view);
@@ -104,7 +105,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 finish();
             }
         });
-
+//        btnGoOn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                restartPreviewAfterDelay(0L);
+//            }
+//        });
 
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
@@ -324,4 +330,5 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
         return 0;
     }
+
 }

@@ -8,11 +8,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -21,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
@@ -36,7 +35,7 @@ public class ProductStockDetailActivity extends AppCompatActivity {
     private TextView tvCode,tvName,tvSize,tvUnit,
                      tvIsMixed,tvStockSum,tvMinStock,tvMaxStock;
     private String strUrl;
-    private ListView lvSpace;
+    private MyListView lvSpace;
     private LinearLayout llLeftArrow;
 
     private SpaceAdapter myAdapter;
@@ -49,6 +48,7 @@ public class ProductStockDetailActivity extends AppCompatActivity {
 //        取出传递到库存详情页面的id
         int id=getIntent().getIntExtra("ID",0);
         strUrl=URL_STOCK_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl=UniversalHelper.getTokenUrl(strUrl);
         getStockDetailFromNet();
     }
 
@@ -78,8 +78,8 @@ public class ProductStockDetailActivity extends AppCompatActivity {
         tvStockSum= (TextView) findViewById(R.id.tvStockSum);
         tvMinStock= (TextView) findViewById(R.id.tvMinStock);
         tvMaxStock= (TextView) findViewById(R.id.tvMaxStock);
-        lvSpace= (ListView) findViewById(R.id.lvSpace);
-        lvSpace.addFooterView(new ViewStub(this));
+        lvSpace= (MyListView) findViewById(R.id.lvSpace);
+//        lvSpace.addFooterView(new ViewStub(this));
 
     }
     public void getStockDetailFromNet(){

@@ -10,13 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +24,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.text.DateFormat;
@@ -46,7 +46,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     private TextView tvName11,tvName12,tvName21,tvName22,tvName31;
     private TextView tvOutOrder,tvOutBatchNo,tvPlanNo,tvRemark,tvOutOrderStatus;
     private TextView name1,name2,name3,name4;
-    private ListView lvMaterialInfo;
+    private MyListView lvMaterialInfo;
     private static String strUrl;
     private ImageView ivScann;
     private LinearLayout llLeftArrow;
@@ -69,6 +69,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         init();
         id=getIntent().getIntExtra("ID",0);
         strUrl=URL_OUT_ORDER_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl= UniversalHelper.getTokenUrl(strUrl);
+
         getOutOrderDetailFromNet();
 
 
@@ -113,8 +115,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         tvRemark= (TextView) findViewById(R.id.tv22);
         tvOutOrderStatus= (TextView) findViewById(R.id.tv31);
 
-        lvMaterialInfo= (ListView) findViewById(R.id.lvTable);
-        lvMaterialInfo.addFooterView(new ViewStub(this));
+        lvMaterialInfo= (MyListView) findViewById(R.id.lvTable);
+//        lvMaterialInfo.addFooterView(new ViewStub(this));
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +145,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 //                }
 //                String outNums1=outNums.substring(0,outNums.length()-1);
                 String url=URL_OUT_COMMIT.replace("{outOrderId}",String.valueOf(id)).replace("{outOrderSpaceIds}",outOrderSpaceIds1).replace("{preOutStocks}",preOutStocks1).replace("{outStocks}",outNums1);
-                Log.d("tAGTAG",url);
+                url= UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
             }
         });

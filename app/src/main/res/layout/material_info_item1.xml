@@ -6,7 +6,9 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1,11">
         <TableRow
-            android:id="@+id/table_header_row">
+            android:id="@+id/table_header_row"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            >
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
@@ -15,9 +17,8 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -27,9 +28,8 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -39,9 +39,8 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -51,9 +50,8 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -63,9 +61,8 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -76,10 +73,8 @@
                 android:inputType="number"
                 android:background="@null"
                 android:layout_width="70dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
-                android:gravity="right|center_vertical"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
