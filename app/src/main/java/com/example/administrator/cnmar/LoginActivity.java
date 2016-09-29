@@ -21,10 +21,10 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.UserInfor;
 import com.example.administrator.cnmar.helper.NetworkHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
-    public static final String LOGIN_URL = "http://benxiao.cnmar.com:8092/login_commit?username={username}&password={password}";
     public static String strUrl;
 
     private Button mLoginButton;
@@ -120,14 +120,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                    return;
                }
 
-                strUrl = UniversalHelper.getTokenUrl(LOGIN_URL.replace("{username}", strUserName).replace("{password}", strPassword));
+                strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_LOGIN.replace("{username}", strUserName).replace("{password}", strPassword));
+//                 Log.d("TAG1", strUrl);
 
         RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
 
                 StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-//                        Log.d("TAG", s);
                         UserInfor userInfor = JSON.parseObject(VolleyHelper.getJson(s), UserInfor.class);
                         if(userInfor.isStatus()){
                             if (auto_login.isChecked()){

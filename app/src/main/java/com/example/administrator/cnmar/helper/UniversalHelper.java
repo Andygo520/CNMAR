@@ -22,7 +22,7 @@ public class UniversalHelper {
         });
     }
     public static String getTokenUrl(String url) {
-        String token = url.replaceAll("http://benxiao.cnmar.com:8092", "");
+        String token = url.replaceAll(UrlHelper.URL_BASE, "");
         String strUrl="";
         if (token.indexOf("/") == 0) {
             token = token.substring(1, token.length());

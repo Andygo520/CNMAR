@@ -27,6 +27,7 @@ import com.example.administrator.cnmar.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.ArrayList;
@@ -43,20 +44,19 @@ import component.material.vo.InOrderStatusVo;
  * A simple {@link Fragment} subclass.
  */
 public class InOrderDetailState2Fragment extends Fragment {
-    private static final String URL_IN_ORDER_DETAIL="http://benxiao.cnmar.com:8092/material_in_order/detail/{id}";
-    private static final String URL_IN_ORDER_COMMIT="http://benxiao.cnmar.com:8092/material_in_order/in_stock_commit?inOrderId={inOrderId}&inOrderSpaceIds={inOrderSpaceIds}&preInStocks={preInStocks}&inStocks={inStocks}";
     private String strUrl;
-    private TextView name1,name2,name3,name4;
+    private TextView name1, name2, name3, name4;
     private MyListView listView;
     private Button btnSubmit;
-    private HashMap<Integer,String> map=new HashMap<>();
+    private HashMap<Integer, String> map = new HashMap<>();
     private int id;
-    private String inOrderSpaceIds="";
-    private String inOrderSpaceIds1="";
-    private String preInStocks="";
-    private String preInStocks1="";
-    private String inStocks="";
-    private String inStocks1="";
+    MaterialInfoAdapter myAdapter;
+    private String inOrderSpaceIds = "";
+    private String inOrderSpaceIds1 = "";
+    private String preInStocks = "";
+    private String preInStocks1 = "";
+    private String inStocks = "";
+    private String inStocks1 = "";
 
 
     public InOrderDetailState2Fragment() {
@@ -68,14 +68,14 @@ public class InOrderDetailState2Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_in_order_detail_state2, container, false);
-        name1= (TextView) view.findViewById(R.id.column1);
-        name2= (TextView) view.findViewById(R.id.column2);
-        name3= (TextView) view.findViewById(R.id.column3);
-        name4= (TextView) view.findViewById(R.id.column4);
-        btnSubmit= (Button) view.findViewById(R.id.btnSubmit);
+        View view = inflater.inflate(R.layout.fragment_in_order_detail_state2, container, false);
+        name1 = (TextView) view.findViewById(R.id.column1);
+        name2 = (TextView) view.findViewById(R.id.column2);
+        name3 = (TextView) view.findViewById(R.id.column3);
+        name4 = (TextView) view.findViewById(R.id.column4);
+        btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
 
-        listView= (MyListView) view.findViewById(R.id.lvTable);
+        listView = (MyListView) view.findViewById(R.id.lvTable);
 //        listView.addFooterView(new ViewStub(getActivity()));
         name1.setText("原料编码");
         name2.setText("仓位编码");
@@ -83,40 +83,47 @@ public class InOrderDetailState2Fragment extends Fragment {
         name4.setText("已入库数量");
 
         //        取出传递到详情页面的id
-        id=getActivity().getIntent().getIntExtra("ID",0);
-        strUrl=URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
-        strUrl= UniversalHelper.getTokenUrl(strUrl);
+        id = getActivity().getIntent().getIntExtra("ID", 0);
+        strUrl = UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
+        strUrl = UniversalHelper.getTokenUrl(strUrl);
 
         getMaterialListFromNet(strUrl);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                            if(inOrderSpaceIds.length()>0){
-                                inOrderSpaceIds1=inOrderSpaceIds.substring(0,inOrderSpaceIds.length()-1);
-                            }
-                            if (preInStocks.length()>0){
-                                preInStocks1=preInStocks.substring(0,preInStocks.length()-1);
-                            }
-                            for (int i=0;i<map.size();i++){
-                                inStocks+=map.get(i)+",";
-                            }
-                           if (inStocks.length()>0){
-                                inStocks1=inStocks.substring(0,inStocks.length()-1);
-                            }
-               String[] str= inStocks1.split(",");
-                String inStocks2="";
-                for(int i=0;i<str.length;i++){
-                    if(!str[i].equals("")){
-                        inStocks2+=str[i]+",";
+                //                入库数量的非空判断
+                if (map.size() < myAdapter.getCount()) {
+                    Toast.makeText(getActivity(), "请输入入库数量再提交", Toast.LENGTH_SHORT).show();
+//                    map.clear();
+                    return;
+                }
+                if (inOrderSpaceIds.length() > 0) {
+                    inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+                }
+                if (preInStocks.length() > 0) {
+                    preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+                }
+                for (int i = 0; i < map.size(); i++) {
+                    inStocks += map.get(i) + ",";
+                }
+                if (inStocks.length() > 0) {
+                    inStocks1 = inStocks.substring(0, inStocks.length() - 1);
+                }
+                String[] str = inStocks1.split(",");
+                String inStocks2 = "";
+                for (int i = 0; i < str.length; i++) {
+                    if (!str[i].equals("")) {
+                        inStocks2 += str[i] + ",";
                     }
                 }
-                if (inStocks2.length()>0){
-                    inStocks2=inStocks2.substring(0,inStocks2.length()-1);
+                if (inStocks2.length() > 0) {
+                    inStocks2 = inStocks2.substring(0, inStocks2.length() - 1);
                 }
-                 Log.d("inStocks2",inStocks2);
+                Log.d("inStocks2", inStocks2);
 
-                String url=URL_IN_ORDER_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderSpaceIds}",inOrderSpaceIds1).replace("{preInStocks}",preInStocks1).replace("{inStocks}",inStocks2);
-                url= UniversalHelper.getTokenUrl(url);
+                String url = UrlHelper.URL_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inStocks2);
+                url = UniversalHelper.getTokenUrl(url);
+                Log.d("url", url);
 
                 sendRequest(url);
             }
@@ -124,13 +131,14 @@ public class InOrderDetailState2Fragment extends Fragment {
 
         return view;
     }
-    public void sendRequest(String url){
-        RequestQueue queue=Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+
+    public void sendRequest(String url) {
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                Intent intent=new Intent(getActivity(), MaterialStockActivity.class);
-                intent.putExtra("flag",1);
+                Intent intent = new Intent(getActivity(), MaterialStockActivity.class);
+                intent.putExtra("flag", 1);
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {
@@ -142,24 +150,25 @@ public class InOrderDetailState2Fragment extends Fragment {
         queue.add(stringRequest);
 
     }
-    public void getMaterialListFromNet(final String url){
+
+    public void getMaterialListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene= Volley.newRequestQueue(getActivity());
-                StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+                RequestQueue quene = Volley.newRequestQueue(getActivity());
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
-                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
-                        MaterialInOrder materialInOrder= JSON.parseObject(response.getData().toString(),MaterialInOrder.class );
-                        List<MaterialInOrderMaterial> list=materialInOrder.getInOrderMaterials();
-                        List<MaterialInOrderSpace> list1=new ArrayList<MaterialInOrderSpace>();
-                        List<MaterialInOrderSpace> list2=new ArrayList<MaterialInOrderSpace>();
+                        String json = VolleyHelper.getJson(s);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        MaterialInOrder materialInOrder = JSON.parseObject(response.getData().toString(), MaterialInOrder.class);
+                        List<MaterialInOrderMaterial> list = materialInOrder.getInOrderMaterials();
+                        List<MaterialInOrderSpace> list1 = new ArrayList<MaterialInOrderSpace>();
+                        List<MaterialInOrderSpace> list2 = new ArrayList<MaterialInOrderSpace>();
 
-                        for(int i=0;i<list.size();i++){
-                            list2=list.get(i).getInOrderSpaces();
-                            for(int j=0;j<list2.size();j++){
+                        for (int i = 0; i < list.size(); i++) {
+                            list2 = list.get(i).getInOrderSpaces();
+                            for (int j = 0; j < list2.size(); j++) {
                                 list2.get(j).getSpace().setMaterial(list.get(i).getMaterial());
                             }
                             list1.addAll(list2);
@@ -169,15 +178,15 @@ public class InOrderDetailState2Fragment extends Fragment {
 //                        MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list1);
 //                        listView.setAdapter(myAdapter);
 
-                        if(materialInOrder.getStatus()== InOrderStatusVo.PRE_IN_STOCK.getKey()){
+                        if (materialInOrder.getStatus() == InOrderStatusVo.PRE_IN_STOCK.getKey()) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             btnSubmit.setText("提交入库");
-                           MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list1);
+                            myAdapter = new MaterialInfoAdapter(getActivity(), list1);
                             listView.setAdapter(myAdapter);
 //                            setListViewHeightBasedOnChildren(listView);
 
-                        }else if (materialInOrder.getStatus()== InOrderStatusVo.IN_STOCK.getKey()){
-                            MaterialInfoAdapter1 myAdapter=new MaterialInfoAdapter1(getActivity(),list1);
+                        } else if (materialInOrder.getStatus() == InOrderStatusVo.IN_STOCK.getKey()) {
+                            MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(getActivity(), list1);
                             listView.setAdapter(myAdapter);
 //                            setListViewHeightBasedOnChildren(listView);
                         }
@@ -185,7 +194,7 @@ public class InOrderDetailState2Fragment extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag",volleyError.toString());
+                        Log.d("Tag", volleyError.toString());
 
                     }
                 });
@@ -218,7 +227,7 @@ public class InOrderDetailState2Fragment extends Fragment {
 
     public class MaterialInfoAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialInOrderSpace> list=null;
+        private List<MaterialInOrderSpace> list = null;
 
 
         public MaterialInfoAdapter(Context context, List<MaterialInOrderSpace> list) {
@@ -243,27 +252,27 @@ public class InOrderDetailState2Fragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item2,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvSpaceCode= (TextView) convertView.findViewById(R.id.spaceCode);
-                holder.tvToBeInOrderNum= (TextView) convertView.findViewById(R.id.toBeNum);
-                holder.tvInNum= (EditText) convertView.findViewById(R.id.num);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item2, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.spaceCode);
+                holder.tvToBeInOrderNum = (TextView) convertView.findViewById(R.id.toBeNum);
+                holder.tvInNum = (EditText) convertView.findViewById(R.id.num);
 
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 
-                holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
-                holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-                holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
+            holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
+            holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
+            holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
 //                holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
 
 
 //            判断原料是扫描入库还是输入数量入库
-            if(list.get(position).getSpace().getMaterial().getStockType()== StockTypeVo.SCAN.getKey()){
+            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.SCAN.getKey()) {
                 holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
                 holder.tvInNum.setFocusable(false);
                 holder.tvInNum.setFocusableInTouchMode(false);
@@ -271,11 +280,11 @@ public class InOrderDetailState2Fragment extends Fragment {
                 holder.tvInNum.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast toast=null;
-                        if(toast==null){
-                            toast=new Toast(getActivity());
-                            toast.makeText(getActivity(),"该原料为扫描出入库",Toast.LENGTH_SHORT).show();
-                        }else
+                        Toast toast = null;
+                        if (toast == null) {
+                            toast = new Toast(getActivity());
+                            toast.makeText(getActivity(), "该原料为扫描出入库", Toast.LENGTH_SHORT).show();
+                        } else
                             toast.show();
 
                     }
@@ -295,10 +304,10 @@ public class InOrderDetailState2Fragment extends Fragment {
 //                    }
 //                });
 
-            }else{
-                inOrderSpaceIds+=list.get(position).getId()+",";
-                Log.d("inOrderSpaceIds",String.valueOf(inOrderSpaceIds));
-                preInStocks+=list.get(position).getPreInStock()+",";
+            } else {
+                inOrderSpaceIds += list.get(position).getId() + ",";
+//                Log.d("inOrderSpaceIds",String.valueOf(inOrderSpaceIds));
+                preInStocks += list.get(position).getPreInStock() + ",";
                 holder.tvInNum.setText("");
                 holder.tvInNum.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -313,9 +322,8 @@ public class InOrderDetailState2Fragment extends Fragment {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if(s.length()>0)
-                        {
-                            map.put(position,s.toString());
+                        if (s.length() > 0) {
+                            map.put(position, s.toString());
                         }
                     }
                 });
@@ -339,7 +347,7 @@ public class InOrderDetailState2Fragment extends Fragment {
 //
 //                    }
 //                });
-                }
+            }
 //            inOrderSpaceIds+=list.get(position).getId()+",";
 //            preInStocks+=list.get(position).getPreInStock()+",";
 
@@ -347,7 +355,7 @@ public class InOrderDetailState2Fragment extends Fragment {
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvSpaceCode;
             TextView tvToBeInOrderNum;
@@ -357,7 +365,7 @@ public class InOrderDetailState2Fragment extends Fragment {
 
     public class MaterialInfoAdapter1 extends BaseAdapter {
         private Context context;
-        private List<MaterialInOrderSpace> list=null;
+        private List<MaterialInOrderSpace> list = null;
 
 
         public MaterialInfoAdapter1(Context context, List<MaterialInOrderSpace> list) {
@@ -382,18 +390,18 @@ public class InOrderDetailState2Fragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item2,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvSpaceCode= (TextView) convertView.findViewById(R.id.spaceCode);
-                holder.tvToBeInOrderNum= (TextView) convertView.findViewById(R.id.toBeNum);
-                holder.tvInNum= (EditText) convertView.findViewById(R.id.num);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item2, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.spaceCode);
+                holder.tvToBeInOrderNum = (TextView) convertView.findViewById(R.id.toBeNum);
+                holder.tvInNum = (EditText) convertView.findViewById(R.id.num);
 
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 
             holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
@@ -404,7 +412,7 @@ public class InOrderDetailState2Fragment extends Fragment {
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvSpaceCode;
             TextView tvToBeInOrderNum;

@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
@@ -26,6 +27,7 @@ import com.example.administrator.cnmar.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.HashMap;
@@ -39,19 +41,15 @@ import component.material.vo.InOrderStatusVo;
  * A simple {@link Fragment} subclass.
  */
 public class InOrderDetailState1Fragment extends Fragment {
-    private static final String URL_IN_ORDER_DETAIL="http://benxiao.cnmar.com:8092/material_in_order/detail/{id}";
-    private static final String URL_TEST_COMMIT="http://benxiao.cnmar.com:8092/material_in_order/test_commit?inOrderId={inOrderId}&inOrderMaterialIds={inOrderMaterialIds}&res={res}&failNums={failNums}";
     private MyListView listView;
     private String strUrl;
     private Button btnSubmit;
-    private HashMap<Integer,String> map=new HashMap<>();
+    private HashMap<Integer, String> map = new HashMap<>();
     private int id;
-    private String inOrderMaterialIds="";
-    private String res="";
-    private String failNums="";
-
-
-
+    MaterialInfoAdapter myAdapter;
+    private String inOrderMaterialIds = "";
+    private String res = "";
+    private String failNums = "";
 
 
     public InOrderDetailState1Fragment() {
@@ -63,58 +61,63 @@ public class InOrderDetailState1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       View view=inflater.inflate(R.layout.fragment_in_order_detail_state1, container, false);
-       listView= (MyListView) view.findViewById(R.id.lvTable);
+        View view = inflater.inflate(R.layout.fragment_in_order_detail_state1, container, false);
+        listView = (MyListView) view.findViewById(R.id.lvTable);
 //       listView.addFooterView(new ViewStub(getActivity()));
-       btnSubmit= (Button) view.findViewById(R.id.btnSubmit);
+        btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
 
         //        取出传递到详情页面的id
-        id=getActivity().getIntent().getIntExtra("ID",0);
-        strUrl=URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
-        strUrl= UniversalHelper.getTokenUrl(strUrl);
+        id = getActivity().getIntent().getIntExtra("ID", 0);
+        strUrl = UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
+        strUrl = UniversalHelper.getTokenUrl(strUrl);
         getMaterialListFromNet(strUrl);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String inOrderMaterialIds1=inOrderMaterialIds.substring(0,inOrderMaterialIds.length()-1);
-                String res1=res.substring(0,res.length()-1);
-                for(int i=0;i<map.size();i++){
-                    failNums+=map.get(i)+",";
+//                不合格数量的非空判断
+                if ( map.size()<myAdapter.getCount()) {
+                    Toast.makeText(getActivity(), "请输入不合格数量再提交", Toast.LENGTH_SHORT).show();
+//                    map.clear();
+                    return;
                 }
-                String failNums1=failNums.substring(0,failNums.length()-1);
-                String url=URL_TEST_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderMaterialIds}",inOrderMaterialIds1).replace("{res}",res1).replace("{failNums}",failNums1);
-                Log.d("strUrlstrUrlstrUrl",url);
-                url= UniversalHelper.getTokenUrl(url);
-
+                String inOrderMaterialIds1 = inOrderMaterialIds.substring(0, inOrderMaterialIds.length() - 1);
+                String res1 = res.substring(0, res.length() - 1);
+                for (int i = 0; i < map.size(); i++) {
+                    failNums += map.get(i) + ",";
+                }
+                String failNums1 = failNums.substring(0, failNums.length() - 1);
+                String url = UrlHelper.URL_TEST_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderMaterialIds}", inOrderMaterialIds1).replace("{res}", res1).replace("{failNums}", failNums1);
+                Log.d("strUrlstrUrlstrUrl", url);
+                url = UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
             }
         });
 
-        return view ;
+        return view;
     }
 
-    public void getMaterialListFromNet(final String url){
+    public void getMaterialListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene= Volley.newRequestQueue(getActivity());
-                StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+                RequestQueue quene = Volley.newRequestQueue(getActivity());
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
-                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
-                        MaterialInOrder materialInOrder= JSON.parseObject(response.getData().toString(),MaterialInOrder.class );
-                        List<MaterialInOrderMaterial> list=materialInOrder.getInOrderMaterials();
+                        String json = VolleyHelper.getJson(s);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        MaterialInOrder materialInOrder = JSON.parseObject(response.getData().toString(), MaterialInOrder.class);
+                        List<MaterialInOrderMaterial> list = materialInOrder.getInOrderMaterials();
 
 //                        Log.d("materialIdsmate",String.valueOf(materialIds.size()));
-                        if(materialInOrder.getStatus()== InOrderStatusVo.PRE_TEST.getKey()){
+                        if (materialInOrder.getStatus() == InOrderStatusVo.PRE_TEST.getKey()) {
                             btnSubmit.setVisibility(View.VISIBLE);
-                            MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list);
+                            myAdapter = new MaterialInfoAdapter(getActivity(), list);
                             listView.setAdapter(myAdapter);
 //                            setListViewHeightBasedOnChildren(listView);
 
-                        }else if (materialInOrder.getStatus()== InOrderStatusVo.TEST_FAIL.getKey()){
-                            MaterialInfoAdapter1 myAdapter=new MaterialInfoAdapter1(getActivity(),list);
+                        } else if (materialInOrder.getStatus() == InOrderStatusVo.TEST_FAIL.getKey()) {
+                            MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(getActivity(), list);
                             listView.setAdapter(myAdapter);
 //                            setListViewHeightBasedOnChildren(listView);
                         }
@@ -124,7 +127,7 @@ public class InOrderDetailState1Fragment extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag",volleyError.toString());
+                        Log.d("Tag", volleyError.toString());
 
                     }
                 });
@@ -132,7 +135,8 @@ public class InOrderDetailState1Fragment extends Fragment {
             }
         }).start();
     }
-//    /**
+
+    //    /**
 //     * 动态设置ListView的高度
 //     * @param listView
 //     */
@@ -153,13 +157,13 @@ public class InOrderDetailState1Fragment extends Fragment {
 //        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
 //        listView.setLayoutParams(params);
 //    }
-    public void sendRequest(String url){
-        RequestQueue queue=Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+    public void sendRequest(String url) {
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                Intent intent=new Intent(getActivity(), MaterialStockActivity.class);
-                intent.putExtra("flag",1);
+                Intent intent = new Intent(getActivity(), MaterialStockActivity.class);
+                intent.putExtra("flag", 1);
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {
@@ -171,9 +175,10 @@ public class InOrderDetailState1Fragment extends Fragment {
         queue.add(stringRequest);
 
     }
+
     public class MaterialInfoAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialInOrderMaterial> list=null;
+        private List<MaterialInOrderMaterial> list = null;
 
         public MaterialInfoAdapter(Context context, List<MaterialInOrderMaterial> list) {
             this.context = context;
@@ -197,20 +202,20 @@ public class InOrderDetailState1Fragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item1,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvToBeInOrderNum= (TextView) convertView.findViewById(R.id.toBeInOrderNum);
-                holder.tvTestNum= (TextView) convertView.findViewById(R.id.testNum);
-                holder.tvAcNum= (TextView) convertView.findViewById(R.id.acNum);
-                holder.tvReNum= (TextView) convertView.findViewById(R.id.reNum);
-                holder.tvInvalidateNum= (EditText) convertView.findViewById(R.id.invalidateNum);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item1, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvToBeInOrderNum = (TextView) convertView.findViewById(R.id.toBeInOrderNum);
+                holder.tvTestNum = (TextView) convertView.findViewById(R.id.testNum);
+                holder.tvAcNum = (TextView) convertView.findViewById(R.id.acNum);
+                holder.tvReNum = (TextView) convertView.findViewById(R.id.reNum);
+                holder.tvInvalidateNum = (EditText) convertView.findViewById(R.id.invalidateNum);
 
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
             holder.tvMaterialCode.setText(list.get(position).getMaterial().getCode());
             holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
             holder.tvTestNum.setText(String.valueOf(list.get(position).getStandard().getSampleNum()));
@@ -218,13 +223,11 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvReNum.setText(String.valueOf(list.get(position).getStandard().getReNum()));
             holder.tvInvalidateNum.setText("");
 
-            inOrderMaterialIds+=list.get(position).getId()+",";
-            Log.d("Tag",String.valueOf(inOrderMaterialIds));
-            res+=list.get(position).getStandard().getReNum()+",";
+            inOrderMaterialIds += list.get(position).getId() + ",";
+            Log.d("Tag", String.valueOf(inOrderMaterialIds));
+            res += list.get(position).getStandard().getReNum() + ",";
 
-//            if(holder.tvInvalidateNum.getText().toString().equals("0")){
-//                map.put(position,holder.tvInvalidateNum.getText().toString());
-//            }else{
+
             holder.tvInvalidateNum.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -237,20 +240,17 @@ public class InOrderDetailState1Fragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(s.length()>0)
-                    {
-                        map.put(position,s.toString());
-                        Log.d("position",s.toString());
+                    if (s.length() > 0) {
+                        map.put(position, s.toString());
                     }
+
                 }
             });
-//            }
-            final ViewHolder finalHolder = holder;
 
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvToBeInOrderNum;
             TextView tvTestNum;
@@ -259,9 +259,10 @@ public class InOrderDetailState1Fragment extends Fragment {
             EditText tvInvalidateNum;
         }
     }
+
     public class MaterialInfoAdapter1 extends BaseAdapter {
         private Context context;
-        private List<MaterialInOrderMaterial> list=null;
+        private List<MaterialInOrderMaterial> list = null;
 
         public MaterialInfoAdapter1(Context context, List<MaterialInOrderMaterial> list) {
             this.context = context;
@@ -285,20 +286,20 @@ public class InOrderDetailState1Fragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item1,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvToBeInOrderNum= (TextView) convertView.findViewById(R.id.toBeInOrderNum);
-                holder.tvTestNum= (TextView) convertView.findViewById(R.id.testNum);
-                holder.tvAcNum= (TextView) convertView.findViewById(R.id.acNum);
-                holder.tvReNum= (TextView) convertView.findViewById(R.id.reNum);
-                holder.tvInvalidateNum= (EditText) convertView.findViewById(R.id.invalidateNum);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item1, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvToBeInOrderNum = (TextView) convertView.findViewById(R.id.toBeInOrderNum);
+                holder.tvTestNum = (TextView) convertView.findViewById(R.id.testNum);
+                holder.tvAcNum = (TextView) convertView.findViewById(R.id.acNum);
+                holder.tvReNum = (TextView) convertView.findViewById(R.id.reNum);
+                holder.tvInvalidateNum = (EditText) convertView.findViewById(R.id.invalidateNum);
 
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
             holder.tvMaterialCode.setText(list.get(position).getMaterial().getCode());
             holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
             holder.tvTestNum.setText(String.valueOf(list.get(position).getStandard().getSampleNum()));
@@ -306,8 +307,8 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvReNum.setText(String.valueOf(list.get(position).getStandard().getReNum()));
             holder.tvInvalidateNum.setText(String.valueOf(list.get(position).getFailNum()));
 
-            inOrderMaterialIds+=list.get(position).getId()+",";
-            res+=list.get(position).getStandard().getReNum()+",";
+            inOrderMaterialIds += list.get(position).getId() + ",";
+            res += list.get(position).getStandard().getReNum() + ",";
 
 //            if(holder.tvInvalidateNum.getText().toString().equals("0")){
 //                map.put(position,holder.tvInvalidateNum.getText().toString());
@@ -324,10 +325,9 @@ public class InOrderDetailState1Fragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if(s.length()>0)
-                    {
-                        map.put(position,s.toString());
-                        Log.d("position",s.toString());
+                    if (s.length() > 0) {
+                        map.put(position, s.toString());
+                        Log.d("position", s.toString());
                     }
                 }
             });
@@ -335,7 +335,7 @@ public class InOrderDetailState1Fragment extends Fragment {
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvToBeInOrderNum;
             TextView tvTestNum;

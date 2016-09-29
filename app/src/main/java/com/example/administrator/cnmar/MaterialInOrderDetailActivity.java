@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.fragment.InOrderDetailState1Fragment;
 import com.example.administrator.cnmar.fragment.InOrderDetailState2Fragment;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.text.DateFormat;
@@ -29,7 +30,6 @@ import component.material.vo.InOrderStatusVo;
 import zxing.activity.CaptureActivity;
 
 public class MaterialInOrderDetailActivity extends AppCompatActivity {
-    private static final String URL_IN_ORDER_DETAIL="http://benxiao.cnmar.com:8092/material_in_order/detail/{id}";
     private TextView tvName11,tvName12,tvName21,tvName22,tvName31,tvName32;
     private TextView tvInOrder,tvInBatchNo,tvPurchaseOrderNo,tvArriveDate,tvRemark,tvInOrderStatus;
 //    private ListView lvMaterialInfo;
@@ -53,7 +53,7 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
         init();
 
             id=getIntent().getExtras().getInt("ID");
-            strUrl=URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
+            strUrl= UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}",String.valueOf(id));
           strUrl= UniversalHelper.getTokenUrl(strUrl);
 //        保存从列表页面传递过来的id对应的URL地址，在扫描页面返回的时候用到
             LoginActivity.editor.putString("URL",strUrl).commit();

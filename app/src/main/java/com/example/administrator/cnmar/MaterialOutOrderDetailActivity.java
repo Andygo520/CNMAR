@@ -26,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.text.DateFormat;
@@ -41,8 +42,6 @@ import component.product.vo.OutOrderStatusVo;
 import zxing.activity.CaptureActivity;
 
 public class MaterialOutOrderDetailActivity extends AppCompatActivity {
-    private static final String URL_OUT_ORDER_DETAIL="http://benxiao.cnmar.com:8092/material_out_order/detail/{id}";
-    private static final String URL_OUT_COMMIT="http://benxiao.cnmar.com:8092/material_out_order/out_stock_commit?outOrderId={outOrderId}&outOrderSpaceIds={outOrderSpaceIds}&preOutStocks={preOutStocks}&outStocks={outStocks}";
     private TextView tvName11,tvName12,tvName21,tvName22,tvName31;
     private TextView tvOutOrder,tvOutBatchNo,tvPlanNo,tvRemark,tvOutOrderStatus;
     private TextView name1,name2,name3,name4;
@@ -68,7 +67,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 
         init();
         id=getIntent().getIntExtra("ID",0);
-        strUrl=URL_OUT_ORDER_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl= UrlHelper.URL_OUT_ORDER_DETAIL.replace("{id}",String.valueOf(id));
         strUrl= UniversalHelper.getTokenUrl(strUrl);
 
         getOutOrderDetailFromNet();
@@ -144,7 +143,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 //                    outNums+=map.get(i)+",";
 //                }
 //                String outNums1=outNums.substring(0,outNums.length()-1);
-                String url=URL_OUT_COMMIT.replace("{outOrderId}",String.valueOf(id)).replace("{outOrderSpaceIds}",outOrderSpaceIds1).replace("{preOutStocks}",preOutStocks1).replace("{outStocks}",outNums1);
+                String url=UrlHelper.URL_OUT_COMMIT.replace("{outOrderId}",String.valueOf(id)).replace("{outOrderSpaceIds}",outOrderSpaceIds1).replace("{preOutStocks}",preOutStocks1).replace("{outStocks}",outNums1);
                 url= UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
             }

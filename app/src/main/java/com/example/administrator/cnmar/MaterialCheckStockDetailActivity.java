@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -28,7 +29,6 @@ import component.material.model.MaterialSpaceStockCheck;
 import component.material.model.MaterialStockCheck;
 
 public class MaterialCheckStockDetailActivity extends AppCompatActivity {
-    private static final String URL_CHECK_STOCK="http://benxiao.cnmar.com:8092/material_stock_check/detail/{ID}";
     private TextView tvMaterialCode,tvMaterialName,tvSize,tvUnit,tvRemark,tvProviderCode,tvMixType,tvCheckTime,tvPreCheckNum,tvAfterCheckNum;
     private TextView name1,name2,name3,name4;
     private MyListView lvSpaceInfo;
@@ -43,7 +43,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 
         init();
         id=getIntent().getIntExtra("ID",0);
-        strUrl=URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
+        strUrl= UrlHelper.URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
         strUrl=UniversalHelper.getTokenUrl(strUrl);
         getCheckListFromNet();
     }

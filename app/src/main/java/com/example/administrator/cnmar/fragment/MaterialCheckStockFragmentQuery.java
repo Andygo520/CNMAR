@@ -4,6 +4,7 @@ package com.example.administrator.cnmar.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,10 +26,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.chanven.lib.cptr.PtrClassicFrameLayout;
+import com.chanven.lib.cptr.PtrDefaultHandler;
+import com.chanven.lib.cptr.PtrFrameLayout;
+import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
 import com.example.administrator.cnmar.MaterialCheckStockDetailActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -40,13 +46,14 @@ import component.material.model.MaterialStockCheck;
  */
 public class MaterialCheckStockFragmentQuery extends Fragment {
     private Context context;
-    private static final String URL_CHECK_QUERY="http://benxiao.cnmar.com:8092/material_stock_check/list?query.code=&page.num=1";
-    private static final String URL_SEARCH_CHECK_QUERY="http://benxiao.cnmar.com:8092/material_stock_check/list?query.code={query.code}&page.num=1";
     private MyListView lvCheckQuery;
     private LinearLayout llSearch;
     private EditText etSearchInput;
     private TextView tvField1,tvField2,tvField3,tvField4;
-    private String url= UniversalHelper.getTokenUrl(URL_CHECK_QUERY);
+    private PtrClassicFrameLayout ptrFrame;
+    private Handler handler = new Handler();
+    int page=0;
+    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_QUERY);
 
     public MaterialCheckStockFragmentQuery(Context context) {
         this.context=context;
@@ -60,7 +67,59 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
         View view=inflater.inflate(R.layout.fragment_check_stock_fragment_query, container, false);
         lvCheckQuery= (MyListView) view.findViewById(R.id.lvTable);
 //        lvCheckQuery.addFooterView(new ViewStub(context));
+        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
+        ptrFrame.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ptrFrame.autoRefresh(true);
+            }
+        }, 150);
+        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page = 0;
+//                        mData.clear();
+//                        for (int i = 0; i < 17; i++) {
+//                            mData.add(new String("  ListView item  -" + i));
+//                        }
+//                        mAdapter.notifyDataSetChanged();
+                        getCheckStockQueryListFromNet(url);
+                        ptrFrame.refreshComplete();
 
+//                        if (!ptrFrame.isLoadMoreEnable()) {
+//                        ptrFrame.setLoadMoreEnable(true);
+//                            }
+
+                    }
+                }, 1500);
+            }
+        });
+        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+            @Override
+            public void loadMore() {
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+//                        mData.add(new String("  ListView item  - add " + page));
+//                        mAdapter.notifyDataSetChanged();
+                        ptrFrame.loadMoreComplete(true);
+                        page++;
+                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
+                                .show();
+
+                        if (page == 1) {
+                            //set load more disable
+//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                        }
+                    }
+                }, 1000);
+            }
+        });
         llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         tvField1= (TextView) view.findViewById(R.id.column1);
         tvField2= (TextView) view.findViewById(R.id.column2);
@@ -82,7 +141,7 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
                     if(input.equals("")){
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
-                        String urlString=URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
+                        String urlString=UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
                         urlString=UniversalHelper.getTokenUrl(urlString);
                         getCheckStockQueryListFromNet(urlString);
                     }
@@ -117,7 +176,7 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
             @Override
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
-                String urlString=URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
+                String urlString=UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
                 urlString=UniversalHelper.getTokenUrl(urlString);
                 getCheckStockQueryListFromNet(urlString);
             }

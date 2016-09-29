@@ -4,6 +4,7 @@ package com.example.administrator.cnmar.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,12 +13,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +26,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.chanven.lib.cptr.PtrClassicFrameLayout;
+import com.chanven.lib.cptr.PtrDefaultHandler;
+import com.chanven.lib.cptr.PtrFrameLayout;
+import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
 import com.example.administrator.cnmar.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -40,12 +45,13 @@ import component.material.model.MaterialOutOrder;
  * A simple {@link Fragment} subclass.
  */
 public class OutOrderFragment extends Fragment {
-    private static final String URL_OUT_ORDER="http://benxiao.cnmar.com:8092/material_out_order/list?query.code=&page.num=1";
-    private static final String URL_SEARCH_OUT_ORDER="http://benxiao.cnmar.com:8092/material_out_order/list?query.code={query.code}&page.num=1";
-    private ListView lvOutOrder;
+    private MyListView lvOutOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
-    private String url= UniversalHelper.getTokenUrl(URL_OUT_ORDER);
+    private PtrClassicFrameLayout ptrFrame;
+    private Handler handler = new Handler();
+    int page=0;
+    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER);
 
     public OutOrderFragment() {
         // Required empty public constructor
@@ -58,9 +64,62 @@ public class OutOrderFragment extends Fragment {
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_out_house_bill, container, false);
-        lvOutOrder= (ListView) view.findViewById(R.id.lvOutOrder);
-        lvOutOrder.addFooterView(new ViewStub(getActivity()));
+        lvOutOrder= (MyListView) view.findViewById(R.id.lvOutOrder);
+//        lvOutOrder.addFooterView(new ViewStub(getActivity()));
 
+        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
+        ptrFrame.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ptrFrame.autoRefresh(true);
+            }
+        }, 150);
+        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page = 0;
+//                        mData.clear();
+//                        for (int i = 0; i < 17; i++) {
+//                            mData.add(new String("  ListView item  -" + i));
+//                        }
+//                        mAdapter.notifyDataSetChanged();
+                        getOutOrderListFromNet(url);
+                        ptrFrame.refreshComplete();
+
+//                        if (!ptrFrame.isLoadMoreEnable()) {
+//                        ptrFrame.setLoadMoreEnable(true);
+//                            }
+
+                    }
+                }, 1500);
+            }
+        });
+        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+            @Override
+            public void loadMore() {
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+//                        mData.add(new String("  ListView item  - add " + page));
+//                        mAdapter.notifyDataSetChanged();
+                        ptrFrame.loadMoreComplete(true);
+                        page++;
+                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
+                                .show();
+
+                        if (page == 1) {
+                            //set load more disable
+//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                        }
+                    }
+                }, 1000);
+            }
+        });
         llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("出库单号查询");
@@ -72,8 +131,7 @@ public class OutOrderFragment extends Fragment {
                     if(input.equals("")){
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
-                        String urlString=URL_SEARCH_OUT_ORDER.replace("{query.code}",input);
-                        urlString=UniversalHelper.getTokenUrl(urlString);
+                        String urlString=UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}",input));
                         getOutOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -107,8 +165,7 @@ public class OutOrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
-                String urlString=URL_SEARCH_OUT_ORDER.replace("{query.code}",input);
-                urlString=UniversalHelper.getTokenUrl(urlString);
+                String urlString=UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}",input));
                 getOutOrderListFromNet(urlString);
             }
         });

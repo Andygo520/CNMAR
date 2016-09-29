@@ -4,6 +4,7 @@ package com.example.administrator.cnmar.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,10 +26,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.chanven.lib.cptr.PtrClassicFrameLayout;
+import com.chanven.lib.cptr.PtrDefaultHandler;
+import com.chanven.lib.cptr.PtrFrameLayout;
+import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
 import com.example.administrator.cnmar.MaterialCheckStockManageActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -40,14 +46,14 @@ import component.material.model.MaterialStock;
  * A simple {@link Fragment} subclass.
  */
 public class MaterialCheckStockFragmentManage extends Fragment {
-//    private Context context;
-    private static final String URL_CHECK_MANAGE="http://benxiao.cnmar.com:8092/material_stock_check_manage/list?query.code=&page.num=1";
-    private static final String URL_SEARCH_CHECK_MANAGE="http://benxiao.cnmar.com:8092/material_stock_check_manage/list?query.code={query.code}&page.num=1";
     private MyListView lvCheckManage;
     private LinearLayout llSearch;
     private EditText etSearchInput;
+    private PtrClassicFrameLayout ptrFrame;
+    private Handler handler = new Handler();
+    int page=0;
     private TextView tvField1,tvField2,tvField3,tvField4;
-    private String url= UniversalHelper.getTokenUrl(URL_CHECK_MANAGE);
+    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_MANAGE);
 
     public MaterialCheckStockFragmentManage() {
 //        this.context = context;
@@ -71,7 +77,59 @@ public class MaterialCheckStockFragmentManage extends Fragment {
         tvField3.setText("库存总量");
         tvField4.setText("操作");
 
+        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
+        ptrFrame.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ptrFrame.autoRefresh(true);
+            }
+        }, 150);
+        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page = 0;
+//                        mData.clear();
+//                        for (int i = 0; i < 17; i++) {
+//                            mData.add(new String("  ListView item  -" + i));
+//                        }
+//                        mAdapter.notifyDataSetChanged();
+                        getCheckStockManageListFromNet(url);
+                        ptrFrame.refreshComplete();
 
+//                        if (!ptrFrame.isLoadMoreEnable()) {
+//                        ptrFrame.setLoadMoreEnable(true);
+//                            }
+
+                    }
+                }, 1500);
+            }
+        });
+        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+            @Override
+            public void loadMore() {
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+//                        mData.add(new String("  ListView item  - add " + page));
+//                        mAdapter.notifyDataSetChanged();
+                        ptrFrame.loadMoreComplete(true);
+                        page++;
+                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
+                                .show();
+
+                        if (page == 1) {
+                            //set load more disable
+//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                        }
+                    }
+                }, 1000);
+            }
+        });
         etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("原料编码查询");
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
@@ -82,7 +140,7 @@ public class MaterialCheckStockFragmentManage extends Fragment {
                     if(input.equals("")){
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
-                        String urlString=URL_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
+                        String urlString=UrlHelper.URL_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
                         urlString=UniversalHelper.getTokenUrl(urlString);
                         getCheckStockManageListFromNet(urlString);
                     }
@@ -117,7 +175,7 @@ public class MaterialCheckStockFragmentManage extends Fragment {
             @Override
             public void onClick(View v) {
                 String input=etSearchInput.getText().toString().trim();
-                String urlString=URL_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
+                String urlString=UrlHelper.URL_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
                 urlString=UniversalHelper.getTokenUrl(urlString);
 
                 getCheckStockManageListFromNet(urlString);

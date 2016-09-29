@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.HashMap;
@@ -34,8 +35,6 @@ import component.material.model.MaterialSpaceStock;
 import component.material.model.MaterialStock;
 
 public class MaterialCheckStockManageActivity extends AppCompatActivity {
-    private static final String URL_CHECK_STOCK="http://benxiao.cnmar.com:8092/material_stock_check_manage/detail/{ID}";
-    private static final String URL_CHECK_COMMIT="http://benxiao.cnmar.com:8092/material_stock_check_manage/check_commit?stockId={stockId}&spaceStockIds={spaceStockIds}&spaceIds={spaceIds}&beforeStocks={beforeStocks}&afterStocks={afterStocks}";
     private TextView tvMaterialCode,tvMaterialName,tvSize,tvUnit,tvRemark,tvProviderCode,tvMixType,tvStockNum;
     private TextView name1,name2,name3,name4;
     private MyListView lvSpaceInfo;
@@ -56,7 +55,7 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_check_stock_manage);
         init();
         id=getIntent().getIntExtra("ID",0);
-        strUrl=URL_CHECK_STOCK.replace("{ID}",String.valueOf(id));
+        strUrl= UrlHelper.URL_STOCK_CHECK_MANAGE.replace("{ID}",String.valueOf(id));
         strUrl= UniversalHelper.getTokenUrl(strUrl);
         getCheckListFromNet();
     }
@@ -110,7 +109,7 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
                     afterStocks+=map.get(i)+",";
                 }
                 String afterStocks1=afterStocks.substring(0,afterStocks.length()-1);
-                String url=URL_CHECK_COMMIT.replace("{stockId}",String.valueOf(id)).replace("{spaceStockIds}",spaceStockIds1).replace("{spaceIds}",spaceIds1).replace("{beforeStocks}",beforeStocks1).replace("{afterStocks}",afterStocks1);
+                String url=UrlHelper.URL_CHECK_COMMIT.replace("{stockId}",String.valueOf(id)).replace("{spaceStockIds}",spaceStockIds1).replace("{spaceIds}",spaceIds1).replace("{beforeStocks}",beforeStocks1).replace("{afterStocks}",afterStocks1);
 //                Log.d("tAGTAG",url);
                 url=UniversalHelper.getTokenUrl(url);
                 sendRequest(url);

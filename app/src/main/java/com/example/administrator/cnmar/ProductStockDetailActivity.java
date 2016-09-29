@@ -21,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
 import java.util.List;
@@ -29,7 +30,6 @@ import component.product.model.ProductSpaceStock;
 import component.product.model.ProductStock;
 
 public class ProductStockDetailActivity extends AppCompatActivity {
-    private static final String URL_STOCK_DETAIL="http://benxiao.cnmar.com:8092/product_stock/detail/{id}";
     private TextView tvTitle;
     private ImageView ivLeftArrow;
     private TextView tvCode,tvName,tvSize,tvUnit,
@@ -47,7 +47,7 @@ public class ProductStockDetailActivity extends AppCompatActivity {
         init();
 //        取出传递到库存详情页面的id
         int id=getIntent().getIntExtra("ID",0);
-        strUrl=URL_STOCK_DETAIL.replace("{id}",String.valueOf(id));
+        strUrl= UrlHelper.URL_PRODUCT_STOCK_DETAIL.replace("{id}",String.valueOf(id));
         strUrl=UniversalHelper.getTokenUrl(strUrl);
         getStockDetailFromNet();
     }

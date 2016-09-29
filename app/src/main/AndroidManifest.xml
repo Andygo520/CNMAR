@@ -15,7 +15,9 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".MaterialStockActivity" />
+        <activity android:name=".MaterialStockActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
         <activity android:name=".MaterialStockDetailActivity" />
         <activity
             android:name=".MaterialInOrderDetailActivity"
@@ -35,7 +37,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProductStockActivity" />
+        <activity android:name=".ProductStockActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
         <activity android:name=".ProductStockDetailActivity" />
         <activity android:name=".ProductCheckStockManageActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
