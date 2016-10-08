@@ -48,6 +48,8 @@
                 android:textColor="@android:color/holo_red_light"
                 android:layout_height="fill_parent"
                 android:gravity="center"
+                android:hint="请输入"
+                android:textColorHint="@android:color/darker_gray"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

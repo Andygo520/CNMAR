@@ -42,22 +42,24 @@ import component.product.vo.OutOrderStatusVo;
 import zxing.activity.CaptureActivity;
 
 public class MaterialOutOrderDetailActivity extends AppCompatActivity {
-    private TextView tvName11,tvName12,tvName21,tvName22,tvName31;
-    private TextView tvOutOrder,tvOutBatchNo,tvPlanNo,tvRemark,tvOutOrderStatus;
-    private TextView name1,name2,name3,name4;
+    private TextView tvName11, tvName12, tvName21, tvName22, tvName31;
+    private TextView tvOutOrder, tvOutBatchNo, tvPlanNo, tvRemark, tvOutOrderStatus;
+    private TextView name1, name2, name3, name4;
     private MyListView lvMaterialInfo;
     private static String strUrl;
     private ImageView ivScann;
     private LinearLayout llLeftArrow;
     private Button btnSubmit;
-    private HashMap<Integer,String> map=new HashMap<>();
+    private HashMap<Integer, String> map = new HashMap<>();
+
     private int id;
-    private String outOrderSpaceIds="";
-    private String outOrderSpaceIds1="";
-    private String preOutStocks="";
-    private String preOutStocks1="";
-    private String outNums="";
-    private String outNums1="";
+    private String outOrderSpaceIds = "";
+    private String outOrderSpaceIds1 = "";
+    private String preOutStocks = "";
+    private String preOutStocks1 = "";
+    private String outNums = "";
+    private String outNums1 = "";
+    private MaterialInfoAdapter myAdapter;
 
     //    private int flag=-1;
     @Override
@@ -66,29 +68,30 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_out_order_detail);
 
         init();
-        id=getIntent().getIntExtra("ID",0);
-        strUrl= UrlHelper.URL_OUT_ORDER_DETAIL.replace("{id}",String.valueOf(id));
-        strUrl= UniversalHelper.getTokenUrl(strUrl);
+        id = getIntent().getIntExtra("ID", 0);
+        strUrl = UrlHelper.URL_OUT_ORDER_DETAIL.replace("{id}", String.valueOf(id));
+        strUrl = UniversalHelper.getTokenUrl(strUrl);
 
         getOutOrderDetailFromNet();
 
 
     }
-    public void init(){
-        tvName11=(TextView) findViewById(R.id.name11);
-        tvName12=(TextView) findViewById(R.id.name12);
-        tvName21=(TextView) findViewById(R.id.name21);
-        tvName22=(TextView) findViewById(R.id.name22);
-        tvName31=(TextView) findViewById(R.id.name31);
-        llLeftArrow= (LinearLayout) findViewById(R.id.left_arrow);
-        ivScann= (ImageView) findViewById(R.id.scann);
+
+    public void init() {
+        tvName11 = (TextView) findViewById(R.id.name11);
+        tvName12 = (TextView) findViewById(R.id.name12);
+        tvName21 = (TextView) findViewById(R.id.name21);
+        tvName22 = (TextView) findViewById(R.id.name22);
+        tvName31 = (TextView) findViewById(R.id.name31);
+        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
+        ivScann = (ImageView) findViewById(R.id.scann);
 
 
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MaterialOutOrderDetailActivity.this,MaterialStockActivity.class);
-                intent.putExtra("flag",2);
+                Intent intent = new Intent(MaterialOutOrderDetailActivity.this, MaterialStockActivity.class);
+                intent.putExtra("flag", 2);
                 startActivity(intent);
             }
         });
@@ -98,73 +101,76 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         tvName22.setText("备注");
         tvName31.setText("出库单状态");
 
-        name1= (TextView) findViewById(R.id.column1);
-        name2= (TextView) findViewById(R.id.column2);
-        name3= (TextView) findViewById(R.id.column3);
-        name4= (TextView) findViewById(R.id.column4);
-        btnSubmit= (Button) findViewById(R.id.btnSubmit);
+        name1 = (TextView) findViewById(R.id.column1);
+        name2 = (TextView) findViewById(R.id.column2);
+        name3 = (TextView) findViewById(R.id.column3);
+        name4 = (TextView) findViewById(R.id.column4);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
         name1.setText("原料编码");
         name2.setText("仓位编码");
         name3.setText("待出库数量");
         name4.setText("已出库数量");
 
-        tvOutOrder= (TextView) findViewById(R.id.tv11);
-        tvOutBatchNo= (TextView) findViewById(R.id.tv12);
-        tvPlanNo= (TextView) findViewById(R.id.tv21);
-        tvRemark= (TextView) findViewById(R.id.tv22);
-        tvOutOrderStatus= (TextView) findViewById(R.id.tv31);
+        tvOutOrder = (TextView) findViewById(R.id.tv11);
+        tvOutBatchNo = (TextView) findViewById(R.id.tv12);
+        tvPlanNo = (TextView) findViewById(R.id.tv21);
+        tvRemark = (TextView) findViewById(R.id.tv22);
+        tvOutOrderStatus = (TextView) findViewById(R.id.tv31);
 
-        lvMaterialInfo= (MyListView) findViewById(R.id.lvTable);
+        lvMaterialInfo = (MyListView) findViewById(R.id.lvTable);
 //        lvMaterialInfo.addFooterView(new ViewStub(this));
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (map.size() < myAdapter.getCount()) {
+                    Toast.makeText(MaterialOutOrderDetailActivity.this, "请先输入已出库数量", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(outOrderSpaceIds.length()>0){
-                    outOrderSpaceIds1=outOrderSpaceIds.substring(0,outOrderSpaceIds.length()-1);
+                    outOrderSpaceIds1 = outOrderSpaceIds.substring(0, outOrderSpaceIds.length() - 1);
                 }
-                if (preOutStocks.length()>0){
-                    preOutStocks1=preOutStocks.substring(0,preOutStocks.length()-1);
+               if(preOutStocks.length()>0){
+                   preOutStocks1 = preOutStocks.substring(0, preOutStocks.length() - 1);
+               }
+                for (int i = 0; i < map.size(); i++) {
+                    outNums += map.get(i) + ",";
                 }
-                for (int i=0;i<map.size();i++){
-                    outNums+=map.get(i)+",";
+                String[] str = outNums.split(",");
+                for (int i = 0; i < str.length; i++) {
+                    if (!str[i].equals("")) {
+                        outNums1 += str[i] + ",";
+                    }
                 }
-                if (outNums.length()>0){
-                    outNums1=outNums.substring(0,outNums.length()-1);
+                if(outNums1.length()>0){
+                    outNums1 = outNums1.substring(0, outNums1.length() - 1);
                 }
-                if(outNums1.startsWith(",")){
-                    outNums1=outNums1.substring(1);
-                }else if (outNums1.endsWith(",")){
-                    outNums1=outNums1.substring(0,outNums1.length()-1);
-                }
-//                outOrderSpaceIds1=outOrderSpaceIds.substring(0,outOrderSpaceIds.length()-1);
-//                preOutStocks1=preOutStocks.substring(0,preOutStocks.length()-1);
-//                for(int i=0;i<map.size();i++){
-//                    outNums+=map.get(i)+",";
-//                }
-//                String outNums1=outNums.substring(0,outNums.length()-1);
-                String url=UrlHelper.URL_OUT_COMMIT.replace("{outOrderId}",String.valueOf(id)).replace("{outOrderSpaceIds}",outOrderSpaceIds1).replace("{preOutStocks}",preOutStocks1).replace("{outStocks}",outNums1);
-                url= UniversalHelper.getTokenUrl(url);
+
+                String url = UrlHelper.URL_OUT_COMMIT.replace("{outOrderId}", String.valueOf(id)).replace("{outOrderSpaceIds}", outOrderSpaceIds1).replace("{preOutStocks}", preOutStocks1).replace("{outStocks}", outNums1);
+                url = UniversalHelper.getTokenUrl(url);
+
                 sendRequest(url);
+
             }
         });
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("FFFF",data.getStringExtra("result"));
-        if (resultCode==RESULT_OK){
-            RequestQueue queue= Volley.newRequestQueue(MaterialOutOrderDetailActivity.this);
-            StringRequest stringRequest=new StringRequest(data.getStringExtra("result"), new Response.Listener<String>() {
+        Log.d("FFFF", data.getStringExtra("result"));
+        if (resultCode == RESULT_OK) {
+            RequestQueue queue = Volley.newRequestQueue(MaterialOutOrderDetailActivity.this);
+            StringRequest stringRequest = new StringRequest(data.getStringExtra("result"), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
-                    String json= VolleyHelper.getJson(s);
-                    component.common.model.Response response= JSON.parseObject(json,component.common.model.Response.class);
-                    if(!response.isStatus()){
-                        Toast.makeText(MaterialOutOrderDetailActivity.this,response.getMsg(),Toast.LENGTH_SHORT).show();
-                    }else{
-                        if(response.getData().toString().equals("out")){
+                    String json = VolleyHelper.getJson(s);
+                    component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                    if (!response.isStatus()) {
+                        Toast.makeText(MaterialOutOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (response.getData().toString().equals("out")) {
                             getOutOrderDetailFromNet();
                         }
                     }
@@ -180,20 +186,21 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
             queue.add(stringRequest);
         }
     }
-    public void sendRequest(String url){
-        RequestQueue queue=Volley.newRequestQueue(this);
-        StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+
+    public void sendRequest(String url) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                String json= VolleyHelper.getJson(s);
-                component.common.model.Response response= JSON.parseObject(json,component.common.model.Response.class);
-                 if(!response.isStatus()){
-                     Toast.makeText(MaterialOutOrderDetailActivity.this,response.getMsg(),Toast.LENGTH_SHORT).show();
-                 }else {
-                     Intent intent=new Intent(MaterialOutOrderDetailActivity.this,MaterialStockActivity.class);
-                     intent.putExtra("flag",2);
-                     startActivity(intent);
-                 }
+                String json = VolleyHelper.getJson(s);
+                component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                if (!response.isStatus()) {
+                    Toast.makeText(MaterialOutOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(MaterialOutOrderDetailActivity.this, MaterialStockActivity.class);
+                    intent.putExtra("flag", 2);
+                    startActivity(intent);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -204,57 +211,58 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
 
     }
-    public void getOutOrderDetailFromNet(){
+
+    public void getOutOrderDetailFromNet() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue queue= Volley.newRequestQueue(MaterialOutOrderDetailActivity.this);
-                StringRequest stringRequest=new StringRequest(strUrl, new Response.Listener<String>() {
+                RequestQueue queue = Volley.newRequestQueue(MaterialOutOrderDetailActivity.this);
+                StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
+                        String json = VolleyHelper.getJson(s);
 //                        Log.d("RRRRR",json);
-                        component.common.model.Response response= JSON.parseObject(json,component.common.model.Response.class );
-                        MaterialOutOrder materialOutOrder=JSON.parseObject(response.getData().toString(),MaterialOutOrder.class);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        MaterialOutOrder materialOutOrder = JSON.parseObject(response.getData().toString(), MaterialOutOrder.class);
 //                        得到列表的数据源
-                        List<MaterialOutOrderMaterial> list=materialOutOrder.getOutOrderMaterials();
-                        List<MaterialOutOrderSpace> list1=new ArrayList<MaterialOutOrderSpace>();
-                        List<MaterialOutOrderSpace> list2=new ArrayList<MaterialOutOrderSpace>();
+                        List<MaterialOutOrderMaterial> list = materialOutOrder.getOutOrderMaterials();
+                        List<MaterialOutOrderSpace> list1 = new ArrayList<MaterialOutOrderSpace>();
+                        List<MaterialOutOrderSpace> list2 = new ArrayList<MaterialOutOrderSpace>();
 
-                        for(int i=0;i<list.size();i++){
-                            list2=list.get(i).getOutOrderSpaces();
-                            for(int j=0;j<list2.size();j++){
+                        for (int i = 0; i < list.size(); i++) {
+                            list2 = list.get(i).getOutOrderSpaces();
+                            for (int j = 0; j < list2.size(); j++) {
                                 list2.get(j).getSpace().setMaterial(list.get(i).getMaterial());
                             }
                             list1.addAll(list2);
                         }
 
 
-                        if(materialOutOrder.getStatus()==OutOrderStatusVo.PRE_OUT_STOCK.getKey()){
-                            MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(MaterialOutOrderDetailActivity.this,list1);
+                        if (materialOutOrder.getStatus() == OutOrderStatusVo.PRE_OUT_STOCK.getKey()) {
+                            myAdapter = new MaterialInfoAdapter(MaterialOutOrderDetailActivity.this, list1);
                             lvMaterialInfo.setAdapter(myAdapter);
                             ivScann.setVisibility(View.VISIBLE);
                             ivScann.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent =new Intent(MaterialOutOrderDetailActivity.this, CaptureActivity.class);
-                                    startActivityForResult(intent,3);
+                                    Intent intent = new Intent(MaterialOutOrderDetailActivity.this, CaptureActivity.class);
+                                    startActivityForResult(intent, 3);
                                 }
                             });
-                        }else if(materialOutOrder.getStatus()==OutOrderStatusVo.OUT_STOCK.getKey()){
-                            MaterialInfoAdapter1 myAdapter=new MaterialInfoAdapter1(MaterialOutOrderDetailActivity.this,list1);
+                        } else if (materialOutOrder.getStatus() == OutOrderStatusVo.OUT_STOCK.getKey()) {
+                            MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(MaterialOutOrderDetailActivity.this, list1);
                             lvMaterialInfo.setAdapter(myAdapter);
                         }
 
                         tvOutOrder.setText(materialOutOrder.getCode());
-                        if(materialOutOrder.getOutTime()!=null){
+                        if (materialOutOrder.getOutTime() != null) {
                             tvOutBatchNo.setText(DateFormat.getDateInstance().format(materialOutOrder.getOutTime()));
-                        }else
+                        } else
                             tvOutBatchNo.setText("");
                         tvPlanNo.setText("");
                         tvRemark.setText(materialOutOrder.getRemark());
                         tvOutOrderStatus.setText(materialOutOrder.getOutOrderStatusVo().getValue());
-                        if(materialOutOrder.getStatus()== OutOrderStatusVo.PRE_OUT_STOCK.getKey()){
+                        if (materialOutOrder.getStatus() == OutOrderStatusVo.PRE_OUT_STOCK.getKey()) {
                             btnSubmit.setVisibility(View.VISIBLE);
                         }
 
@@ -270,68 +278,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    public class MaterialInfoAdapter1 extends BaseAdapter {
-        private Context context;
-        private List<MaterialOutOrderSpace> list=null;
-
-
-        public MaterialInfoAdapter1(Context context, List<MaterialOutOrderSpace> list) {
-            this.context = context;
-            this.list = list;
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item2,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvSpaceCode= (TextView) convertView.findViewById(R.id.spaceCode);
-                holder.tvToBeOutOrderNum= (TextView) convertView.findViewById(R.id.toBeNum);
-                holder.tvOutNum= (EditText) convertView.findViewById(R.id.num);
-
-                convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
-
-            holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
-            holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvToBeOutOrderNum.setText(String.valueOf(list.get(position).getPreOutStock()));
-            holder.tvOutNum.setText(String.valueOf(list.get(position).getOutStock()));
-
-
-
-            return convertView;
-        }
-
-        public class ViewHolder{
-            TextView tvMaterialCode;
-            TextView tvSpaceCode;
-            TextView tvToBeOutOrderNum;
-            EditText tvOutNum;
-        }
-    }
-
 
     public class MaterialInfoAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialOutOrderSpace> list=null;
+        private List<MaterialOutOrderSpace> list = null;
 
 
         public MaterialInfoAdapter(Context context, List<MaterialOutOrderSpace> list) {
@@ -356,18 +306,18 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                convertView= LayoutInflater.from(context).inflate(R.layout.material_info_item2,parent,false);
-                holder=new ViewHolder();
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.materialCode);
-                holder.tvSpaceCode= (TextView) convertView.findViewById(R.id.spaceCode);
-                holder.tvToBeOutOrderNum= (TextView) convertView.findViewById(R.id.toBeNum);
-                holder.tvOutNum= (EditText) convertView.findViewById(R.id.num);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item2, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.spaceCode);
+                holder.tvToBeOutOrderNum = (TextView) convertView.findViewById(R.id.toBeNum);
+                holder.tvOutNum = (EditText) convertView.findViewById(R.id.num);
 
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 
             holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
@@ -375,25 +325,25 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 //            holder.tvOutNum.setText(String.valueOf(list.get(position).getOutStock()));
 
 
-//          如果该产品为扫描二维码出入库产品，那么直接将扫描数量存入map
-            if(list.get(position).getSpace().getMaterial().getStockType()== StockTypeVo.SCAN.getKey()){
+//          如果该产品为扫描二维码出入库产品，那么直接将空字符存入map
+            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.SCAN.getKey()) {
                 holder.tvOutNum.setText(String.valueOf(list.get(position).getOutStock()));
                 holder.tvOutNum.setFocusable(false);
                 holder.tvOutNum.setFocusableInTouchMode(false);
-                map.put(position,"");
+                map.put(position, "");
                 holder.tvOutNum.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MaterialOutOrderDetailActivity.this,"该原料为扫描二维码出入库",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MaterialOutOrderDetailActivity.this, "该原料为扫描二维码出入库", Toast.LENGTH_SHORT).show();
                     }
                 });
 
             }
 //            若产品为手动输入数量的出入库产品，那么将输入的数量存入map中
-            else{
+            else {
                 holder.tvOutNum.setText("");
-                outOrderSpaceIds+=String.valueOf(list.get(position).getId())+",";
-                preOutStocks+=String.valueOf(list.get(position).getPreOutStock())+",";
+                outOrderSpaceIds += String.valueOf(list.get(position).getId()) + ",";
+                preOutStocks += String.valueOf(list.get(position).getPreOutStock()) + ",";
                 holder.tvOutNum.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -406,8 +356,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if(s.length()>0){
-                            map.put(position,s.toString());
+                        if (s.length() > 0) {
+                            map.put(position, s.toString());
+                        } else {
+                            map.remove(position);
                         }
 
                     }
@@ -418,7 +370,65 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
             return convertView;
         }
 
-        public class ViewHolder{
+        public class ViewHolder {
+            TextView tvMaterialCode;
+            TextView tvSpaceCode;
+            TextView tvToBeOutOrderNum;
+            EditText tvOutNum;
+        }
+    }
+
+    public class MaterialInfoAdapter1 extends BaseAdapter {
+        private Context context;
+        private List<MaterialOutOrderSpace> list = null;
+
+
+        public MaterialInfoAdapter1(Context context, List<MaterialOutOrderSpace> list) {
+            this.context = context;
+            this.list = list;
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.material_info_item2, parent, false);
+                holder = new ViewHolder();
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.materialCode);
+                holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.spaceCode);
+                holder.tvToBeOutOrderNum = (TextView) convertView.findViewById(R.id.toBeNum);
+                holder.tvOutNum = (EditText) convertView.findViewById(R.id.num);
+
+                convertView.setTag(holder);
+            } else
+                holder = (ViewHolder) convertView.getTag();
+
+            holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
+            holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
+            holder.tvToBeOutOrderNum.setText(String.valueOf(list.get(position).getPreOutStock()));
+            holder.tvOutNum.setText(String.valueOf(list.get(position).getOutStock()));
+            holder.tvOutNum.setFocusable(false);
+            holder.tvOutNum.setFocusableInTouchMode(false);
+
+            return convertView;
+        }
+
+        public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvSpaceCode;
             TextView tvToBeOutOrderNum;

@@ -23,7 +23,7 @@ public class UrlHelper {
     public static final String URL_PRODUCT_STOCK_DETAIL = URL_BASE + "product_stock/detail/{id}";
     public static final String URL_TEST_COMMIT =URL_BASE +  "material_in_order/test_commit?inOrderId={inOrderId}&inOrderMaterialIds={inOrderMaterialIds}&res={res}&failNums={failNums}";
     public static final String URL_IN_ORDER_COMMIT =URL_BASE +  "material_in_order/in_stock_commit?inOrderId={inOrderId}&inOrderSpaceIds={inOrderSpaceIds}&preInStocks={preInStocks}&inStocks={inStocks}";
-    public static final String URL_IN_ORDER =URL_BASE +  "material_in_order/list?query.code=&page.num=1";
+    public static final String URL_IN_ORDER =URL_BASE +  "material_in_order/list?query.code=&page.num={page}";
     public static final String URL_SEARCH_IN_ORDER =URL_BASE +  "material_in_order/list?query.code={query.code}&page.num=1";
     public static final String URL_CHECK_MANAGE = URL_BASE + "material_stock_check_manage/list?query.code=&page.num=1";
     public static final String URL_SEARCH_CHECK_MANAGE =URL_BASE +  "material_stock_check_manage/list?query.code={query.code}&page.num=1";

@@ -89,7 +89,7 @@ public class MaterialStockFragment extends Fragment {
 //                            }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -166,7 +166,7 @@ public class MaterialStockFragment extends Fragment {
                 getStockListFromNet(urlString);
             }
         });
-        getStockListFromNet(url);
+//        getStockListFromNet(url);
         return view;
     }
 

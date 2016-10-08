@@ -46,13 +46,15 @@ import component.material.model.MaterialInOrder;
  * A simple {@link Fragment} subclass.
  */
 public class InOrderFragment extends Fragment {
+    //    page代表显示的是第几页内容，从1开始
+    int page = 1;
     private MyListView lvInOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
     private PtrClassicFrameLayout ptrFrame;
     private Handler handler = new Handler();
-    private String strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_IN_ORDER);
-    int page = 0;
+    private String strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_IN_ORDER.replace("{page}", String.valueOf(page)));
+
 
     public InOrderFragment() {
         // Required empty public constructor
@@ -80,7 +82,7 @@ public class InOrderFragment extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        page = 0;
+                        page = 1;
 //                        mData.clear();
 //                        for (int i = 0; i < 17; i++) {
 //                            mData.add(new String("  ListView item  -" + i));
@@ -89,12 +91,12 @@ public class InOrderFragment extends Fragment {
                         getInOrderListFromNet(strUrl);
                         ptrFrame.refreshComplete();
 
-//                        if (!ptrFrame.isLoadMoreEnable()) {
-//                        ptrFrame.setLoadMoreEnable(true);
-//                            }
+                        if (!ptrFrame.isLoadMoreEnable()) {
+                            ptrFrame.setLoadMoreEnable(true);
+                        }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -105,10 +107,10 @@ public class InOrderFragment extends Fragment {
 
                     @Override
                     public void run() {
-//                        mData.add(new String("  ListView item  - add " + page));
-//                        mAdapter.notifyDataSetChanged();
-                        ptrFrame.loadMoreComplete(true);
                         page++;
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_IN_ORDER.replace("{page}", String.valueOf(page)));
+                        getInOrderListFromNet(url);
+                        ptrFrame.loadMoreComplete(true);
                         Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
                                 .show();
 
@@ -168,13 +170,13 @@ public class InOrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String input = etSearchInput.getText().toString().trim();
-                String urlString =UrlHelper.URL_SEARCH_IN_ORDER.replace("{query.code}", input);
+                String urlString = UrlHelper.URL_SEARCH_IN_ORDER.replace("{query.code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
 
                 getInOrderListFromNet(urlString);
             }
         });
-        getInOrderListFromNet(strUrl);
+//        getInOrderListFromNet(strUrl);
         return view;
     }
 

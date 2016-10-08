@@ -51,17 +51,19 @@ public class ProductStockFragment extends Fragment {
     private EditText etSearchInput;
     private PtrClassicFrameLayout ptrFrame;
     private Handler handler = new Handler();
-    int page=0;
-    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_STOCK);
+    int page = 0;
+    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_STOCK);
+
     public ProductStockFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_product_stock, container, false);
-        lvStock= (MyListView) view.findViewById(R.id.stock_list_view);
+        View view = inflater.inflate(R.layout.fragment_product_stock, container, false);
+        lvStock = (MyListView) view.findViewById(R.id.stock_list_view);
         ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
         ptrFrame.postDelayed(new Runnable() {
             @Override
@@ -89,7 +91,7 @@ public class ProductStockFragment extends Fragment {
 //                            }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -115,19 +117,19 @@ public class ProductStockFragment extends Fragment {
                 }, 1000);
             }
         });
-        llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
-        etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
+        llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
+        etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("成品编码查询");
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode==KeyEvent.KEYCODE_ENTER){
-                    String input=etSearchInput.getText().toString().trim();
-                    if(input.equals("")){
-                        Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
-                    }else{
-                        String urlString=UrlHelper.URL_PRODUCT_SEARCH_STOCK.replace("{query.code}",input);
-                        urlString=UniversalHelper.getTokenUrl(urlString);
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String input = etSearchInput.getText().toString().trim();
+                    if (input.equals("")) {
+                        Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String urlString = UrlHelper.URL_PRODUCT_SEARCH_STOCK.replace("{query.code}", input);
+                        urlString = UniversalHelper.getTokenUrl(urlString);
                         getStockListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -160,36 +162,36 @@ public class ProductStockFragment extends Fragment {
         llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String input=etSearchInput.getText().toString().trim();
-                String urlString=UrlHelper.URL_PRODUCT_SEARCH_STOCK.replace("{query.code}",input);
-                urlString=UniversalHelper.getTokenUrl(urlString);
+                String input = etSearchInput.getText().toString().trim();
+                String urlString = UrlHelper.URL_PRODUCT_SEARCH_STOCK.replace("{query.code}", input);
+                urlString = UniversalHelper.getTokenUrl(urlString);
                 getStockListFromNet(urlString);
             }
         });
-        getStockListFromNet(url);
+//        getStockListFromNet(url);
         return view;
     }
 
 
-    public void getStockListFromNet(final String url){
+    public void getStockListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene= Volley.newRequestQueue(getActivity());
-                StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+                RequestQueue quene = Volley.newRequestQueue(getActivity());
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
-                        Log.d("TAG",json);
-                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
-                        List<ProductStock> list= JSON.parseArray(response.getData().toString(),ProductStock.class );
-                        StockAdapter myAdapter=new StockAdapter(list,getActivity());
+                        String json = VolleyHelper.getJson(s);
+                        Log.d("TAG", json);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        List<ProductStock> list = JSON.parseArray(response.getData().toString(), ProductStock.class);
+                        StockAdapter myAdapter = new StockAdapter(list, getActivity());
                         lvStock.setAdapter(myAdapter);
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag",volleyError.toString());
+                        Log.d("Tag", volleyError.toString());
 
                     }
                 });
@@ -200,7 +202,7 @@ public class ProductStockFragment extends Fragment {
 
     class StockAdapter extends BaseAdapter {
         private Context context;
-        private List<ProductStock> list=null;
+        private List<ProductStock> list = null;
 
         public StockAdapter(List<ProductStock> list, Context context) {
             this.list = list;
@@ -224,17 +226,17 @@ public class ProductStockFragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                holder=new ViewHolder();
-                convertView= LayoutInflater.from(context).inflate(R.layout.stock_item,parent,false);
-                holder.code= (TextView) convertView.findViewById(R.id.code);
-                holder.name= (TextView) convertView.findViewById(R.id.name);
-                holder.stockSum= (TextView) convertView.findViewById(R.id.stockSum);
-                holder.detail= (TextView) convertView.findViewById(R.id.detail);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = LayoutInflater.from(context).inflate(R.layout.stock_item, parent, false);
+                holder.code = (TextView) convertView.findViewById(R.id.code);
+                holder.name = (TextView) convertView.findViewById(R.id.name);
+                holder.stockSum = (TextView) convertView.findViewById(R.id.stockSum);
+                holder.detail = (TextView) convertView.findViewById(R.id.detail);
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 
             holder.code.setText(list.get(position).getProduct().getCode());
             holder.name.setText(list.get(position).getProduct().getName());
@@ -253,13 +255,13 @@ public class ProductStockFragment extends Fragment {
             return convertView;
         }
 
-        class ViewHolder{
-            public  TextView code;
-            public  TextView name;
-            public  TextView stockSum;
+        class ViewHolder {
+            public TextView code;
+            public TextView name;
+            public TextView stockSum;
             //            public  TextView minStock;
 //            public  TextView maxStock;
-            public  TextView detail;
+            public TextView detail;
         }
 
     }

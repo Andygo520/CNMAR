@@ -94,7 +94,7 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
 //                            }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -181,7 +181,7 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
                 getCheckStockQueryListFromNet(urlString);
             }
         });
-        getCheckStockQueryListFromNet(url);
+//        getCheckStockQueryListFromNet(url);
         return view;
     }
     public void getCheckStockQueryListFromNet(final String url){

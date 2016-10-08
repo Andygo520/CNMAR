@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +23,7 @@ import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import component.material.model.MaterialSpaceStockCheck;
@@ -86,6 +87,17 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 //        lvSpaceInfo.addFooterView(new ViewStub(this));
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK){
+            Intent intent=new Intent(this,MaterialStockActivity.class);
+            intent.putExtra("flag",3);
+            startActivity(intent);
+            return  true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void getCheckListFromNet(){
         new Thread(new Runnable() {
             @Override
@@ -111,7 +123,8 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
                         tvRemark.setText(materialStockCheck.getMaterial().getRemark());
                         tvProviderCode.setText(materialStockCheck.getMaterial().getSupply().getCode());
                         tvMixType.setText(materialStockCheck.getMaterial().getMixTypeVo().getValue());
-                        tvCheckTime.setText(DateFormat.getDateFormat(MaterialCheckStockDetailActivity.this).format(materialStockCheck.getCtime()));
+                        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        tvCheckTime.setText(sdf.format(materialStockCheck.getCtime()));
                         tvPreCheckNum.setText(String.valueOf(materialStockCheck.getBeforeStock()));
                         tvAfterCheckNum.setText(String.valueOf(materialStockCheck.getAfterStock()));
                     }

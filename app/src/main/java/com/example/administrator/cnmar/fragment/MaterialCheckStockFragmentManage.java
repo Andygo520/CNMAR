@@ -104,7 +104,7 @@ public class MaterialCheckStockFragmentManage extends Fragment {
 //                            }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -181,7 +181,7 @@ public class MaterialCheckStockFragmentManage extends Fragment {
                 getCheckStockManageListFromNet(urlString);
             }
         });
-        getCheckStockManageListFromNet(url);
+//        getCheckStockManageListFromNet(url);
         return view;
     }
 

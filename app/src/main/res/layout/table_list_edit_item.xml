@@ -49,6 +49,8 @@
                 android:textColor="@color/color_red"
                 android:inputType="number"
                 android:background="@null"
+                android:hint="请输入"
+                android:textColorHint="@android:color/darker_gray"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

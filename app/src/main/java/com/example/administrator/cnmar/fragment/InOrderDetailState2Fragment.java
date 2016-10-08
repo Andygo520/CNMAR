@@ -43,7 +43,7 @@ import component.material.vo.InOrderStatusVo;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InOrderDetailState2Fragment extends Fragment {
+public class InOrderDetailState2Fragment extends Fragment implements View.OnClickListener {
     private String strUrl;
     private TextView name1, name2, name3, name4;
     private MyListView listView;
@@ -57,6 +57,7 @@ public class InOrderDetailState2Fragment extends Fragment {
     private String preInStocks1 = "";
     private String inStocks = "";
     private String inStocks1 = "";
+    List<MaterialInOrderSpace> list1;
 
 
     public InOrderDetailState2Fragment() {
@@ -88,46 +89,8 @@ public class InOrderDetailState2Fragment extends Fragment {
         strUrl = UniversalHelper.getTokenUrl(strUrl);
 
         getMaterialListFromNet(strUrl);
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //                入库数量的非空判断
-                if (map.size() < myAdapter.getCount()) {
-                    Toast.makeText(getActivity(), "请输入入库数量再提交", Toast.LENGTH_SHORT).show();
-//                    map.clear();
-                    return;
-                }
-                if (inOrderSpaceIds.length() > 0) {
-                    inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
-                }
-                if (preInStocks.length() > 0) {
-                    preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
-                }
-                for (int i = 0; i < map.size(); i++) {
-                    inStocks += map.get(i) + ",";
-                }
-                if (inStocks.length() > 0) {
-                    inStocks1 = inStocks.substring(0, inStocks.length() - 1);
-                }
-                String[] str = inStocks1.split(",");
-                String inStocks2 = "";
-                for (int i = 0; i < str.length; i++) {
-                    if (!str[i].equals("")) {
-                        inStocks2 += str[i] + ",";
-                    }
-                }
-                if (inStocks2.length() > 0) {
-                    inStocks2 = inStocks2.substring(0, inStocks2.length() - 1);
-                }
-                Log.d("inStocks2", inStocks2);
 
-                String url = UrlHelper.URL_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inStocks2);
-                url = UniversalHelper.getTokenUrl(url);
-                Log.d("url", url);
-
-                sendRequest(url);
-            }
-        });
+        btnSubmit.setOnClickListener(this);
 
         return view;
     }
@@ -137,9 +100,22 @@ public class InOrderDetailState2Fragment extends Fragment {
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                Intent intent = new Intent(getActivity(), MaterialStockActivity.class);
-                intent.putExtra("flag", 1);
-                startActivity(intent);
+                Log.d("ssssss", s);
+                String json = VolleyHelper.getJson(s);
+                component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                if (response.isStatus()) {
+                    Intent intent = new Intent(getActivity(), MaterialStockActivity.class);
+                    intent.putExtra("flag", 1);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
+                    for (int position = 0; position < map.size(); position++) {
+                        if (Integer.parseInt(map.get(position)) > list1.get(position).getPreInStock().intValue()) {
+                            map.remove(position);
+                        }
+                    }
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -163,7 +139,7 @@ public class InOrderDetailState2Fragment extends Fragment {
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         MaterialInOrder materialInOrder = JSON.parseObject(response.getData().toString(), MaterialInOrder.class);
                         List<MaterialInOrderMaterial> list = materialInOrder.getInOrderMaterials();
-                        List<MaterialInOrderSpace> list1 = new ArrayList<MaterialInOrderSpace>();
+                        list1 = new ArrayList<MaterialInOrderSpace>();
                         List<MaterialInOrderSpace> list2 = new ArrayList<MaterialInOrderSpace>();
 
                         for (int i = 0; i < list.size(); i++) {
@@ -183,12 +159,10 @@ public class InOrderDetailState2Fragment extends Fragment {
                             btnSubmit.setText("提交入库");
                             myAdapter = new MaterialInfoAdapter(getActivity(), list1);
                             listView.setAdapter(myAdapter);
-//                            setListViewHeightBasedOnChildren(listView);
 
-                        } else if (materialInOrder.getStatus() == InOrderStatusVo.IN_STOCK.getKey()) {
+                        } else if (materialInOrder.getStatus() == InOrderStatusVo.IN_STOCK.getKey() || materialInOrder.getStatus() == InOrderStatusVo.PRE_PRINT.getKey()) {
                             MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(getActivity(), list1);
                             listView.setAdapter(myAdapter);
-//                            setListViewHeightBasedOnChildren(listView);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -202,27 +176,39 @@ public class InOrderDetailState2Fragment extends Fragment {
             }
         }).start();
     }
-//    /**
-//     * 动态设置ListView的高度
-//     * @param listView
-//     */
-//    public static void setListViewHeightBasedOnChildren(ListView listView) {
-//        if(listView == null) return;
-//        ListAdapter listAdapter = listView.getAdapter();
-//        if (listAdapter == null) {
-//            // pre-condition
-//            return;
-//        }
-//        int totalHeight = 0;
-//        for (int i = 0; i < listAdapter.getCount(); i++) {
-//            View listItem = listAdapter.getView(i, null, listView);
-//            listItem.measure(0, 0);
-//            totalHeight += listItem.getMeasuredHeight();
-//        }
-//        ViewGroup.LayoutParams params = listView.getLayoutParams();
-//        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-//        listView.setLayoutParams(params);
-//    }
+
+    @Override
+    public void onClick(View v) {
+        //                入库数量的非空判断
+        if (map.size() < myAdapter.getCount()) {
+            Toast.makeText(getActivity(), "请输入入库数量再提交", Toast.LENGTH_SHORT).show();
+            return;
+        }
+//                若包含输入数量入库，则inOrderSpaceIds非空
+        if (inOrderSpaceIds.length() > 0) {
+            inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+        }
+        if (preInStocks.length() > 0) {
+            preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+        }
+        for (int i = 0; i < map.size(); i++) {
+            inStocks += map.get(i) + ",";
+        }
+        String[] str = inStocks.split(",");
+        for (int i = 0; i < str.length; i++) {
+            if (!str[i].equals("")) {
+                inStocks1 += str[i] + ",";
+            }
+        }
+        if (inStocks1.length() > 0) {
+            inStocks1 = inStocks1.substring(0, inStocks1.length() - 1);
+        }
+
+        String url = UrlHelper.URL_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inStocks1);
+        url = UniversalHelper.getTokenUrl(url);
+
+        sendRequest(url);
+    }
 
 
     public class MaterialInfoAdapter extends BaseAdapter {
@@ -289,26 +275,11 @@ public class InOrderDetailState2Fragment extends Fragment {
 
                     }
                 });
-//                btnSubmit.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-////                        String inOrderSpaceIds1=inOrderSpaceIds.substring(0,inOrderSpaceIds.length()-1);
-////                        String preInStocks1=preInStocks.substring(0,preInStocks.length()-1);
-////                        for (int i=0;i<map.size();i++){
-////                            inStocks+=map.get(i)+",";
-////                        }
-////                        String inStocks1=inStocks.substring(0,inStocks.length()-1);
-//                        String url=URL_IN_ORDER_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderSpaceIds}","").replace("{preInStocks}","").replace("{inStocks}","");
-//                        Log.d("UrlstrUrlstrUrl",url);
-//                        sendRequest(url);
-//                    }
-//                });
-
             } else {
                 inOrderSpaceIds += list.get(position).getId() + ",";
-//                Log.d("inOrderSpaceIds",String.valueOf(inOrderSpaceIds));
                 preInStocks += list.get(position).getPreInStock() + ",";
                 holder.tvInNum.setText("");
+                final ViewHolder finalHolder = holder;
                 holder.tvInNum.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -323,33 +294,42 @@ public class InOrderDetailState2Fragment extends Fragment {
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (s.length() > 0) {
-                            map.put(position, s.toString());
+//                            if (Integer.parseInt(s.toString()) > list.get(position).getPreInStock().intValue()) {
+//                                Toast.makeText(getActivity(), "已入库数量不能超过待入库数量", Toast.LENGTH_SHORT).show();
+//                                btnSubmit.setBackgroundColor(getResources().getColor(R.color.color_dark_grey));
+//                                btnSubmit.setEnabled(false);
+//                                return;
+//                            } else {
+                                map.put(position, s.toString());
+//                                btnSubmit.setBackgroundColor(getResources().getColor(R.color.colorBase));
+//                                btnSubmit.setEnabled(true);
+//                                if (Integer.parseInt(s.toString()) < list.get(position).getPreInStock().intValue()) {
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+//                                            .setTitle("")
+//                                            .setMessage("您输入的已入库数量小于待入库数量，\t\n是否确定？")
+//                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    btnSubmit.setOnClickListener(InOrderDetailState2Fragment.this);
+//                                                }
+//                                            })
+//                                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            });
+//                                    AlertDialog dialog = builder.create();
+//                                    dialog.show();
+//                                }
+
+//                            }
+                        } else {
+                            map.remove(position);
                         }
                     }
                 });
-//                final ViewHolder finalHolder = holder;
-//                btnSubmit.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (finalHolder.tvInNum.getText().toString().equals("")){
-//                            Toast.makeText(getActivity(),"请输入已入库数量后再提交",Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            String inOrderSpaceIds1=inOrderSpaceIds.substring(0,inOrderSpaceIds.length()-1);
-//                            String preInStocks1=preInStocks.substring(0,preInStocks.length()-1);
-//                            for (int i=0;i<map.size();i++){
-//                                inStocks+=map.get(i)+",";
-//                            }
-//                            String inStocks1=inStocks.substring(0,inStocks.length()-1);
-//                            String url=URL_IN_ORDER_COMMIT.replace("{inOrderId}",String.valueOf(id)).replace("{inOrderSpaceIds}",inOrderSpaceIds1).replace("{preInStocks}",preInStocks1).replace("{inStocks}",inStocks1);
-//                            Log.d("UrlstrUrlstrUrl",url);
-////                        sendRequest(url);
-//                        }
-//
-//                    }
-//                });
             }
-//            inOrderSpaceIds+=list.get(position).getId()+",";
-//            preInStocks+=list.get(position).getPreInStock()+",";
 
 
             return convertView;

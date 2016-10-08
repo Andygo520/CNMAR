@@ -75,6 +75,8 @@
                 android:layout_width="70dip"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:hint="请输入"
+                android:textColorHint="@android:color/darker_gray"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

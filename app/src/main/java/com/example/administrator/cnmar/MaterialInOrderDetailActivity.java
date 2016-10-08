@@ -151,7 +151,7 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View v) {
 
-                                    Intent intent=new Intent(MaterialInOrderDetailActivity.this,CaptureActivity.class);
+                                    Intent intent=new Intent(MaterialInOrderDetailActivity.this, CaptureActivity.class);
                                     startActivityForResult(intent,0);
 //                                    finish();
                                 }

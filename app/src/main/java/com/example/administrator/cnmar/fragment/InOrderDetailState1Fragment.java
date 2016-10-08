@@ -77,7 +77,6 @@ public class InOrderDetailState1Fragment extends Fragment {
 //                不合格数量的非空判断
                 if ( map.size()<myAdapter.getCount()) {
                     Toast.makeText(getActivity(), "请输入不合格数量再提交", Toast.LENGTH_SHORT).show();
-//                    map.clear();
                     return;
                 }
                 String inOrderMaterialIds1 = inOrderMaterialIds.substring(0, inOrderMaterialIds.length() - 1);
@@ -242,6 +241,8 @@ public class InOrderDetailState1Fragment extends Fragment {
                 public void afterTextChanged(Editable s) {
                     if (s.length() > 0) {
                         map.put(position, s.toString());
+                    }else {
+                        map.remove(position);
                     }
 
                 }

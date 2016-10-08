@@ -94,7 +94,7 @@ public class OutOrderFragment extends Fragment {
 //                            }
 
                     }
-                }, 1500);
+                }, 100);
             }
         });
         ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -169,7 +169,7 @@ public class OutOrderFragment extends Fragment {
                 getOutOrderListFromNet(urlString);
             }
         });
-        getOutOrderListFromNet(url);
+//        getOutOrderListFromNet(url);
         return view;
     }
     public void getOutOrderListFromNet(final String url){
