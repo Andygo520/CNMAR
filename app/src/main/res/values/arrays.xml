@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="materialInOrderStatus">
+        <item>@string/ALL</item>
+        <item>@string/PRE_PRINT</item>
+        <item>@string/PRE_IN_STOCK</item>
+        <item>@string/IN_STOCK</item>
+        <item>@string/NOT_ALL_IN</item>
+        <item>@string/PRE_TEST</item>
+        <item>@string/TEST_FAIL</item>
+    </string-array>
+    <string-array name="inOrderStatus">
+        <item>@string/ALL</item>
+        <item>@string/PRE_PRINT</item>
+        <item>@string/PRE_IN_STOCK</item>
+        <item>@string/NOT_ALL_IN</item>
+        <item>@string/IN_STOCK</item>
+    </string-array>
+    <string-array name="outOrderStatus">
+        <item>@string/ALL</item>
+        <item>@string/PRE_OUT_STOCK</item>
+        <item>@string/NOT_ALL_OUT</item>
+        <item>@string/OUT_STOCK</item>
+    </string-array>
+</resources>

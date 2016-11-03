@@ -1,0 +1,67 @@
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <include layout="@layout/top"></include>
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom" >
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+            <RadioButton
+                android:id="@+id/productionPlan"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="加工单"
+                android:textColor="@color/text_color"
+                android:textSize="15sp"
+                android:button="@null"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+            <RadioButton
+                android:id="@+id/receiveMaterialOrder"
+                android:background="@color/color_white"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="领料单"
+                android:textSize="15sp"
+                android:textColor="@color/text_color"
+                android:button="@null"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+            <RadioButton
+                android:id="@+id/deliveryPlan"
+                android:background="@color/color_white"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="交付计划"
+                android:textSize="15sp"
+                android:textColor="@color/text_color"
+                android:button="@null"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+        </RadioGroup>
+    </LinearLayout>
+
+</LinearLayout>
