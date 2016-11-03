@@ -17,10 +17,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.administrator.cnmar.LoginActivity;
+import com.example.administrator.cnmar.activity.LoginActivity;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.entity.UserInfor;
+import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
+
+import java.text.SimpleDateFormat;
 
 import component.system.model.SystemUser;
 
@@ -82,42 +84,22 @@ public class ProfileFragment extends Fragment {
         StringRequest stringRequest=new StringRequest(LoginActivity.strUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
-                String json=VolleyHelper.getJson(s);
-                UserInfor userInfor= JSON.parseObject(json,UserInfor.class);
-                component.common.model.Response response=JSON.parseObject(json,component.common.model.Response.class);
-                SystemUser model = JSON.parseObject(response.getData().toString(), SystemUser.class);
+                component.common.model.Response response = JSON.parseObject(VolleyHelper.getJson(s), component.common.model.Response.class);
+                SystemUser userInfor = JSON.parseObject(response.getData().toString(), SystemUser.class);
 
-                tvAccount.setText(userInfor.getData().getUsername());
-                tvName.setText(userInfor.getData().getName());
-                tvSex.setText(model.getGenderVo().getValue());
-                if(userInfor.getData().getBirthday()!=null){
-                    tvBirthday.setText(userInfor.getData().getBirthday().toString());
+                tvAccount.setText(userInfor.getUsername());
+                tvName.setText(userInfor.getName());
+                tvSex.setText(userInfor.getGenderVo().getValue());
+                if(userInfor.getBirthday()!=null){
+                    SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+                    String birthday=sdf.format(userInfor.getBirthday());
+                    tvBirthday.setText(birthday);
                 }else
                     tvBirthday.setText("未设置");
-                if(userInfor.getData().getImgId()>0){
-                    String path="http://139.196.104.170:8090"+"/"+model.getImg().getPath();
+                if(userInfor.getImgId()>0){
+//                    获取图片的路径，路径=绝对路径+相对路径
+                    String path= UrlHelper.URL_IMAGE+userInfor.getImg().getPath();
                     VolleyHelper.showImageByUrl(getActivity(),path,ivImage);
-//                    HttpURLConnection con= null;
-//                    try {
-//                        con = (HttpURLConnection)new URL(path).openConnection();
-//                        InputStream in=con.getInputStream();
-//                        Bitmap bitmap= BitmapFactory.decodeStream(in);
-////                      ivImage.setImageBitmap(bitmap);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-//                    Log.d("tag",path);
-//                    Uri uri=Uri.parse(path);
-//                    ivImage.setImageURI(uri);
-//                    try {
-//                        InputStream is=new URL(path).openStream();
-//                        Bitmap bitmap=BitmapFactory.decodeStream(is);
-//                        ivImage.setImageBitmap(bitmap);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
                 }
 
 

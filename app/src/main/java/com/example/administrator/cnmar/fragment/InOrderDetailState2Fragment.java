@@ -2,9 +2,11 @@ package com.example.administrator.cnmar.fragment;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,7 +25,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.administrator.cnmar.MaterialStockActivity;
+import com.example.administrator.cnmar.activity.LoginActivity;
+import com.example.administrator.cnmar.activity.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
@@ -57,7 +60,11 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
     private String preInStocks1 = "";
     private String inStocks = "";
     private String inStocks1 = "";
-    List<MaterialInOrderSpace> list1;
+    private String role;
+    private Boolean isSuper;
+
+
+    private List<MaterialInOrderSpace> list1;
 
 
     public InOrderDetailState2Fragment() {
@@ -75,6 +82,11 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
         name3 = (TextView) view.findViewById(R.id.column3);
         name4 = (TextView) view.findViewById(R.id.column4);
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
+
+        //        从SharedPreference中取出用户信息
+        role = LoginActivity.sp.getString("Role", "123");
+        isSuper=LoginActivity.sp.getBoolean("isSuper",false);
+
 
         listView = (MyListView) view.findViewById(R.id.lvTable);
 //        listView.addFooterView(new ViewStub(getActivity()));
@@ -107,13 +119,6 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
                     Intent intent = new Intent(getActivity(), MaterialStockActivity.class);
                     intent.putExtra("flag", 1);
                     startActivity(intent);
-                } else {
-                    Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
-                    for (int position = 0; position < map.size(); position++) {
-                        if (Integer.parseInt(map.get(position)) > list1.get(position).getPreInStock().intValue()) {
-                            map.remove(position);
-                        }
-                    }
                 }
 
             }
@@ -154,13 +159,13 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
 //                        MaterialInfoAdapter myAdapter=new MaterialInfoAdapter(getActivity(),list1);
 //                        listView.setAdapter(myAdapter);
 
-                        if (materialInOrder.getStatus() == InOrderStatusVo.PRE_IN_STOCK.getKey()) {
+                        if (materialInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey() && (role.contains("原料库管员") || isSuper)) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             btnSubmit.setText("提交入库");
                             myAdapter = new MaterialInfoAdapter(getActivity(), list1);
                             listView.setAdapter(myAdapter);
 
-                        } else if (materialInOrder.getStatus() == InOrderStatusVo.IN_STOCK.getKey() || materialInOrder.getStatus() == InOrderStatusVo.PRE_PRINT.getKey()) {
+                        } else {
                             MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(getActivity(), list1);
                             listView.setAdapter(myAdapter);
                         }
@@ -179,33 +184,50 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        //                入库数量的非空判断
+        //   入库数量的非空判断
         if (map.size() < myAdapter.getCount()) {
             Toast.makeText(getActivity(), "请输入入库数量再提交", Toast.LENGTH_SHORT).show();
             return;
         }
-//                若包含输入数量入库，则inOrderSpaceIds非空
-        if (inOrderSpaceIds.length() > 0) {
-            inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+        for (int position = 0; position < map.size(); position++) {
+            if (map.get(position).equals("?")) {
+                Toast.makeText(getActivity(),R.string.more_than_pre_in, Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
-        if (preInStocks.length() > 0) {
-            preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
-        }
+
+        inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+        preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
         for (int i = 0; i < map.size(); i++) {
             inStocks += map.get(i) + ",";
         }
-        String[] str = inStocks.split(",");
-        for (int i = 0; i < str.length; i++) {
-            if (!str[i].equals("")) {
-                inStocks1 += str[i] + ",";
-            }
-        }
-        if (inStocks1.length() > 0) {
-            inStocks1 = inStocks1.substring(0, inStocks1.length() - 1);
-        }
+
+        inStocks1 = inStocks.substring(0, inStocks.length() - 1);
 
         String url = UrlHelper.URL_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inStocks1);
         url = UniversalHelper.getTokenUrl(url);
+        for (int position = 0; position < map.size(); position++) {
+            if (Integer.parseInt(map.get(position)) < list1.get(position).getPreInStock().intValue()) {
+                final String finalUrl = url;
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("系统提示")
+                        .setMessage("未全部入库，提交之后不能修改，确认入库吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendRequest(finalUrl);
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                inStocks = "";
+                            }
+                        }).create().show();
+                return;
+            }
+        }
 
         sendRequest(url);
     }
@@ -256,13 +278,16 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
             holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
 //                holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
 
+            inOrderSpaceIds += list.get(position).getId() + ",";
+            preInStocks += list.get(position).getPreInStock() + ",";
 
 //            判断原料是扫描入库还是输入数量入库
-            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.SCAN.getKey()) {
+            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.scan.getKey()) {
                 holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
                 holder.tvInNum.setFocusable(false);
                 holder.tvInNum.setFocusableInTouchMode(false);
-                map.put(position, "");
+//                map.put(position, "");
+                map.put(position, String.valueOf(list.get(position).getInStock()));
                 holder.tvInNum.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -276,8 +301,6 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
                     }
                 });
             } else {
-                inOrderSpaceIds += list.get(position).getId() + ",";
-                preInStocks += list.get(position).getPreInStock() + ",";
                 holder.tvInNum.setText("");
                 final ViewHolder finalHolder = holder;
                 holder.tvInNum.addTextChangedListener(new TextWatcher() {
@@ -294,36 +317,11 @@ public class InOrderDetailState2Fragment extends Fragment implements View.OnClic
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (s.length() > 0) {
-//                            if (Integer.parseInt(s.toString()) > list.get(position).getPreInStock().intValue()) {
-//                                Toast.makeText(getActivity(), "已入库数量不能超过待入库数量", Toast.LENGTH_SHORT).show();
-//                                btnSubmit.setBackgroundColor(getResources().getColor(R.color.color_dark_grey));
-//                                btnSubmit.setEnabled(false);
-//                                return;
-//                            } else {
+                            if (Integer.parseInt(s.toString()) > list.get(position).getPreInStock().intValue()) {
+                                map.put(position, "?");
+                            } else
                                 map.put(position, s.toString());
-//                                btnSubmit.setBackgroundColor(getResources().getColor(R.color.colorBase));
-//                                btnSubmit.setEnabled(true);
-//                                if (Integer.parseInt(s.toString()) < list.get(position).getPreInStock().intValue()) {
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-//                                            .setTitle("")
-//                                            .setMessage("您输入的已入库数量小于待入库数量，\t\n是否确定？")
-//                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(DialogInterface dialog, int which) {
-//                                                    btnSubmit.setOnClickListener(InOrderDetailState2Fragment.this);
-//                                                }
-//                                            })
-//                                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(DialogInterface dialog, int which) {
-//                                                    dialog.cancel();
-//                                                }
-//                                            });
-//                                    AlertDialog dialog = builder.create();
-//                                    dialog.show();
-//                                }
 
-//                            }
                         } else {
                             map.remove(position);
                         }

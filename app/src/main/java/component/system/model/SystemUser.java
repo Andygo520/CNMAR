@@ -1,9 +1,9 @@
 package component.system.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.Date;
 import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.ImgModel;
 import component.common.vo.IsEnableVo;

@@ -11,21 +11,21 @@ public class Supply extends BaseModel {
 	private String code; // 供应商编码
 	@JSONField(ordinal = 2)
 	private String name; // 供应商名称
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 3)
 	private String tel; // 电话
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 4)
 	private String fax; // 传真
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 5)
 	private String address; // 地址
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 6)
 	private String intro; // 简介
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 7)
 	private String contact; // 联系人
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 8)
 	private String job; // 职位
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 9)
 	private String phone; // 手机号
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 10)
 	private String email; // 邮箱
 
 	public String getCode() {

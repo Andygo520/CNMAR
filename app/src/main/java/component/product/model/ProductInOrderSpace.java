@@ -21,7 +21,11 @@ public class ProductInOrderSpace {
 	private String qrcode; // 二维码相对路径
 
 	@JSONField(ordinal = 8)
+	private Product product;
+	@JSONField(ordinal = 9)
 	private ProductSpace space;
+	@JSONField(ordinal = 10)
+	private String inOrOut;
 
 	public ProductInOrderSpace() {
 
@@ -90,12 +94,28 @@ public class ProductInOrderSpace {
 		this.qrcode = qrcode;
 	}
 
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
 	public ProductSpace getSpace() {
 		return space;
 	}
 
 	public void setSpace(ProductSpace space) {
 		this.space = space;
+	}
+
+	public String getInOrOut() {
+		return inOrOut;
+	}
+
+	public void setInOrOut(String inOrOut) {
+		this.inOrOut = inOrOut;
 	}
 
 }

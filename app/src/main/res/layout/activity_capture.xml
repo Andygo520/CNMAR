@@ -28,6 +28,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:gravity="center"
+                android:visibility="invisible"
                 >
                 <ImageView
                     android:id="@+id/left_img"
@@ -40,11 +41,13 @@
 
         <RelativeLayout
             android:id="@+id/capture_crop_view"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_below="@id/capture_mask_top"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/qr_code_bg">
+            android:background="@drawable/qr_code_bg"
+            android:visibility="visible"
+            >
 
             <ImageView
                 android:id="@+id/capture_scan_line"
@@ -56,6 +59,53 @@
                 android:src="@drawable/scan_line"/>
 
         </RelativeLayout>
+<!--      扫描完成后，弹出该继续扫描视图，扫描界面隐藏     -->
+        <RelativeLayout
+            android:id="@+id/rlMultiScan"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_below="@id/capture_mask_top"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"
+            android:background="@drawable/shadow"
+            >
+
+            <TextView
+                android:id="@+id/tvCode"
+                style="@style/textview_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/white"
+                android:textIsSelectable="false"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_horizontal"
+                >
+
+                <Button
+                    android:id="@+id/goOnScan"
+                    style="@style/button_blue_style"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:text="继续"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/stopScan"
+                    style="@style/button_blue_style"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="结束"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
 
         <ImageView
             android:id="@+id/capture_mask_bottom"

@@ -1,14 +1,21 @@
 package component.company.model;
 
-import component.common.model.BaseModel;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import component.common.model.ImgModel;
 
 /** 产品 */
-public class CompanyProduct extends BaseModel {
+public class CompanyProduct extends ImgModel {
 
+	@JSONField(ordinal = 1)
 	private String code; // 产品编码
+	@JSONField(ordinal = 2)
 	private String name; // 产品名称
+	@JSONField(ordinal = 3)
 	private String spec; // 规格
+	@JSONField(ordinal = 4)
 	private String intro; // 简介
+	@JSONField(ordinal = 5)
 	private String qrcode; // 二维码相对路径
 
 	public String getCode() {

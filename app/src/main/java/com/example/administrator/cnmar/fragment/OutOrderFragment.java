@@ -14,9 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,20 +30,22 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.chanven.lib.cptr.PtrClassicFrameLayout;
-import com.chanven.lib.cptr.PtrDefaultHandler;
-import com.chanven.lib.cptr.PtrFrameLayout;
-import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
-import com.example.administrator.cnmar.MaterialOutOrderDetailActivity;
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import component.material.model.MaterialOutOrder;
+import component.material.vo.OutOrderStatusVo;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,10 +54,26 @@ public class OutOrderFragment extends Fragment {
     private MyListView lvOutOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
-    private PtrClassicFrameLayout ptrFrame;
+    private Spinner spinner;
+    //    配合Spinner使用的分割线
+    private TextView tvLine;
+
+    //   数组用来存放所有出库单状态
+    String[] status = {"所有状态", "待出库", "未全部出库", "已出库"};
+    //    map用来将出库单状态跟OutOrderStatusVo里面的状态关联
+    private Map<String, Object> map = new HashMap<>();
+
+    private ImageView ivDelete;
+    private MaterialRefreshLayout materialRefreshLayout;
     private Handler handler = new Handler();
-    int page=0;
-    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER);
+    private BillAdapter myAdapter;
+    int page = 1;    //    page代表显示的是第几页内容，从1开始
+    private int total; // 总页数
+    private int num = 1; // 第几页
+    private int count; // 数据总条数
+    //    用来存放从后台取出的数据列表，作为adapter的数据源
+    private List<MaterialOutOrder> data = new ArrayList<>();
+    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
 
     public OutOrderFragment() {
         // Required empty public constructor
@@ -63,75 +85,116 @@ public class OutOrderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_out_house_bill, container, false);
-        lvOutOrder= (MyListView) view.findViewById(R.id.lvOutOrder);
+        View view = inflater.inflate(R.layout.fragment_out_order, container, false);
+        lvOutOrder = (MyListView) view.findViewById(R.id.lvOutOrder);
 //        lvOutOrder.addFooterView(new ViewStub(getActivity()));
+        ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
-        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
-        ptrFrame.postDelayed(new Runnable() {
+        //      在map中存入状态与Vo的对应关系，“所有状态”存入空字符
+        map.put(status[0], "");
+        map.put(status[1], OutOrderStatusVo.pre_out_stock.getKey());
+        map.put(status[2], OutOrderStatusVo.not_all.getKey());
+        map.put(status[3], OutOrderStatusVo.out_stock.getKey());
+
+        spinner = (Spinner) view.findViewById(R.id.spinner);
+        spinner.setVisibility(View.VISIBLE);
+        // 建立数据源
+        String[] mItems = getResources().getStringArray(R.array.outOrderStatus);
+        // 建立Adapter并且绑定数据源
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //绑定 Adapter到控件
+        spinner.setAdapter(adapter);
+
+//       只有在拥有垂直下拉列表的Fragment才显示这个分割线
+        tvLine = (TextView) view.findViewById(R.id.seperator_layout);
+        tvLine.setVisibility(View.VISIBLE);
+//      默认情况下不激活setOnItemSelectedListener方法，只有选择的时候才调用该方法
+        spinner.setSelection(0, false);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void run() {
-                ptrFrame.autoRefresh(true);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String urlString = UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", "").replace("{query.status}", String.valueOf(map.get(status[position])));
+                urlString = UniversalHelper.getTokenUrl(urlString);
+                myAdapter = null;
+                getOutOrderListFromNet(urlString);
             }
-        }, 150);
-        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
+
             @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
+        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
+        materialRefreshLayout.setLoadMore(true);
+
+//        materialRefreshLayout.autoRefreshLoadMore();
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+            @Override
+            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
+                //一般加载数据都是在子线程中，这里我用到了handler
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        page = 0;
-//                        mData.clear();
-//                        for (int i = 0; i < 17; i++) {
-//                            mData.add(new String("  ListView item  -" + i));
-//                        }
-//                        mAdapter.notifyDataSetChanged();
+                        myAdapter = null;
+//                      下拉刷新默认显示第一页（10条）内容
+                        page = 1;
                         getOutOrderListFromNet(url);
-                        ptrFrame.refreshComplete();
-
-//                        if (!ptrFrame.isLoadMoreEnable()) {
-//                        ptrFrame.setLoadMoreEnable(true);
-//                            }
-
+                        materialRefreshLayout.finishRefresh();
                     }
-                }, 100);
+                }, 400);
             }
-        });
-        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
 
             @Override
-            public void loadMore() {
-                handler.postDelayed(new Runnable() {
+            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
+                if (count <= 10) {
+                    materialRefreshLayout.setLoadMore(false);
+                    materialRefreshLayout.finishRefreshLoadMore();
 
-                    @Override
-                    public void run() {
-//                        mData.add(new String("  ListView item  - add " + page));
-//                        mAdapter.notifyDataSetChanged();
-                        ptrFrame.loadMoreComplete(true);
-                        page++;
-                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
-                                .show();
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        if (page == 1) {
-                            //set load more disable
-//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                            myAdapter = new BillAdapter();
+                            page++;
+//                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
+                            if (page == total) {
+                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
+                                Log.d("urlfinish", url);
+                                getOutOrderListFromNet(url);
+                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
+                                // 结束上拉刷新...
+                                materialRefreshLayout.finishRefreshLoadMore();
+                                materialRefreshLayout.setLoadMore(false);
+                                return;
+                            }
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
+                            Log.d("urlmore", url);
+                            getOutOrderListFromNet(url);
+                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            // 结束上拉刷新...
+                            materialRefreshLayout.finishRefreshLoadMore();
                         }
-                    }
-                }, 1000);
+                    }, 400);
+                }
             }
         });
-        llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
-        etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
+        llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
+        etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("出库单号查询");
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode==KeyEvent.KEYCODE_ENTER){
-                    String input=etSearchInput.getText().toString().trim();
-                    if(input.equals("")){
-                        Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
-                    }else{
-                        String urlString=UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}",input));
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    String input = etSearchInput.getText().toString().trim();
+                    if (input.equals("")) {
+                        Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", input));
+                        myAdapter = null;
                         getOutOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -157,42 +220,77 @@ public class OutOrderFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                    if (s.toString().equals(""))
-                        getOutOrderListFromNet(url);
+                if (s.toString().equals("")) {
+                    ivDelete.setVisibility(View.GONE);
+
+                    myAdapter = null;
+                    getOutOrderListFromNet(url);
+
+                } else {
+                    ivDelete.setVisibility(View.VISIBLE);
+                    ivDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            etSearchInput.setText("");
+                        }
+                    });
+                }
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String input=etSearchInput.getText().toString().trim();
-                String urlString=UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}",input));
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
+                String input = etSearchInput.getText().toString().trim();
+                if (input.equals("")) {
+                    Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", input));
+                myAdapter = null;
                 getOutOrderListFromNet(urlString);
             }
         });
 //        getOutOrderListFromNet(url);
         return view;
     }
-    public void getOutOrderListFromNet(final String url){
+
+    public void getOutOrderListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene= Volley.newRequestQueue(getActivity());
+                RequestQueue quene = Volley.newRequestQueue(getActivity());
 //                Log.d("Tag","开始执行");
-                StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
+                        String json = VolleyHelper.getJson(s);
 //                        Log.d("GGGG",json);
-                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
-                        List<MaterialOutOrder> list= JSON.parseArray(response.getData().toString(),MaterialOutOrder.class );
-                        BillAdapter myAdapter=new BillAdapter(list,getActivity());
-                        lvOutOrder.setAdapter(myAdapter);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        List<MaterialOutOrder> list = JSON.parseArray(response.getData().toString(), MaterialOutOrder.class);
+                        count = response.getPage().getCount();
+                        total = response.getPage().getTotal();
+                        num = response.getPage().getNum();
+
+                        if (myAdapter == null) {
+                            data = list;
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvOutOrder.setAdapter(myAdapter);
+                        } else {
+                            data.addAll(list);
+//                            myAdapter.notifyDataSetChanged();
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvOutOrder.setAdapter(myAdapter);
+                        }
 
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag",volleyError.toString());
+                        Log.d("Tag", volleyError.toString());
 
                     }
                 });
@@ -203,11 +301,15 @@ public class OutOrderFragment extends Fragment {
 
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialOutOrder> list=null;
+        private List<MaterialOutOrder> list = null;
 
         public BillAdapter(List<MaterialOutOrder> list, Context context) {
             this.list = list;
             this.context = context;
+        }
+
+        public BillAdapter() {
+
         }
 
         @Override
@@ -227,20 +329,25 @@ public class OutOrderFragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                holder=new ViewHolder();
-                convertView= LayoutInflater.from(context).inflate(R.layout.out_order_item,parent,false);
-                holder.tvOutOrderNo= (TextView) convertView.findViewById(R.id.tvOutOrderNo);
-                holder.tvPlanNo= (TextView) convertView.findViewById(R.id.tvPlanNo);
-                holder.tvOutOrderStatus= (TextView) convertView.findViewById(R.id.tvOutOrderStatus);
-                holder.detail= (TextView) convertView.findViewById(R.id.detail);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = LayoutInflater.from(context).inflate(R.layout.out_order_item, parent, false);
+                holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.tvOutOrderNo);
+                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.tvPlanNo);
+                holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.tvOutOrderStatus);
+                holder.detail = (TextView) convertView.findViewById(R.id.detail);
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 //            Log.d("GGGG", DateFormat.getDateInstance().format(list.get(position).getArrivalDate()));
             holder.tvOutOrderNo.setText(list.get(position).getCode());
-            holder.tvPlanNo.setText("");
+
+            if (list.get(position).getProducePlan() != null)
+                holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
+            else
+                holder.tvPlanNo.setText("");
+
             holder.tvOutOrderStatus.setText(list.get(position).getOutOrderStatusVo().getValue());
             holder.detail.setText("详情");
             holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
@@ -256,11 +363,11 @@ public class OutOrderFragment extends Fragment {
             return convertView;
         }
 
-        class ViewHolder{
-            public  TextView tvOutOrderNo;
-            public  TextView tvPlanNo;
-            public  TextView tvOutOrderStatus;
-            public  TextView detail;
+        class ViewHolder {
+            public TextView tvOutOrderNo;
+            public TextView tvPlanNo;  // 加工单编号
+            public TextView tvOutOrderStatus;
+            public TextView detail;
         }
 
     }

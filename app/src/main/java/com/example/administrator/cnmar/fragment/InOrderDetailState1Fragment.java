@@ -23,7 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.administrator.cnmar.MaterialStockActivity;
+import com.example.administrator.cnmar.activity.LoginActivity;
+import com.example.administrator.cnmar.activity.MaterialStockActivity;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
@@ -45,11 +46,13 @@ public class InOrderDetailState1Fragment extends Fragment {
     private String strUrl;
     private Button btnSubmit;
     private HashMap<Integer, String> map = new HashMap<>();
-    private int id;
+    private int id, testId;
     MaterialInfoAdapter myAdapter;
     private String inOrderMaterialIds = "";
     private String res = "";
     private String failNums = "";
+    private String role;
+    private Boolean isSuper;
 
 
     public InOrderDetailState1Fragment() {
@@ -66,8 +69,14 @@ public class InOrderDetailState1Fragment extends Fragment {
 //       listView.addFooterView(new ViewStub(getActivity()));
         btnSubmit = (Button) view.findViewById(R.id.btnSubmit);
 
-        //        取出传递到详情页面的id
+//        从SharedPreference中取出用户的角色，若角色包含"检验员"就显示按钮;如果是超级用户显示所有按钮
+        role = LoginActivity.sp.getString("Role", "123");
+        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
+
+        //        取出传递到详情页面的id，以及从登陆页面传递过来的用户的id（提交检验结果的时候用到）
         id = getActivity().getIntent().getIntExtra("ID", 0);
+        testId = LoginActivity.sp.getInt("userId", 0);
+
         strUrl = UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
         getMaterialListFromNet(strUrl);
@@ -75,8 +84,8 @@ public class InOrderDetailState1Fragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                不合格数量的非空判断
-                if ( map.size()<myAdapter.getCount()) {
-                    Toast.makeText(getActivity(), "请输入不合格数量再提交", Toast.LENGTH_SHORT).show();
+                if (map.size() < myAdapter.getCount()) {
+                    Toast.makeText(getActivity(), R.string.input_fail_num , Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String inOrderMaterialIds1 = inOrderMaterialIds.substring(0, inOrderMaterialIds.length() - 1);
@@ -85,7 +94,7 @@ public class InOrderDetailState1Fragment extends Fragment {
                     failNums += map.get(i) + ",";
                 }
                 String failNums1 = failNums.substring(0, failNums.length() - 1);
-                String url = UrlHelper.URL_TEST_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderMaterialIds}", inOrderMaterialIds1).replace("{res}", res1).replace("{failNums}", failNums1);
+                String url = UrlHelper.URL_TEST_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{testId}", String.valueOf(testId)).replace("{inOrderMaterialIds}", inOrderMaterialIds1).replace("{res}", res1).replace("{failNums}", failNums1);
                 Log.d("strUrlstrUrlstrUrl", url);
                 url = UniversalHelper.getTokenUrl(url);
                 sendRequest(url);
@@ -109,13 +118,13 @@ public class InOrderDetailState1Fragment extends Fragment {
                         List<MaterialInOrderMaterial> list = materialInOrder.getInOrderMaterials();
 
 //                        Log.d("materialIdsmate",String.valueOf(materialIds.size()));
-                        if (materialInOrder.getStatus() == InOrderStatusVo.PRE_TEST.getKey()) {
+//                        只有单据状态为待检验并且用户拥有“检验员”角色或者是超级用户才能显示按钮
+                        if (materialInOrder.getStatus() == InOrderStatusVo.pre_test.getKey() && (role.contains("检验员") || isSuper)) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             myAdapter = new MaterialInfoAdapter(getActivity(), list);
                             listView.setAdapter(myAdapter);
-//                            setListViewHeightBasedOnChildren(listView);
 
-                        } else if (materialInOrder.getStatus() == InOrderStatusVo.TEST_FAIL.getKey()) {
+                        } else {
                             MaterialInfoAdapter1 myAdapter = new MaterialInfoAdapter1(getActivity(), list);
                             listView.setAdapter(myAdapter);
 //                            setListViewHeightBasedOnChildren(listView);
@@ -241,7 +250,7 @@ public class InOrderDetailState1Fragment extends Fragment {
                 public void afterTextChanged(Editable s) {
                     if (s.length() > 0) {
                         map.put(position, s.toString());
-                    }else {
+                    } else {
                         map.remove(position);
                     }
 
@@ -307,32 +316,10 @@ public class InOrderDetailState1Fragment extends Fragment {
             holder.tvAcNum.setText(String.valueOf(list.get(position).getStandard().getAcNum()));
             holder.tvReNum.setText(String.valueOf(list.get(position).getStandard().getReNum()));
             holder.tvInvalidateNum.setText(String.valueOf(list.get(position).getFailNum()));
+            holder.tvInvalidateNum.setFocusable(false);
+            holder.tvInvalidateNum.setFocusableInTouchMode(false);
 
-            inOrderMaterialIds += list.get(position).getId() + ",";
-            res += list.get(position).getStandard().getReNum() + ",";
 
-//            if(holder.tvInvalidateNum.getText().toString().equals("0")){
-//                map.put(position,holder.tvInvalidateNum.getText().toString());
-//            }else{
-            holder.tvInvalidateNum.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s.length() > 0) {
-                        map.put(position, s.toString());
-                        Log.d("position", s.toString());
-                    }
-                }
-            });
-//            }
             return convertView;
         }
 

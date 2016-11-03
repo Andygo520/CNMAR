@@ -2,7 +2,7 @@ package component.common.vo;
 
 public enum IsEnableVo {
 
-	EMPTY(null, ""),
+	empty(null, ""),
 	/** 启用 */
 	T(true, "启用"),
 	/** 禁用 */

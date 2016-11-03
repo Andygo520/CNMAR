@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 public enum GenderVo {
 
-	EMPTY(null, ""),
+	empty(null, ""),
 	/** 男 */
 	M("M", "男"),
 	/** 女 */
@@ -29,7 +29,7 @@ public enum GenderVo {
 	public static final GenderVo getInstance(String key) {
 		for (GenderVo vo : values()) {
 			if (StringUtils.isEmpty(key)) {
-				return EMPTY;
+				return empty;
 			} else if (key.equals(vo.getKey())) {
 				return vo;
 			}

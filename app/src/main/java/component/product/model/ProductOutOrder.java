@@ -19,7 +19,7 @@ public class ProductOutOrder extends BaseModel {
 	@JSONField(ordinal = 3)
 	private String remark; // 备注
 	@JSONField(ordinal = 4)
-	private int status; // 出库单状态 - 2待出库3已出库
+	private int status; // 出库单状态 - 2待出库3已出库4未全部出库
 
 	@JSONField(ordinal = 5)
 	private CustomDeliverPlan deliverPlan;

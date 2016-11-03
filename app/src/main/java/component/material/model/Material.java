@@ -1,9 +1,13 @@
 package component.material.model;
 
+import java.util.List;
+
 import com.alibaba.fastjson.annotation.JSONField;
 
 import component.basic.vo.MixTypeVo;
+import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
+import component.category.model.Category;
 import component.common.model.BaseModel;
 import component.supply.model.Supply;
 
@@ -11,32 +15,52 @@ import component.supply.model.Supply;
 public class Material extends BaseModel {
 
 	@JSONField(ordinal = 1)
-	private int supplyId; // 供应商id
+	private int categoryId; // BOM属性id
 	@JSONField(ordinal = 2)
-	private int unitId; // 单位id
+	private int supplyId; // 供应商id
 	@JSONField(ordinal = 3)
-	private String code; // 原料编码
+	private int unitId; // 单位id
 	@JSONField(ordinal = 4)
-	private String name; // 原料名称
+	private String code; // 原料编码
 	@JSONField(ordinal = 5)
-	private String spec; // 规格
+	private String name; // 原料名称
 	@JSONField(ordinal = 6)
-	private String remark; // 备注
+	private String spec; // 规格
 	@JSONField(ordinal = 7)
-	private int stockType; // 出入库操作 - 1扫描二维码2输入数量
+	private String remark; // 备注
 	@JSONField(ordinal = 8)
-	private int mixType; // 不同批次混仓 - 1不允许2允许
+	private int stockType; // 出入库操作 - 1扫描二维码2输入数量
 	@JSONField(ordinal = 9)
-	private int minStock; // 预警最小库存
+	private int mixType; // 不同批次混仓 - 1不允许2允许
 	@JSONField(ordinal = 10)
+	private int packType; // 包装类型 - 1袋装2装箱3捆包4捆扎5料框
+	@JSONField(ordinal = 11)
+	private int packNum; // 包装数量
+	@JSONField(ordinal = 12)
+	private int packUnitId; // 包装单位id
+	@JSONField(ordinal = 13)
+	private int minStock; // 预警最小库存
+	@JSONField(ordinal = 14)
 	private int maxStock; // 预警最大库存
 
-	@JSONField(ordinal = 11)
+	@JSONField(ordinal = 15)
 	private Supply supply;
-	@JSONField(ordinal = 12)
+	@JSONField(ordinal = 16)
 	private MaterialUnit unit;
-	@JSONField(ordinal = 13)
+	@JSONField(ordinal = 17)
+	private Category category;
+	@JSONField(ordinal = 18)
 	private MaterialStock stock;
+	@JSONField(serialize = false)
+	private List<MaterialSpace> spaces;
+
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
 
 	public int getSupplyId() {
 		return supplyId;
@@ -102,6 +126,30 @@ public class Material extends BaseModel {
 		this.mixType = mixType;
 	}
 
+	public int getPackType() {
+		return packType;
+	}
+
+	public void setPackType(int packType) {
+		this.packType = packType;
+	}
+
+	public int getPackNum() {
+		return packNum;
+	}
+
+	public void setPackNum(int packNum) {
+		this.packNum = packNum;
+	}
+
+	public int getPackUnitId() {
+		return packUnitId;
+	}
+
+	public void setPackUnitId(int packUnitId) {
+		this.packUnitId = packUnitId;
+	}
+
 	public int getMinStock() {
 		return minStock;
 	}
@@ -134,12 +182,28 @@ public class Material extends BaseModel {
 		this.unit = unit;
 	}
 
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
 	public MaterialStock getStock() {
 		return stock;
 	}
 
 	public void setStock(MaterialStock stock) {
 		this.stock = stock;
+	}
+
+	public List<MaterialSpace> getSpaces() {
+		return spaces;
+	}
+
+	public void setSpaces(List<MaterialSpace> spaces) {
+		this.spaces = spaces;
 	}
 
 	@JSONField(serialize = false)
@@ -150,6 +214,11 @@ public class Material extends BaseModel {
 	@JSONField(serialize = false)
 	public MixTypeVo getMixTypeVo() {
 		return MixTypeVo.getInstance(mixType);
+	}
+
+	@JSONField(serialize = false)
+	public PackTypeVo getPackTypeVo() {
+		return PackTypeVo.getInstance(packType);
 	}
 
 }

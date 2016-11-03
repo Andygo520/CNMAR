@@ -3,15 +3,15 @@ package component.system.vo;
 public enum AuthValueVo {
 
 	/** 查询 */
-	LIST("list", "查询"),
+	list("list", "查询"),
 	/** 新增 */
-	ADD("add", "新增"),
+	add("add", "新增"),
 	/** 编辑 */
-	EDIT("edit", "编辑"),
+	edit("edit", "编辑"),
 	/** 删除 */
-	DELETE("delete", "删除"),
+	delete("delete", "删除"),
 	/** 其它 */
-	OTHER("other", "其它");
+	other("other", "其它");
 
 	private String key;
 	private String value;

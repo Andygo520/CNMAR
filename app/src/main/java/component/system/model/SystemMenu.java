@@ -21,6 +21,8 @@ public class SystemMenu extends TreeModel {
 	private List<SystemMenu> subList;
 	@JSONField(serialize = false)
 	private SystemMenu topMenu;
+	@JSONField(serialize = false)
+	private List<SystemAuth> auths;
 
 	public SystemMenu() {
 
@@ -75,6 +77,14 @@ public class SystemMenu extends TreeModel {
 
 	public void setTopMenu(SystemMenu topMenu) {
 		this.topMenu = topMenu;
+	}
+
+	public List<SystemAuth> getAuths() {
+		return auths;
+	}
+
+	public void setAuths(List<SystemAuth> auths) {
+		this.auths = auths;
 	}
 
 }

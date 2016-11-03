@@ -11,13 +11,13 @@ public class TreeModel extends BaseModel {
 	@JSONField(ordinal = 83)
 	protected Boolean isLeaf;// 叶子节点 - 0否1是
 
-	@JSONField(ordinal = 84)
+	@JSONField(serialize = false)
 	protected int level;
-	@JSONField(ordinal = 85)
+	@JSONField(serialize = false)
 	protected boolean first;
-	@JSONField(ordinal = 86)
+	@JSONField(serialize = false)
 	protected boolean last;
-	@JSONField(ordinal = 87)
+	@JSONField(serialize = false)
 	protected boolean disabled;
 
 	public int getPid() {

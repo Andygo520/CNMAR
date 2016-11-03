@@ -69,7 +69,6 @@
                 android:checked="true"
                 android:button="@null"
                 android:gravity="center"
-                android:drawableTop="@drawable/home_selector"
                 />
             <RadioButton
                 android:id="@+id/mProfile"
@@ -82,7 +81,6 @@
                 android:textColor="@color/text_color"
                 android:button="@null"
                 android:gravity="center"
-                android:drawableTop="@drawable/profile_selector"
                 />
         </RadioGroup>
     </LinearLayout>

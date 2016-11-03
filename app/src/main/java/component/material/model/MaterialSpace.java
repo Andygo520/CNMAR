@@ -25,6 +25,11 @@ public class MaterialSpace extends BaseModel {
 
 	}
 
+	public MaterialSpace(String code, String name) {
+		this.code = code;
+		this.name = name;
+	}
+
 	public MaterialSpace(int id, int materialId, int capacity) {
 		this.id = id;
 		this.materialId = materialId;

@@ -25,6 +25,11 @@ public class ProductSpace extends BaseModel {
 
 	}
 
+	public ProductSpace(String code, String name) {
+		this.code = code;
+		this.name = name;
+	}
+
 	public ProductSpace(int id, int productId, int capacity) {
 		this.id = id;
 		this.productId = productId;

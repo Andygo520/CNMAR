@@ -6,13 +6,13 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import component.material.model.Material;
 
-/** 生产计划物料清单 */
+/** 加工单物料清单 */
 public class ProduceBom {
 
 	@JSONField(ordinal = 1)
 	private int id;
 	@JSONField(ordinal = 2)
-	private int produceId; // 生产计划id
+	private int produceId; // 加工单id
 	@JSONField(ordinal = 3)
 	private int materialId; // 原料id
 	@JSONField(ordinal = 4)

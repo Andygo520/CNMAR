@@ -10,7 +10,7 @@ import component.material.model.MaterialOutOrder;
 import component.product.model.Product;
 import component.product.model.ProductInOrder;
 
-/** 生产计划 */
+/** 加工单 */
 public class ProducePlan extends BaseModel {
 
 	@JSONField(ordinal = 2)
@@ -20,9 +20,9 @@ public class ProducePlan extends BaseModel {
 	@JSONField(ordinal = 4)
 	private int productInOrderId; // 成品入库单id
 	@JSONField(ordinal = 5)
-	private String code; // 生产计划编号
+	private String code; // 加工单编号
 	@JSONField(ordinal = 6)
-	private String name; // 生产计划名称
+	private String name; // 加工单名称
 	@JSONField(ordinal = 7)
 	private int produceNum; // 生产数量
 	@JSONField(ordinal = 8)

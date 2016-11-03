@@ -7,44 +7,88 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- 文件的读写操作 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_OWNER_DATA" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".MaterialStockActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            />
-        <activity android:name=".MaterialStockDetailActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.MainActivity" />
         <activity
-            android:name=".MaterialInOrderDetailActivity"
+            android:name=".activity.MaterialStockActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.MaterialStockDetailActivity" />
+        <activity
+            android:name=".activity.MaterialInOrderDetailActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name="zxing.activity.CaptureActivity" />
         <activity
-            android:name=".MaterialOutOrderDetailActivity"
+            android:name=".activity.MaterialOutOrderDetailActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".MaterialCheckStockManageActivity"
+            android:name=".activity.MaterialCheckStockManageActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".MaterialCheckStockDetailActivity" />
-        <activity android:name=".WelcomeActivity">
+        <activity android:name=".activity.MaterialCheckStockDetailActivity" />
+        <activity android:name=".activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProductStockActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            />
-        <activity android:name=".ProductStockDetailActivity" />
-        <activity android:name=".ProductCheckStockManageActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            />
-        <activity android:name=".ProductCheckStockDetailActivity"></activity>
+        <activity
+            android:name=".activity.ProductStockActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.ProductStockDetailActivity" />
+        <activity
+            android:name=".activity.ProductCheckStockManageActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.ProductCheckStockDetailActivity" />
+        <activity
+            android:name=".activity.PlanManageActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.ProductionPlanDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.DeliveryPlanDetailActivity" />
+        <activity
+            android:name=".activity.ProductInOrderDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.ProductOutOrderDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.QualityControlActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.QualityControlDetailActivity" />
+        <activity android:name=".activity.ReceiveMaterialOrderDetailActivity" />
+        <activity
+            android:name=".activity.SupplyManageActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.SupplyManageDetailActivity" />
+        <activity
+            android:name=".activity.CompanyManageActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.QRCodeActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth" />
+        <activity android:name=".activity.CompanyInfoDetailActivity" />
+        <activity android:name=".activity.ProductDetailActivity" />
+        <activity
+            android:name=".activity.HalfProductStockActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.HalfProductStockDetailActivity" />
+        <activity android:name=".activity.HalfProductInOrderDetailActivity" />
+        <activity android:name=".activity.HalfProductOutOrderDetailActivity" />
+        <activity android:name=".activity.HalfProductCheckStockDetailActivity" />
+        <activity android:name=".activity.HalfProductCheckStockManageActivity"></activity>
     </application>
 
 </manifest>

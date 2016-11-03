@@ -8,6 +8,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import component.common.model.BaseModel;
 import component.material.vo.OutOrderStatusVo;
 import component.produce.model.ProducePlan;
+import component.system.model.SystemUser;
 
 /** 原料出库单 */
 public class MaterialOutOrder extends BaseModel {
@@ -19,11 +20,15 @@ public class MaterialOutOrder extends BaseModel {
 	@JSONField(ordinal = 3)
 	private String remark; // 备注
 	@JSONField(ordinal = 4)
-	private int status; // 出库单状态 - 2待出库3已出库
-
+	private int status; // 出库单状态 - 2待出库3已出库4未全部出库
 	@JSONField(ordinal = 5)
-	private ProducePlan producePlan;
+	private int receiveId; // 领料人id
+
 	@JSONField(ordinal = 6)
+	private SystemUser receive;
+	@JSONField(ordinal = 7)
+	private ProducePlan producePlan;
+	@JSONField(ordinal = 8)
 	private List<MaterialOutOrderMaterial> outOrderMaterials;
 
 	public MaterialOutOrder() {
@@ -68,6 +73,22 @@ public class MaterialOutOrder extends BaseModel {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public int getReceiveId() {
+		return receiveId;
+	}
+
+	public void setReceiveId(int receiveId) {
+		this.receiveId = receiveId;
+	}
+
+	public SystemUser getReceive() {
+		return receive;
+	}
+
+	public void setReceive(SystemUser receive) {
+		this.receive = receive;
 	}
 
 	public ProducePlan getProducePlan() {

@@ -66,6 +66,10 @@ public class VolleyHelper {
 //
 //    }
 
+/*
+* 根据URL地址显示图片内容
+*
+* */
     public static void showImageByUrl(Context context, String url, NetworkImageView networkImageView){
              RequestQueue requestQueue= Volley.newRequestQueue(context);
 

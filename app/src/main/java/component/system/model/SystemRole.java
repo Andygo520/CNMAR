@@ -1,8 +1,9 @@
 package component.system.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.Date;
+import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 
@@ -14,6 +15,8 @@ public class SystemRole extends BaseModel {
 
 	@JSONField(serialize = false)
 	private boolean checked;
+	@JSONField(serialize = false)
+	private List<SystemAuth> auths;
 
 	public SystemRole() {
 
@@ -39,6 +42,14 @@ public class SystemRole extends BaseModel {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+
+	public List<SystemAuth> getAuths() {
+		return auths;
+	}
+
+	public void setAuths(List<SystemAuth> auths) {
+		this.auths = auths;
 	}
 
 }

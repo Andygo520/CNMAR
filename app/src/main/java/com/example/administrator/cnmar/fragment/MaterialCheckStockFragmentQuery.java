@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,17 +27,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.chanven.lib.cptr.PtrClassicFrameLayout;
-import com.chanven.lib.cptr.PtrDefaultHandler;
-import com.chanven.lib.cptr.PtrFrameLayout;
-import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
-import com.example.administrator.cnmar.MaterialCheckStockDetailActivity;
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.activity.MaterialCheckStockDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import component.material.model.MaterialStockCheck;
@@ -45,18 +45,25 @@ import component.material.model.MaterialStockCheck;
  * A simple {@link Fragment} subclass.
  */
 public class MaterialCheckStockFragmentQuery extends Fragment {
-    private Context context;
     private MyListView lvCheckQuery;
     private LinearLayout llSearch;
     private EditText etSearchInput;
-    private TextView tvField1,tvField2,tvField3,tvField4;
-    private PtrClassicFrameLayout ptrFrame;
+    private ImageView ivDelete;
+    private TextView tvField1, tvField2, tvField3, tvField4;
+    private MaterialRefreshLayout materialRefreshLayout;
     private Handler handler = new Handler();
-    int page=0;
-    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_QUERY);
+    private BillAdapter myAdapter;
+    int page = 1;    //    page代表显示的是第几页内容，从1开始
+    private int total; // 总页数
+    private int num = 1; // 第几页
+    private int count; // 数据总条数
 
-    public MaterialCheckStockFragmentQuery(Context context) {
-        this.context=context;
+    //    用来存放从后台取出的数据列表，作为adapter的数据源
+    private List<MaterialStockCheck> data = new ArrayList<>();
+    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_QUERY.replace("{page}", String.valueOf(page)));
+
+    public MaterialCheckStockFragmentQuery() {
+
     }
 
 
@@ -64,85 +71,91 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_check_stock_fragment_query, container, false);
-        lvCheckQuery= (MyListView) view.findViewById(R.id.lvTable);
+        View view = inflater.inflate(R.layout.fragment_check_stock_fragment_query, container, false);
+        lvCheckQuery = (MyListView) view.findViewById(R.id.lvTable);
 //        lvCheckQuery.addFooterView(new ViewStub(context));
-        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
-        ptrFrame.postDelayed(new Runnable() {
+        ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
+
+        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
+        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
+
+        materialRefreshLayout.setLoadMore(true);
+
+//        materialRefreshLayout.autoRefreshLoadMore();
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
             @Override
-            public void run() {
-                ptrFrame.autoRefresh(true);
-            }
-        }, 150);
-        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
+            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
+                //一般加载数据都是在子线程中，这里我用到了handler
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        page = 0;
-//                        mData.clear();
-//                        for (int i = 0; i < 17; i++) {
-//                            mData.add(new String("  ListView item  -" + i));
-//                        }
-//                        mAdapter.notifyDataSetChanged();
+                        myAdapter = null;
+//                      下拉刷新默认显示第一页（10条）内容
+                        page = 1;
                         getCheckStockQueryListFromNet(url);
-                        ptrFrame.refreshComplete();
-
-//                        if (!ptrFrame.isLoadMoreEnable()) {
-//                        ptrFrame.setLoadMoreEnable(true);
-//                            }
-
+                        materialRefreshLayout.finishRefresh();
                     }
-                }, 100);
+                }, 400);
             }
-        });
-        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
 
             @Override
-            public void loadMore() {
-                handler.postDelayed(new Runnable() {
+            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
+                if (count <= 10) {
+                    materialRefreshLayout.setLoadMore(false);
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                    @Override
-                    public void run() {
-//                        mData.add(new String("  ListView item  - add " + page));
-//                        mAdapter.notifyDataSetChanged();
-                        ptrFrame.loadMoreComplete(true);
-                        page++;
-                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
-                                .show();
-
-                        if (page == 1) {
-                            //set load more disable
-//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                            myAdapter = new BillAdapter();
+                            page++;
+//                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
+                            if (page == total) {
+                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_QUERY.replace("{page}", String.valueOf(page)));
+                                Log.d("urlfinish", url);
+                                getCheckStockQueryListFromNet(url);
+                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
+                                // 结束上拉刷新...
+                                materialRefreshLayout.finishRefreshLoadMore();
+                                materialRefreshLayout.setLoadMore(false);
+                                return;
+                            }
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_QUERY.replace("{page}", String.valueOf(page)));
+                            Log.d("urlmore", url);
+                            getCheckStockQueryListFromNet(url);
+                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            // 结束上拉刷新...
+                            materialRefreshLayout.finishRefreshLoadMore();
                         }
-                    }
-                }, 1000);
+                    }, 400);
+                }
+
             }
         });
-        llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
-        tvField1= (TextView) view.findViewById(R.id.column1);
-        tvField2= (TextView) view.findViewById(R.id.column2);
-        tvField3= (TextView) view.findViewById(R.id.column3);
-        tvField4= (TextView) view.findViewById(R.id.column4);
+        llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
+        tvField1 = (TextView) view.findViewById(R.id.column1);
+        tvField2 = (TextView) view.findViewById(R.id.column2);
+        tvField3 = (TextView) view.findViewById(R.id.column3);
+        tvField4 = (TextView) view.findViewById(R.id.column4);
         tvField1.setText("原料编码");
         tvField2.setText("盘点前总量");
         tvField3.setText("盘点后总量");
         tvField4.setText("操作");
 
 
-        etSearchInput= (EditText) view.findViewById(R.id.etSearchInput);
+        etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
         etSearchInput.setHint("原料编码查询");
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode==KeyEvent.KEYCODE_ENTER){
-                    String input=etSearchInput.getText().toString().trim();
-                    if(input.equals("")){
-                        Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
-                    }else{
-                        String urlString=UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
-                        urlString=UniversalHelper.getTokenUrl(urlString);
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    String input = etSearchInput.getText().toString().trim();
+                    if (input.equals("")) {
+                        Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String urlString = UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}", input);
+                        urlString = UniversalHelper.getTokenUrl(urlString);
+                        myAdapter = null;
                         getCheckStockQueryListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -168,42 +181,75 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().equals(""))
+                if (s.toString().equals("")) {
+                    ivDelete.setVisibility(View.GONE);
+                    myAdapter = null;
                     getCheckStockQueryListFromNet(url);
+
+                } else {
+                    ivDelete.setVisibility(View.VISIBLE);
+                    ivDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            etSearchInput.setText("");
+                        }
+                    });
+                }
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String input=etSearchInput.getText().toString().trim();
-                String urlString=UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}",input);
-                urlString=UniversalHelper.getTokenUrl(urlString);
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
+                String input = etSearchInput.getText().toString().trim();
+                if (input.equals("")) {
+                    Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String urlString = UrlHelper.URL_SEARCH_CHECK_QUERY.replace("{query.code}", input);
+                urlString = UniversalHelper.getTokenUrl(urlString);
+                myAdapter = null;
                 getCheckStockQueryListFromNet(urlString);
             }
         });
 //        getCheckStockQueryListFromNet(url);
         return view;
     }
-    public void getCheckStockQueryListFromNet(final String url){
+
+    public void getCheckStockQueryListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene= Volley.newRequestQueue(context);
-                Log.d("Tag","开始执行");
-                StringRequest stringRequest=new StringRequest(url, new Response.Listener<String>() {
+                RequestQueue quene = Volley.newRequestQueue(getParentFragment().getActivity());
+                Log.d("Tag", "开始执行");
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        String json= VolleyHelper.getJson(s);
-                        component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
-                        List<MaterialStockCheck> list= JSON.parseArray(response.getData().toString(),MaterialStockCheck.class );
-                        BillAdapter myAdapter=new BillAdapter(list,context);
-                        lvCheckQuery.setAdapter(myAdapter);
+                        String json = VolleyHelper.getJson(s);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        List<MaterialStockCheck> list = JSON.parseArray(response.getData().toString(), MaterialStockCheck.class);
+                        count = response.getPage().getCount();
+                        total = response.getPage().getTotal();
+                        num = response.getPage().getNum();
+                        if (myAdapter == null) {
+                            data = list;
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvCheckQuery.setAdapter(myAdapter);
+                        } else {
+                            data.addAll(list);
+//                            myAdapter.notifyDataSetChanged();
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvCheckQuery.setAdapter(myAdapter);
+                        }
 
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag",volleyError.toString());
+                        Log.d("Tag", volleyError.toString());
 
                     }
                 });
@@ -214,11 +260,14 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
 
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialStockCheck> list=null;
+        private List<MaterialStockCheck> list = null;
 
         public BillAdapter(List<MaterialStockCheck> list, Context context) {
             this.list = list;
             this.context = context;
+        }
+
+        public BillAdapter() {
         }
 
         @Override
@@ -238,17 +287,17 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder=null;
-            if(convertView==null){
-                holder=new ViewHolder();
-                convertView= LayoutInflater.from(context).inflate(R.layout.table_list_item,parent,false);
-                holder.tvMaterialCode= (TextView) convertView.findViewById(R.id.column1);
-                holder.tvPreNum= (TextView) convertView.findViewById(R.id.column2);
-                holder.tvAfterNum= (TextView) convertView.findViewById(R.id.column3);
-                holder.tvDetail= (TextView) convertView.findViewById(R.id.column4);
+            ViewHolder holder = null;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvDetail = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
-            }else
-                holder= (ViewHolder) convertView.getTag();
+            } else
+                holder = (ViewHolder) convertView.getTag();
 //            Log.d("GGGG", DateFormat.getDateInstance().format(list.get(position).getArrivalDate()));
             holder.tvMaterialCode.setText(list.get(position).getMaterial().getCode());
             holder.tvPreNum.setText(String.valueOf(list.get(position).getBeforeStock()));
@@ -267,11 +316,11 @@ public class MaterialCheckStockFragmentQuery extends Fragment {
             return convertView;
         }
 
-        class ViewHolder{
-            public  TextView tvMaterialCode;
-            public  TextView tvPreNum;
-            public  TextView tvAfterNum;
-            public  TextView tvDetail;
+        class ViewHolder {
+            public TextView tvMaterialCode;
+            public TextView tvPreNum;
+            public TextView tvAfterNum;
+            public TextView tvDetail;
         }
 
     }

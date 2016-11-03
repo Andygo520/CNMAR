@@ -2,11 +2,11 @@ package component.basic.vo;
 
 public enum StockTypeVo {
 
-	EMPTY(null, ""),
+	empty(null, ""),
 	/** 扫描二维码 */
-	SCAN(1, "扫描二维码"),
+	scan(1, "扫描二维码"),
 	/** 输入数量 */
-	INPUT(2, "输入数量");
+	input(2, "输入数量");
 
 	private Integer key;
 	private String value;
@@ -27,7 +27,7 @@ public enum StockTypeVo {
 	public static final StockTypeVo getInstance(Integer key) {
 		for (StockTypeVo vo : values()) {
 			if (key == null) {
-				return EMPTY;
+				return empty;
 			} else if (key == vo.getKey()) {
 				return vo;
 			}

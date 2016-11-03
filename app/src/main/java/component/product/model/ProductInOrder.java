@@ -19,12 +19,14 @@ public class ProductInOrder extends BaseModel {
 	@JSONField(ordinal = 5)
 	private String remark; // 备注
 	@JSONField(ordinal = 6)
-	private int status; // 入库单状态 - 1待打印2待入库3已入库
+	private int status; // 入库单状态 - 1待打印2待入库3已入库4未全部入库
 
 	@JSONField(ordinal = 7)
 	private ProducePlan producePlan;
 	@JSONField(ordinal = 8)
 	private List<ProductInOrderProduct> inOrderProducts;
+	@JSONField(serialize = false)
+	private boolean showPrint;
 
 	public ProductInOrder() {
 
@@ -84,6 +86,14 @@ public class ProductInOrder extends BaseModel {
 
 	public void setInOrderProducts(List<ProductInOrderProduct> inOrderProducts) {
 		this.inOrderProducts = inOrderProducts;
+	}
+
+	public boolean isShowPrint() {
+		return showPrint;
+	}
+
+	public void setShowPrint(boolean showPrint) {
+		this.showPrint = showPrint;
 	}
 
 	@JSONField(serialize = false)

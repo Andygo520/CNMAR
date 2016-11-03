@@ -77,7 +77,7 @@ public class ProductCheckStockFragment extends Fragment {
                     transaction.hide(fragmentManage);
                 }
                 if(fragmentQuery==null){
-                    fragmentQuery=new ProductCheckStockFragmentQuery(getActivity());
+                    fragmentQuery=new ProductCheckStockFragmentQuery();
                     transaction.add(R.id.content,fragmentQuery);
                 }else
                     transaction.show(fragmentQuery);

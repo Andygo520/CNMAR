@@ -1,19 +1,31 @@
 package component.company.model;
 
-import component.common.model.BaseModel;
+import com.alibaba.fastjson.annotation.JSONField;
+
+import component.common.model.ImgModel;
 
 /** 企业 */
-public class Company extends BaseModel {
+public class Company extends ImgModel {
 
+	@JSONField(ordinal = 1)
 	private String name; // 企业名称
+	@JSONField(ordinal = 2)
 	private String tel; // 电话
+	@JSONField(ordinal = 3)
 	private String fax; // 传真
+	@JSONField(ordinal = 4)
 	private String address; // 地址
+	@JSONField(ordinal = 5)
 	private String intro; // 简介
+	@JSONField(ordinal = 6)
 	private String contact; // 联系人
+	@JSONField(ordinal = 7)
 	private String job; // 职位
+	@JSONField(ordinal = 8)
 	private String phone; // 手机号
+	@JSONField(ordinal = 9)
 	private String email; // 邮箱
+	@JSONField(ordinal = 10)
 	private String qrcode; // 二维码相对路径
 
 	public String getName() {

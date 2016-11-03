@@ -2,11 +2,11 @@ package component.basic.vo;
 
 public enum MixTypeVo {
 
-	EMPTY(null, ""),
+	empty(null, ""),
 	/** 不允许 */
-	NO(1, "不允许"),
+	no(1, "不允许"),
 	/** 允许 */
-	YES(2, "允许");
+	yes(2, "允许");
 
 	private Integer key;
 	private String value;
@@ -27,7 +27,7 @@ public enum MixTypeVo {
 	public static final MixTypeVo getInstance(Integer key) {
 		for (MixTypeVo vo : values()) {
 			if (key == null) {
-				return EMPTY;
+				return empty;
 			} else if (key == vo.getKey()) {
 				return vo;
 			}

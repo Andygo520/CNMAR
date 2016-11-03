@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,17 +27,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.chanven.lib.cptr.PtrClassicFrameLayout;
-import com.chanven.lib.cptr.PtrDefaultHandler;
-import com.chanven.lib.cptr.PtrFrameLayout;
-import com.chanven.lib.cptr.loadmore.OnLoadMoreListener;
-import com.example.administrator.cnmar.ProductCheckStockManageActivity;
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.activity.ProductCheckStockManageActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.http.VolleyHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import component.basic.vo.StockTypeVo;
@@ -49,11 +49,19 @@ public class ProductCheckStockFragmentManage extends Fragment {
     private MyListView lvCheckManage;
     private LinearLayout llSearch;
     private EditText etSearchInput;
+    private ImageView ivDelete;
     private TextView tvField1,tvField2,tvField3,tvField4;
-    private PtrClassicFrameLayout ptrFrame;
+    private MaterialRefreshLayout materialRefreshLayout;
     private Handler handler = new Handler();
-    int page=0;
-    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_CHECK_MANAGE);
+    private BillAdapter myAdapter;
+    int page = 1;    //    page代表显示的是第几页内容，从1开始
+    private int total; // 总页数
+    private int num = 1; // 第几页
+    private int count; // 数据总条数
+
+    //    用来存放从后台取出的数据列表，作为adapter的数据源
+    private List<ProductStock> data = new ArrayList<>();
+    private String url= UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_CHECK_MANAGE.replace("{page}",String.valueOf(page)));
 
     public ProductCheckStockFragmentManage() {
 //        this.context = context;
@@ -66,59 +74,68 @@ public class ProductCheckStockFragmentManage extends Fragment {
         View view=inflater.inflate(R.layout.fragment_product_check_stock_fragment_manage, container, false);
         lvCheckManage= (MyListView) view.findViewById(R.id.lvTable);
 //        lvCheckManage.addFooterView(new ViewStub(getParentFragment().getActivity()));
-        ptrFrame = (PtrClassicFrameLayout) view.findViewById(R.id.ptrFrame);
-        ptrFrame.postDelayed(new Runnable() {
+        ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
+
+        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
+        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
+
+        materialRefreshLayout.setLoadMore(true);
+
+//        materialRefreshLayout.autoRefreshLoadMore();
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
             @Override
-            public void run() {
-                ptrFrame.autoRefresh(true);
-            }
-        }, 150);
-        ptrFrame.setPtrHandler(new PtrDefaultHandler() {
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
+            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
+                //一般加载数据都是在子线程中，这里我用到了handler
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        page = 0;
-//                        mData.clear();
-//                        for (int i = 0; i < 17; i++) {
-//                            mData.add(new String("  ListView item  -" + i));
-//                        }
-//                        mAdapter.notifyDataSetChanged();
+                        myAdapter = null;
+//                      下拉刷新默认显示第一页（10条）内容
+                        page = 1;
                         getCheckStockManageListFromNet(url);
-                        ptrFrame.refreshComplete();
-
-//                        if (!ptrFrame.isLoadMoreEnable()) {
-//                        ptrFrame.setLoadMoreEnable(true);
-//                            }
-
+                        materialRefreshLayout.finishRefresh();
                     }
-                }, 100);
+                }, 400);
             }
-        });
-        ptrFrame.setOnLoadMoreListener(new OnLoadMoreListener() {
 
             @Override
-            public void loadMore() {
-                handler.postDelayed(new Runnable() {
+            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
+                if (count <= 10) {
+                    materialRefreshLayout.setLoadMore(false);
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                    @Override
-                    public void run() {
-//                        mData.add(new String("  ListView item  - add " + page));
-//                        mAdapter.notifyDataSetChanged();
-                        ptrFrame.loadMoreComplete(true);
-                        page++;
-                        Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT)
-                                .show();
-
-                        if (page == 1) {
-                            //set load more disable
-//                            ptrClassicFrameLayout.setLoadMoreEnable(false);
+                            myAdapter = new BillAdapter();
+                            page++;
+//                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
+                            if (page==total){
+                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_CHECK_MANAGE.replace("{page}", String.valueOf(page)));
+                                Log.d("urlfinish", url);
+                                getCheckStockManageListFromNet(url);
+                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
+                                // 结束上拉刷新...
+                                materialRefreshLayout.finishRefreshLoadMore();
+                                materialRefreshLayout.setLoadMore(false);
+                                return;
+                            }
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_CHECK_MANAGE.replace("{page}", String.valueOf(page)));
+                            Log.d("urlmore", url);
+                            getCheckStockManageListFromNet(url);
+                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            // 结束上拉刷新...
+                            materialRefreshLayout.finishRefreshLoadMore();
                         }
-                    }
-                }, 1000);
+                    }, 400);
+                }
+
+
+
+
             }
         });
+
         llSearch= (LinearLayout) view.findViewById(R.id.llSearch);
         tvField1= (TextView) view.findViewById(R.id.column1);
         tvField2= (TextView) view.findViewById(R.id.column2);
@@ -135,13 +152,14 @@ public class ProductCheckStockFragmentManage extends Fragment {
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode==KeyEvent.KEYCODE_ENTER){
+                if (keyCode==KeyEvent.KEYCODE_ENTER && event.getAction()==KeyEvent.ACTION_UP){
                     String input=etSearchInput.getText().toString().trim();
                     if(input.equals("")){
                         Toast.makeText(getActivity(),"请输入内容后再查询",Toast.LENGTH_SHORT).show();
                     }else{
                         String urlString=UrlHelper.URL_PRODUCT_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
                         urlString=UniversalHelper.getTokenUrl(urlString);
+                        myAdapter=null;
                         getCheckStockManageListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -167,16 +185,38 @@ public class ProductCheckStockFragmentManage extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().equals(""))
+                if (s.toString().equals("")){
+                    ivDelete.setVisibility(View.GONE);
+                    myAdapter=null;
                     getCheckStockManageListFromNet(url);
+
+                } else{
+                    ivDelete.setVisibility(View.VISIBLE);
+                    ivDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            etSearchInput.setText("");
+                        }
+                    });
+                }
             }
         });
         llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
                 String input=etSearchInput.getText().toString().trim();
+                if (input.equals("")) {
+                    Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 String urlString=UrlHelper.URL_PRODUCT_SEARCH_CHECK_MANAGE.replace("{query.code}",input);
                 urlString=UniversalHelper.getTokenUrl(urlString);
+                myAdapter=null;
                 getCheckStockManageListFromNet(urlString);
             }
         });
@@ -197,8 +237,19 @@ public class ProductCheckStockFragmentManage extends Fragment {
                         Log.d("GGGG",json);
                         component.common.model.Response response= JSON.parseObject(json, component.common.model.Response.class);
                         List<ProductStock> list= JSON.parseArray(response.getData().toString(),ProductStock.class );
-                        BillAdapter myAdapter=new BillAdapter(list,getParentFragment().getActivity());
-                        lvCheckManage.setAdapter(myAdapter);
+                        count = response.getPage().getCount();
+                        total = response.getPage().getTotal();
+                        num = response.getPage().getNum();
+                        if (myAdapter == null) {
+                            data = list;
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvCheckManage.setAdapter(myAdapter);
+                        } else {
+                            data.addAll(list);
+//                            myAdapter.notifyDataSetChanged();
+                            myAdapter = new BillAdapter(data, getActivity());
+                            lvCheckManage.setAdapter(myAdapter);
+                        }
 
                     }
                 }, new Response.ErrorListener() {
@@ -220,6 +271,9 @@ public class ProductCheckStockFragmentManage extends Fragment {
         public BillAdapter(List<ProductStock> list, Context context) {
             this.list = list;
             this.context = context;
+        }
+
+        public BillAdapter() {
         }
 
         @Override
@@ -254,7 +308,7 @@ public class ProductCheckStockFragmentManage extends Fragment {
             holder.tvCode.setText(list.get(position).getProduct().getCode());
             holder.tvName.setText(list.get(position).getProduct().getName());
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
-            if(list.get(position).getProduct().getStockType()== StockTypeVo.SCAN.getKey()){
+            if(list.get(position).getProduct().getStockType()== StockTypeVo.scan.getKey()){
                 holder.tvCheck.setText("");
             }else{
                 holder.tvCheck.setText("盘点");

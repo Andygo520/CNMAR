@@ -1,8 +1,30 @@
 <resources>
     <string name="app_name">洲马物联</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--菜单项-->
+    <string name="MENUS">原料仓库，成品仓库，计划管理，相关方管理，企业管理，系统管理，品控管理，报表管理，半成品仓库</string>
+    <string name="HOME_YLCK">原料仓库</string>
+    <string name="HOME_CPCK">成品仓库</string>
+    <string name="HOME_JHGL">计划管理</string>
+    <string name="HOME_QYGL">企业管理</string>
+    <string name="HOME_XGFGL">相关方管理</string>
+    <string name="HOME_XTGL">系统管理</string>
+    <string name="HOME_PKGL">品控管理</string>
+    <string name="HOME_BBGL">报表管理</string>
+    <string name="HOME_BCPCK">半成品仓库</string>
+
+    <!--入库单状态-->
+    <string name="ALL">所有状态</string>
+    <string name="PRE_PRINT">待打印</string>
+    <string name="PRE_IN_STOCK">待入库</string>
+    <string name="IN_STOCK">已入库</string>
+    <string name="NOT_ALL_IN">未全部入库</string>
+    <string name="PRE_TEST">待检验</string>
+    <string name="TEST_FAIL">检验不合格</string>
+
+    <string name="PRE_OUT_STOCK">待出库</string>
+    <string name="NOT_ALL_OUT">未全部出库</string>
+    <string name="OUT_STOCK">已出库</string>
 
 
     <string name="cube_ptr_pull_down">下拉</string>
@@ -15,4 +37,12 @@
     <string name="cube_ptr_seconds_ago">&#160;秒之前</string>
     <string name="cube_ptr_minutes_ago">&#160;分钟之前</string>
     <string name="cube_ptr_hours_ago">&#160;小时之前</string>
+
+    <!--Toast-->
+    <string name="only_scan_cnmar">请扫描系统生成的二维码</string>
+    <string name="input_fail_num">请输入不合格数量</string>
+    <string name="more_than_pre_in">已入库数量不能超过待入库数量</string>
+    <string name="more_than_pre_out">已出库数量不能超过待出库数量</string>
+
+
 </resources>

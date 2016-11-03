@@ -17,7 +17,9 @@ public class Query implements Cloneable {
 
 	private Integer stockType;
 	private Integer mixType;
+	private Integer packType;
 	private Integer status;
+	private Integer categoryId;
 
 	private Date sdate;
 	private Date edate;
@@ -103,12 +105,28 @@ public class Query implements Cloneable {
 		this.mixType = mixType;
 	}
 
+	public Integer getPackType() {
+		return packType;
+	}
+
+	public void setPackType(Integer packType) {
+		this.packType = packType;
+	}
+
 	public Integer getStatus() {
 		return status;
 	}
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public Date getSdate() {
