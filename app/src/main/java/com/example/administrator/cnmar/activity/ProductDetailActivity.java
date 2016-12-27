@@ -1,10 +1,8 @@
 package com.example.administrator.cnmar.activity;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,54 +14,48 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import component.company.model.CompanyProduct;
 
 public class ProductDetailActivity extends AppCompatActivity {
+    @BindView(R.id.left_arrow)
+    LinearLayout llLeftArrow;
+    @BindView(R.id.title)
+    TextView tvTitle;
+    @BindView(R.id.tvProductCode)
+    TextView tvProductCode;
+    @BindView(R.id.tvProductName)
+    TextView tvProductName;
+    @BindView(R.id.tvSize)
+    TextView tvSize;
+    @BindView(R.id.ivImage)
+    NetworkImageView ivImage;
+    @BindView(R.id.webView)
+    WebView webView;
     private int id;
-    private static String strUrl;
-    private Context context=ProductDetailActivity.this;
-    private TextView tvTitle;
-    private LinearLayout llLeftArrow;
-    private TextView tvProductCode;
-    private TextView tvProductName;
-    private TextView tvSize;
-    private NetworkImageView ivImage;   //产品资质
-    private WebView webView;
+    private  String strUrl;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
+        ButterKnife.bind(this);
+        AppExit.getInstance().addActivity(this);
 
         id = getIntent().getIntExtra("ID", 0);
         strUrl = UrlHelper.URL_PRODUCT_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
-        
-        tvTitle = (TextView) findViewById(R.id.title);
+
         tvTitle.setText("产品详情");
-        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
-        llLeftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CompanyManageActivity.class);
-                intent.putExtra("flag",1);
-                startActivity(intent);
-            }
-        });
-        tvProductCode= (TextView)findViewById(R.id.productCode);
-        tvProductName= (TextView) findViewById(R.id.productName);
-        tvSize= (TextView) findViewById(R.id.size);
-        ivImage= (NetworkImageView) findViewById(R.id.image);
-
-        webView = (WebView) findViewById(R.id.webView);
-
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -72,10 +64,19 @@ public class ProductDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    public void getProductInfoFromNet(){
-        RequestQueue queue= Volley.newRequestQueue(context);
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
-        StringRequest stringRequest=new StringRequest(strUrl, new Response.Listener<String>() {
+    public void getProductInfoFromNet() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 component.common.model.Response response = JSON.parseObject(VolleyHelper.getJson(s), component.common.model.Response.class);
@@ -85,10 +86,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                 tvProductName.setText(companyProduct.getName());
                 tvSize.setText(companyProduct.getSpec());
 //               ImgId>0代表用户设置了产品资质图片
-                if(companyProduct.getImgId()>0){
+                if (companyProduct.getImgId() > 0) {
 //                    获取图片的路径，路径=绝对路径+相对路径
-                    String path= UrlHelper.URL_IMAGE+companyProduct.getImg().getPath();
-                    VolleyHelper.showImageByUrl(context,path,ivImage);
+                    String path = UrlHelper.URL_IMAGE + companyProduct.getImg().getPath();
+                    VolleyHelper.showImageByUrl(ProductDetailActivity.this, path, ivImage);
                 }
 //              得到简介内容
                 String introduction = companyProduct.getIntro();
@@ -107,4 +108,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    @OnClick(R.id.left_arrow)
+    public void onClick() {
+        finish();
+    }
 }

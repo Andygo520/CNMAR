@@ -1,7 +1,6 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -18,22 +17,24 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import component.basic.vo.PackTypeVo;
 import component.material.model.MaterialOutOrder;
 import component.material.model.MaterialOutOrderMaterial;
 import component.material.vo.OutOrderStatusVo;
 
 public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
     private TextView tvReceiveMaterialOrder, tvTime, tvProduceNo, tvProduceName, tvProductCode,
-            tvProductName, tvSize, tvProduceNum, tvBeginDate, tvEndDate, tvPerson, tvStatus;
+            tvProductName, tvUnit, tvProduceNum, tvBeginDate, tvEndDate, tvPerson, tvStatus;
     private TextView name1, name2, name3, name4;
     private MyListView listView;
     private static String strUrl;
@@ -47,7 +48,7 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_material_order_detail);
         id = getIntent().getIntExtra("ID", 0);
-
+        AppExit.getInstance().addActivity(this);
         //   从登陆页面取出用户的角色信息
 //        role = LoginActivity.sp.getString("Role", "123");
 //        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
@@ -65,9 +66,7 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ReceiveMaterialOrderDetailActivity.this, PlanManageActivity.class);
-                intent.putExtra("flag", 2);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -85,8 +84,8 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         tvProduceName = (TextView) findViewById(R.id.tv22);
         tvProductCode = (TextView) findViewById(R.id.tv31);
         tvProductName = (TextView) findViewById(R.id.tv32);
-        tvSize = (TextView) findViewById(R.id.tv41);
-        tvProduceNum = (TextView) findViewById(R.id.tv42);
+        tvProduceNum = (TextView) findViewById(R.id.tv41);
+        tvUnit = (TextView) findViewById(R.id.tv42);
         tvBeginDate = (TextView) findViewById(R.id.tv51);
         tvEndDate = (TextView) findViewById(R.id.tv52);
         tvPerson = (TextView) findViewById(R.id.tv61);
@@ -100,9 +99,7 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, PlanManageActivity.class);
-            intent.putExtra("flag", 0);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -153,11 +150,25 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
                         tvProduceName.setText(materialOutOrder.getProducePlan().getName());
                         tvProductCode.setText(materialOutOrder.getProducePlan().getProduct().getCode());
                         tvProductName.setText(materialOutOrder.getProducePlan().getProduct().getName());
-                        tvSize.setText(materialOutOrder.getProducePlan().getProduct().getSpec());
-                        tvProduceNum.setText(String.valueOf(materialOutOrder.getProducePlan().getProduceNum())+materialOutOrder.getProducePlan().getProduct().getUnit().getName());
+//                        有包装的，单位格式为“9个/袋”
+                        if (materialOutOrder.getProducePlan().getProduct().getPackType() != PackTypeVo.empty.getKey())
+                            tvUnit.setText(materialOutOrder.getProducePlan().getProduct().getPackNum()
+                                    + materialOutOrder.getProducePlan().getProduct().getUnit().getName()
+                                    + " / " + materialOutOrder.getProducePlan().getProduct().getPackTypeVo().getValue().substring(1, 2));
+                        else
+                            tvUnit.setText(materialOutOrder.getProducePlan().getProduct().getUnit().getName());
 
-                        tvBeginDate.setText(sdf.format(materialOutOrder.getProducePlan().getStartDate()));
-                        tvEndDate.setText(sdf.format(materialOutOrder.getProducePlan().getEndDate()));
+                        tvProduceNum.setText(String.valueOf(materialOutOrder.getProducePlan().getProduceNum()) + materialOutOrder.getProducePlan().getProduct().getUnit().getName());
+//   起始日期、结束日期的非空判断
+                        if (materialOutOrder.getProducePlan().getStartDate() != null)
+                            tvBeginDate.setText(sdf.format(materialOutOrder.getProducePlan().getStartDate()));
+                        else
+                            tvBeginDate.setText("");
+
+                        if (materialOutOrder.getProducePlan().getEndDate() != null)
+                            tvEndDate.setText(sdf.format(materialOutOrder.getProducePlan().getEndDate()));
+                        else
+                            tvEndDate.setText("");
 
                         tvPerson.setText(materialOutOrder.getReceive().getName());
 

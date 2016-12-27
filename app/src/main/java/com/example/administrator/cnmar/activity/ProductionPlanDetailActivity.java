@@ -19,28 +19,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import component.basic.vo.PackTypeVo;
 import component.material.vo.OutOrderStatusVo;
 import component.produce.model.ProduceBom;
 import component.produce.model.ProducePlan;
 
 public class ProductionPlanDetailActivity extends AppCompatActivity {
+    private Context context;
     private TextView tvPlanCode, tvPlanName, tvProductCode, tvProductName, tvSize,
-            tvUnit, tvProduceNum, tvBeginDate, tvEndDate, tvMaterialOutOrder, tvProductInOrder;
-    private EditText etSuccessNum;
+            tvUnit, tvProduceNum, tvCheckMan, tvBeginDate, tvEndDate, tvMaterialOutOrder, tvProductInOrder;
+    private EditText etSuccessNum, etActualNum;
     private TextView name1, name2, name3, name4;
     private MyListView listView;
     private static String strUrl;
@@ -48,9 +53,11 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     private TextView tvTitle;
     private int id, receiveId;
     private Button btn;
-    private String successNum;
+    private String successNum; //记录合格品数量
+    private String actualNum; //记录实际生产数量
+    private int produceNum; //记录生产数量
 
-    private String role;
+    private String role,menu;
     private Boolean isSuper;
 
     @Override
@@ -58,12 +65,13 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_production_plan_detail);
         id = getIntent().getIntExtra("ID", 0);
-        receiveId = LoginActivity.sp.getInt("userId", 0);
+        receiveId = SPHelper.getInt(this, "userId", 0);
 
-        //   从登陆页面取出用户的角色信息
-        role = LoginActivity.sp.getString("Role", "123");
-        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
-
+        //   从登陆页面取出用户的角色以及二级子菜单信息
+        role = SPHelper.getString(this, "Role", "");
+        menu = SPHelper.getString(this, "品控管理", "");
+        isSuper = SPHelper.getBoolean(this, "isSuper", false);
+        AppExit.getInstance().addActivity(this);
         init();
         strUrl = UrlHelper.URL_PRODUCE_PLAN_DETAIL.replace("{ID}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
@@ -71,15 +79,14 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
+        context = ProductionPlanDetailActivity.this;
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("加工单管理");
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductionPlanDetailActivity.this, PlanManageActivity.class);
-                intent.putExtra("flag", 0);
-                startActivity(intent);
+                ProductionPlanDetailActivity.this.finish();//结束当前页面
             }
         });
 
@@ -91,31 +98,76 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                     new AlertDialog.Builder(ProductionPlanDetailActivity.this)
                             .setTitle("系统提示")
                             .setMessage("确认领料且生成出库单？")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    UniversalHelper.showProgressDialog(context);
                                     String url = UrlHelper.URL_RECEIVE_MATERIAL_COMMIT.replace("{ID}", String.valueOf(id)).replace("{receiveId}", String.valueOf(receiveId));
                                     url = UniversalHelper.getTokenUrl(url);
                                     sendRequest(url);
                                 }
                             })
-                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
                                 }
                             }).create().show();
-
-
                 } else if (btn.getText().toString().equals("提交待入库")) {
+//              获得用户的输入
                     successNum = etSuccessNum.getText().toString().trim();
-                    if (successNum.equals("")) {
+                    if (successNum.length() == 0) {
                         Toast.makeText(ProductionPlanDetailActivity.this, "请输入合格品数量", Toast.LENGTH_SHORT).show();
                     } else {
-                        String url = UrlHelper.URL_PRODUCT_PRE_IN_STOCK_COMMIT.replace("{ID}", String.valueOf(id)).replace("{successNum}", successNum);
-                        url = UniversalHelper.getTokenUrl(url);
-                        Log.d("jiagong",url);
-                        sendRequest(url);
+//                        合格品数量不做限制
+//                        if (Integer.parseInt(successNum) > produceNum) {
+//                            Toast.makeText(ProductionPlanDetailActivity.this, "合格品数量不能大于生产数量，请重新输入", Toast.LENGTH_LONG).show();
+//                        } else {
+                        new AlertDialog.Builder(ProductionPlanDetailActivity.this)
+                                .setTitle("系统提示")
+                                .setMessage("确定提交吗？")
+                                .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UniversalHelper.showProgressDialog(context);
+                                        String url = UrlHelper.URL_PRODUCT_PRE_IN_STOCK_COMMIT.replace("{ID}", String.valueOf(id)).replace("{successNum}", successNum).replace("{testId}",receiveId+"");
+                                        url = UniversalHelper.getTokenUrl(url);
+                                        Log.d("UniversalHelper",url);
+                                        sendRequest(url);
+                                    }
+                                }).create().show();
+//                        }
+                    }
+                } else if (btn.getText().toString().equals("提交待检验")) {
+//              获得用户的输入
+                    actualNum = etActualNum.getText().toString().trim();
+                    if (actualNum.length() == 0) {
+                        Toast.makeText(ProductionPlanDetailActivity.this, "请输入实际生产数量", Toast.LENGTH_SHORT).show();
+                    } else {
+                        new AlertDialog.Builder(ProductionPlanDetailActivity.this)
+                                .setTitle("系统提示")
+                                .setMessage("确定提交吗？")
+                                .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UniversalHelper.showProgressDialog(context);
+                                        String url = UrlHelper.URL_PRODUCT_ACTUAL_NUM_COMMIT.replace("{ID}", String.valueOf(id)).replace("{actualNum}", actualNum);
+                                        url = UniversalHelper.getTokenUrl(url);
+                                        sendRequest(url);
+                                    }
+                                }).create().show();
                     }
                 }
             }
@@ -136,13 +188,17 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
         tvSize = (TextView) findViewById(R.id.tv31);
         tvUnit = (TextView) findViewById(R.id.tv32);
         tvProduceNum = (TextView) findViewById(R.id.tv41);
-        tvBeginDate = (TextView) findViewById(R.id.tv51);
-        tvEndDate = (TextView) findViewById(R.id.tv52);
-        tvMaterialOutOrder = (TextView) findViewById(R.id.tv61);
-        tvProductInOrder = (TextView) findViewById(R.id.tv62);
+        tvCheckMan = (TextView) findViewById(R.id.tv51);
+        tvBeginDate = (TextView) findViewById(R.id.tv61);
+        tvEndDate = (TextView) findViewById(R.id.tv62);
+        tvMaterialOutOrder = (TextView) findViewById(R.id.tv71);
+        tvProductInOrder = (TextView) findViewById(R.id.tv72);
 
-        etSuccessNum = (EditText) findViewById(R.id.tv42);
+        etActualNum = (EditText) findViewById(R.id.tv42);
+        etSuccessNum = (EditText) findViewById(R.id.tv52);
+        etActualNum.setFocusable(false);
         etSuccessNum.setFocusable(false);
+        etActualNum.setFocusableInTouchMode(false);
         etSuccessNum.setFocusableInTouchMode(false);
 
         listView = (MyListView) findViewById(R.id.lvTable);
@@ -152,9 +208,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, PlanManageActivity.class);
-            intent.putExtra("flag", 0);
-            startActivity(intent);
+            finish();//结束当前页面
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -168,11 +222,12 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
+                        UniversalHelper.dismissProgressDialog();
                         String json = VolleyHelper.getJson(s);
                         Log.d("production", json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         if (!response.isStatus()) {
-                            Toast.makeText(ProductionPlanDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProductionPlanDetailActivity.this, response.getMsg(), Toast.LENGTH_LONG).show();
                         } else {
                             Intent intent = new Intent(ProductionPlanDetailActivity.this, PlanManageActivity.class);
                             startActivity(intent);
@@ -181,9 +236,12 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-
+                        UniversalHelper.dismissProgressDialog();
+                        Toast.makeText(ProductionPlanDetailActivity.this, "连接超时", Toast.LENGTH_LONG).show();
                     }
                 });
+//                重设Volley请求超时时间
+                request.setRetryPolicy(new DefaultRetryPolicy(1000 * 1000, 0, 0f));
                 queue.add(request);
             }
         }).start();
@@ -221,38 +279,79 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                         tvProductCode.setText(producePlan.getProduct().getCode());
                         tvProductName.setText(producePlan.getProduct().getName());
                         tvSize.setText(producePlan.getProduct().getSpec());
-                        tvUnit.setText(producePlan.getProduct().getUnit().getName());
-                        tvProduceNum.setText(String.valueOf(producePlan.getProduceNum()));
+//                        有包装的，单位格式为“9个/袋”
+                        if (producePlan.getProduct().getPackType() != PackTypeVo.empty.getKey())
+                            tvUnit.setText(producePlan.getProduct().getPackNum()
+                                    + producePlan.getProduct().getUnit().getName()
+                                    + " / " + producePlan.getProduct().getPackTypeVo().getValue().substring(1, 2));
+                        else
+                            tvUnit.setText(producePlan.getProduct().getUnit().getName());
+
+                        if (producePlan.getTest() != null)
+                            tvCheckMan.setText(producePlan.getTest().getName());
+                        else
+                            tvCheckMan.setText("");
+
+                        tvProduceNum.setText(producePlan.getProduceNum() + producePlan.getProduct().getUnit().getName());
+                        produceNum = producePlan.getProduceNum();
 
                         etSuccessNum.setText("");
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                      开始日期、结束日期的非空判断
+                        if (producePlan.getStartDate() == null)
+                            tvBeginDate.setText("");
+                        else
+                            tvBeginDate.setText(sdf.format(producePlan.getStartDate()));
+                        if (producePlan.getEndDate() == null)
+                            tvEndDate.setText("");
+                        else
+                            tvEndDate.setText(sdf.format(producePlan.getEndDate()));
 
-                        tvBeginDate.setText(sdf.format(producePlan.getStartDate()));
-                        tvEndDate.setText(sdf.format(producePlan.getEndDate()));
+//                        获取用户“品控管理”以及“计划管理”菜单及其子菜单的对应关系，后面按钮的显示与此有关
+                        String subList=SPHelper.getString(context,getResources().getString(R.string.HOME_PKGL));
+                        String subList1=SPHelper.getString(context,getResources().getString(R.string.HOME_JHGL));
 
-//     只有原料出库单状态为空并且用户为超级管理员或车间班组长，才显示“领料”按钮
-                        if (producePlan.getMaterialOutOrder() == null && (role.contains("车间班组长") || isSuper)) {
+//   当还未领料的时候（原料出库单为空），显示实际生产数为空字符
+                        if (producePlan.getMaterialOutOrder() == null) {
+                            etActualNum.setText("");
                             tvMaterialOutOrder.setText("");
-                            btn.setVisibility(View.VISIBLE);
-                            btn.setText("领料");
-                            etSuccessNum.setFocusable(false);
-                            etSuccessNum.setFocusableInTouchMode(false);
-                        } else
+//                            用户拥有“领料单”子菜单就可以领料
+                            if (subList1.contains(","+getResources().getString(R.string.material_out_order_receive_url)+",")) {
+                                btn.setVisibility(View.VISIBLE);
+                                btn.setText("领料");
+                            }
+                        } else{
                             tvMaterialOutOrder.setText(producePlan.getMaterialOutOrder().getCode());
-//     只有在原料出库单状态为已出库(或未全部出库)并且成品入库单为空的状态下，才显示“提交待入库”按钮
-                        if (producePlan.getProductInOrder() == null) {
+//                            当已领料（原料出库单非空）的时候，若实际生产数为0，就提示用户输入，否则显示其数值
+                            if (producePlan.getActualNum() == 0 ) {
+                                btn.setVisibility(View.VISIBLE);
+                                btn.setText("提交待检验");
+                                etActualNum.setHint("请输入");
+                                etActualNum.setFocusable(true);
+                                etActualNum.setFocusableInTouchMode(true);
+                            }else
+                                etActualNum.setText(producePlan.getActualNum()+"");
+                        }
+
+
+
+//     只有在原料出库单状态为已出库(或未全部出库)并且成品入库单为空的状态，用户拥有“成品检验”的子菜单才显示“提交待入库”按钮
+                        if (producePlan.getProductInOrder() == null ) {
                             tvProductInOrder.setText("");
-                            if (producePlan.getMaterialOutOrder() != null && (producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.not_all.getKey() || producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.out_stock.getKey()) && (role.contains("检验员") || isSuper)) {
+                            if (producePlan.getMaterialOutOrder() != null&& producePlan.getActualNum() > 0
+                                    && (producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.not_all.getKey()
+                                    || producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.out_stock.getKey())
+                                    && subList.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
                                 btn.setVisibility(View.VISIBLE);
                                 btn.setText("提交待入库");
+                                etSuccessNum.setHint("请输入");
+                                etSuccessNum.setFocusable(true);
                                 etSuccessNum.setFocusableInTouchMode(true);
                             }
-
                         } else {
                             tvProductInOrder.setText(producePlan.getProductInOrder().getCode());
                             etSuccessNum.setText(String.valueOf(producePlan.getSuccessNum()));
-                            etSuccessNum.setTextColor(getResources().getColor(R.color.color_red));
                         }
 
 
@@ -271,7 +370,6 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     public class MyAdapter extends BaseAdapter {
         private Context context;
         private List<ProduceBom> list = null;
-
 
         public MyAdapter(Context context, List<ProduceBom> list) {
             this.context = context;

@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,15 +31,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,8 @@ import component.material.vo.OutOrderStatusVo;
  * A simple {@link Fragment} subclass.
  */
 public class OutOrderFragment extends Fragment {
+    //    表头4个字段
+    private TextView tv1, tv2, tv3, tv4;
     private MyListView lvOutOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
@@ -64,7 +68,7 @@ public class OutOrderFragment extends Fragment {
     private Map<String, Object> map = new HashMap<>();
 
     private ImageView ivDelete;
-    private MaterialRefreshLayout materialRefreshLayout;
+    private TwinklingRefreshLayout refreshLayout;
     private Handler handler = new Handler();
     private BillAdapter myAdapter;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
@@ -85,8 +89,19 @@ public class OutOrderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_out_order, container, false);
-        lvOutOrder = (MyListView) view.findViewById(R.id.lvOutOrder);
+        View view = inflater.inflate(R.layout.refresh_frame, container, false);
+
+        tv1 = (TextView) view.findViewById(R.id.tv1);
+        tv2 = (TextView) view.findViewById(R.id.tv2);
+        tv3 = (TextView) view.findViewById(R.id.tv3);
+        tv4 = (TextView) view.findViewById(R.id.tv4);
+
+        tv1.setText("出库单号");
+        tv2.setText("出库批次号");
+        tv3.setText("加工单编号");
+        tv4.setText("出库单状态");
+
+        lvOutOrder = (MyListView) view.findViewById(R.id.listView);
 //        lvOutOrder.addFooterView(new ViewStub(getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
@@ -116,7 +131,6 @@ public class OutOrderFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String urlString = UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", "").replace("{query.status}", String.valueOf(map.get(status[position])));
                 urlString = UniversalHelper.getTokenUrl(urlString);
-                myAdapter = null;
                 getOutOrderListFromNet(urlString);
             }
 
@@ -126,39 +140,28 @@ public class OutOrderFragment extends Fragment {
             }
         });
 
-        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
-        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
-        materialRefreshLayout.setLoadMore(true);
-
-//        materialRefreshLayout.autoRefreshLoadMore();
-        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+        refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
+        UniversalHelper.initRefresh(getActivity(),refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
             @Override
-            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
-                //一般加载数据都是在子线程中，这里我用到了handler
-                handler.postDelayed(new Runnable() {
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        myAdapter = null;
 //                      下拉刷新默认显示第一页（10条）内容
                         page = 1;
                         getOutOrderListFromNet(url);
-                        materialRefreshLayout.finishRefresh();
+                        refreshLayout.setEnableLoadmore(true);
+                        refreshLayout.finishRefreshing();
                     }
-                }, 400);
+                },400);
             }
 
             @Override
-            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
-                if (count <= 10) {
-                    materialRefreshLayout.setLoadMore(false);
-                    materialRefreshLayout.finishRefreshLoadMore();
-
-                } else {
-                    handler.postDelayed(new Runnable() {
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-
-                            myAdapter = new BillAdapter();
                             page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
                             if (page == total) {
@@ -167,8 +170,8 @@ public class OutOrderFragment extends Fragment {
                                 getOutOrderListFromNet(url);
                                 Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                                 // 结束上拉刷新...
-                                materialRefreshLayout.finishRefreshLoadMore();
-                                materialRefreshLayout.setLoadMore(false);
+                                refreshLayout.finishLoadmore();
+                                refreshLayout.setEnableLoadmore(false);
                                 return;
                             }
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
@@ -176,10 +179,10 @@ public class OutOrderFragment extends Fragment {
                             getOutOrderListFromNet(url);
                             Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
-                            materialRefreshLayout.finishRefreshLoadMore();
+                            refreshLayout.finishLoadmore();
                         }
-                    }, 400);
-                }
+                    },400);
+
             }
         });
         llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
@@ -194,7 +197,6 @@ public class OutOrderFragment extends Fragment {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
                         String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", input));
-                        myAdapter = null;
                         getOutOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -222,8 +224,6 @@ public class OutOrderFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
-
-                    myAdapter = null;
                     getOutOrderListFromNet(url);
 
                 } else {
@@ -250,12 +250,24 @@ public class OutOrderFragment extends Fragment {
                     return;
                 }
                 String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_OUT_ORDER.replace("{query.code}", input));
-                myAdapter = null;
                 getOutOrderListFromNet(urlString);
             }
         });
-//        getOutOrderListFromNet(url);
+        getOutOrderListFromNet(url);
         return view;
+    }
+
+    /*
+* Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
+* */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+//        Fragment重新显示到最前端中
+        if (!hidden){
+            page=1;
+            getOutOrderListFromNet(url);
+        }
     }
 
     public void getOutOrderListFromNet(final String url) {
@@ -274,8 +286,14 @@ public class OutOrderFragment extends Fragment {
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
+                        //      数据超过10条才可以上拉加载更多
+                        if (count <= 10 || num==total)
+                            refreshLayout.setEnableLoadmore(false);
+                        else
+                            refreshLayout.setEnableLoadmore(true);
 
-                        if (myAdapter == null) {
+//  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
+                        if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());
                             lvOutOrder.setAdapter(myAdapter);
@@ -308,10 +326,6 @@ public class OutOrderFragment extends Fragment {
             this.context = context;
         }
 
-        public BillAdapter() {
-
-        }
-
         @Override
         public int getCount() {
             return list.size();
@@ -332,16 +346,27 @@ public class OutOrderFragment extends Fragment {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.out_order_item, parent, false);
-                holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.tvOutOrderNo);
-                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.tvPlanNo);
-                holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.tvOutOrderStatus);
-                holder.detail = (TextView) convertView.findViewById(R.id.detail);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
+//                偶数行背景设为灰色
+                if (position % 2 == 0)
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
+                holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
-//            Log.d("GGGG", DateFormat.getDateInstance().format(list.get(position).getArrivalDate()));
+
             holder.tvOutOrderNo.setText(list.get(position).getCode());
+
+//         出库批次号用出库时间表示
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            if (list.get(position).getOutTime() != null)
+                holder.tvBatchNo.setText(sdf.format(list.get(position).getOutTime()));
+            else
+                holder.tvBatchNo.setText("");
 
             if (list.get(position).getProducePlan() != null)
                 holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
@@ -349,9 +374,8 @@ public class OutOrderFragment extends Fragment {
                 holder.tvPlanNo.setText("");
 
             holder.tvOutOrderStatus.setText(list.get(position).getOutOrderStatusVo().getValue());
-            holder.detail.setText("详情");
-            holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.detail.setOnClickListener(new View.OnClickListener() {
+            holder.tvOutOrderNo.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvOutOrderNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, MaterialOutOrderDetailActivity.class);
@@ -365,9 +389,9 @@ public class OutOrderFragment extends Fragment {
 
         class ViewHolder {
             public TextView tvOutOrderNo;
+            public TextView tvBatchNo;  // 出库批次号
             public TextView tvPlanNo;  // 加工单编号
             public TextView tvOutOrderStatus;
-            public TextView detail;
         }
 
     }

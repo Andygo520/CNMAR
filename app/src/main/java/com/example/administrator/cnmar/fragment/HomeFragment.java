@@ -1,6 +1,5 @@
 package com.example.administrator.cnmar.fragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,12 +17,14 @@ import android.widget.TextView;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.CompanyManageActivity;
 import com.example.administrator.cnmar.activity.HalfProductStockActivity;
-import com.example.administrator.cnmar.activity.LoginActivity;
 import com.example.administrator.cnmar.activity.MaterialStockActivity;
 import com.example.administrator.cnmar.activity.PlanManageActivity;
 import com.example.administrator.cnmar.activity.ProductStockActivity;
 import com.example.administrator.cnmar.activity.QualityControlActivity;
+import com.example.administrator.cnmar.activity.ReportManageActivity;
 import com.example.administrator.cnmar.activity.SupplyManageActivity;
+import com.example.administrator.cnmar.activity.SystemManageActivity;
+import com.example.administrator.cnmar.helper.SPHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import java.util.Map;
  */
 public class HomeFragment extends Fragment {
     private GridView gvMenu;
-    private Map<String, Integer> map = new HashMap<>();
+    private Map<String, Integer> map = new HashMap<>(); // 该map用来存放菜单名跟图片的对应关系
 
     public HomeFragment() {
         // Required empty public constructor
@@ -58,15 +59,17 @@ public class HomeFragment extends Fragment {
         map.put(getResources().getString(R.string.HOME_BBGL), R.mipmap.bbgl);
         map.put(getResources().getString(R.string.HOME_BCPCK), R.mipmap.bcpgl);
 
-        Log.d("LOG","123455");
-        String roleMenu = LoginActivity.sp.getString("Menu", getResources().getString(R.string.MENUS));
-        Log.d("Log",roleMenu);
 
+//        得到用户拥有的菜单名字段
+        String roleMenu = SPHelper.getString(getActivity(),"Menu", "");
+        Log.d("Log",roleMenu);
         String[] menuText = roleMenu.split(",");
         List<Integer> images = new ArrayList<>();
+
         for (int i = 0; i < menuText.length; i++) {
             images.add(map.get(menuText[i]));
         }
+//        得到菜单名对应的图片数组
         Integer[] menuImage = images.toArray(new Integer[images.size()]);
         ImageAdapter adapter = new ImageAdapter(getActivity(), menuImage, menuText);
         gvMenu.setAdapter(adapter);
@@ -84,14 +87,6 @@ public class HomeFragment extends Fragment {
             this.images = images;
             this.texts = texts;
         }
-        //        private String[] texts = {
-//                StringHelper.HOME_YLCK,
-//                StringHelper.HOME_CPCK,
-//                StringHelper.HOME_JHGL,
-//                StringHelper.HOME_QYGL,
-//                StringHelper.HOME_XGFGL,
-//                StringHelper.HOME_XTGL
-//        };
 
         @Override
         public int getCount() {
@@ -148,12 +143,16 @@ public class HomeFragment extends Fragment {
                             startActivity(intent4);
                             break;
                         case R.mipmap.xtgl:
+                            Intent intent5 = new Intent(getActivity(), SystemManageActivity.class);
+                            startActivity(intent5);
                             break;
                         case R.mipmap.pkgl:
                             Intent intent6 = new Intent(getActivity(), QualityControlActivity.class);
                             startActivity(intent6);
                             break;
                         case R.mipmap.bbgl:
+                            Intent intent7 = new Intent(getActivity(), ReportManageActivity.class);
+                            startActivity(intent7);
                             break;
                         case R.mipmap.bcpgl:
                             Intent intent8 = new Intent(getActivity(), HalfProductStockActivity.class);

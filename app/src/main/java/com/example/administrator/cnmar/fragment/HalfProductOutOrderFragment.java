@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +31,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.HalfProductOutOrderDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,11 +53,13 @@ import component.half.vo.OutOrderStatusVo;
  * A simple {@link Fragment} subclass.
  */
 public class HalfProductOutOrderFragment extends Fragment {
+    //    表头4个字段
+    private TextView tv1, tv2, tv3, tv4;
     private MyListView lvOutOrder;
     private LinearLayout llSearch;
     private EditText etSearchInput;
     private ImageView ivDelete;
-    private MaterialRefreshLayout materialRefreshLayout;
+    private TwinklingRefreshLayout refreshLayout;
     private Handler handler = new Handler();
     private BillAdapter myAdapter;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
@@ -84,8 +87,19 @@ public class HalfProductOutOrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_half_product_out_order, container, false);
-        lvOutOrder = (MyListView) view.findViewById(R.id.lvOutOrder);
+        View view = inflater.inflate(R.layout.refresh_frame, container, false);
+
+        tv1= (TextView) view.findViewById(R.id.tv1);
+        tv2= (TextView) view.findViewById(R.id.tv2);
+        tv3= (TextView) view.findViewById(R.id.tv3);
+        tv4= (TextView) view.findViewById(R.id.tv4);
+
+        tv1.setText("出库单号");
+        tv2.setText("出库批次号");
+        tv3.setText("备注");
+        tv4.setText("出库单状态");
+
+        lvOutOrder = (MyListView) view.findViewById(R.id.listView);
 //        lvOutOrder.addFooterView(new ViewStub(getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 //      在map中存入状态与Vo的对应关系，“所有状态”存入空字符
@@ -124,60 +138,44 @@ public class HalfProductOutOrderFragment extends Fragment {
         });
 
 
-        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
-        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
-        materialRefreshLayout.setLoadMore(true);
-
-//        materialRefreshLayout.autoRefreshLoadMore();
-        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+        refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
+        UniversalHelper.initRefresh(getActivity(),refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
             @Override
-            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
-                //一般加载数据都是在子线程中，这里我用到了handler
-                handler.postDelayed(new Runnable() {
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        myAdapter = null;
 //                      下拉刷新默认显示第一页（10条）内容
                         page = 1;
                         getOutOrderListFromNet(url);
-                        materialRefreshLayout.finishRefresh();
+                        refreshLayout.finishRefreshing();
                     }
-                }, 400);
+                },400);
             }
 
             @Override
-            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
-
-                if (count <= 10) {
-                    materialRefreshLayout.setLoadMore(false);
-                } else {
-                    handler.postDelayed(new Runnable() {
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-
-                            myAdapter = new BillAdapter();
                             page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
                             if (page == total) {
                                 String url = UniversalHelper.getTokenUrl(UrlHelper.URL_HALF_PRODUCT_OUT_ORDER.replace("{page}", String.valueOf(page)));
-                                Log.d("urlfinish", url);
                                 getOutOrderListFromNet(url);
                                 Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                                 // 结束上拉刷新...
-                                materialRefreshLayout.finishRefreshLoadMore();
-                                materialRefreshLayout.setLoadMore(false);
+                                refreshLayout.finishLoadmore();
                                 return;
                             }
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_HALF_PRODUCT_OUT_ORDER.replace("{page}", String.valueOf(page)));
-                            Log.d("urlmore", url);
                             getOutOrderListFromNet(url);
                             Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
-                            materialRefreshLayout.finishRefreshLoadMore();
+                            refreshLayout.finishLoadmore();
                         }
-                    }, 400);
-                }
-
+                    },400);
 
             }
         });
@@ -193,7 +191,6 @@ public class HalfProductOutOrderFragment extends Fragment {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
                         String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_HALF_PRODUCT_OUT_ORDER.replace("{query.code}", input));
-                        myAdapter = null;
                         getOutOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -222,7 +219,6 @@ public class HalfProductOutOrderFragment extends Fragment {
                 if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
 
-                    myAdapter = null;
                     getOutOrderListFromNet(url);
 
                 } else {
@@ -249,13 +245,26 @@ public class HalfProductOutOrderFragment extends Fragment {
                     return;
                 }
                 String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_HALF_PRODUCT_OUT_ORDER.replace("{query.code}", input));
-                myAdapter = null;
                 getOutOrderListFromNet(urlString);
             }
         });
-//        getOutOrderListFromNet(url);
+        getOutOrderListFromNet(url);
         return view;
     }
+
+    /*
+* Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
+* */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+//        Fragment重新显示到最前端中
+        if (!hidden){
+            page=1;
+            getOutOrderListFromNet(url);
+        }
+    }
+
 
     public void getOutOrderListFromNet(final String url) {
         new Thread(new Runnable() {
@@ -274,7 +283,13 @@ public class HalfProductOutOrderFragment extends Fragment {
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
-                        if (myAdapter == null) {
+                        //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
+                        if (count <= 10 || num==total)
+                            refreshLayout.setEnableLoadmore(false);
+                        else
+                            refreshLayout.setEnableLoadmore(true);
+                        //  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
+                        if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());
                             lvOutOrder.setAdapter(myAdapter);
@@ -331,11 +346,15 @@ public class HalfProductOutOrderFragment extends Fragment {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.out_order_item, parent, false);
-                holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.tvOutOrderNo);
-                holder.tvBatchNo = (TextView) convertView.findViewById(R.id.tvPlanNo);
-                holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.tvOutOrderStatus);
-                holder.detail = (TextView) convertView.findViewById(R.id.detail);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
+//                偶数行背景设为灰色
+                if (position % 2 == 0)
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
+                holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvRemark = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
@@ -350,9 +369,9 @@ public class HalfProductOutOrderFragment extends Fragment {
                 holder.tvBatchNo.setText("");
 
             holder.tvOutOrderStatus.setText(list.get(position).getOutOrderStatusVo().getValue());
-            holder.detail.setText("详情");
-            holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.detail.setOnClickListener(new View.OnClickListener() {
+            holder.tvRemark.setText(list.get(position).getRemark());
+            holder.tvOutOrderNo.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvOutOrderNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, HalfProductOutOrderDetailActivity.class);
@@ -367,8 +386,8 @@ public class HalfProductOutOrderFragment extends Fragment {
         class ViewHolder {
             public TextView tvOutOrderNo;
             public TextView tvBatchNo;  //出库批次号
+            public TextView tvRemark;
             public TextView tvOutOrderStatus;
-            public TextView detail;
         }
 
     }

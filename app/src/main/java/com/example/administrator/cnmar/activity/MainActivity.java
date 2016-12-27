@@ -1,6 +1,6 @@
 package com.example.administrator.cnmar.activity;
 
-import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,21 +9,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.fragment.HomeFragment;
 import com.example.administrator.cnmar.fragment.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
-
-    private TextView tvTitle;
-    private ImageView ivLeftImage;
     private RadioGroup radioGroup;
     private RadioButton rbHome,rbMyProfile;
     private HomeFragment homeFragment;
@@ -46,38 +42,31 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        if(savedInstanceState!=null){
-//
-//        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        tvTitle= (TextView) findViewById(R.id.title);
-        ivLeftImage= (ImageView) findViewById(R.id.left_img);
+        AppExit.getInstance().addActivity(this);
         radioGroup= (RadioGroup) findViewById(R.id.rg);
-        rbHome= (RadioButton) findViewById(R.id.home);
-        rbMyProfile= (RadioButton) findViewById(R.id.mProfile);
+        rbHome= (RadioButton) findViewById(R.id.rb1);
+        rbMyProfile= (RadioButton) findViewById(R.id.rb2);
         llLeftArrow= (LinearLayout) findViewById(R.id.left_arrow);
 
+        rbHome.setVisibility(View.VISIBLE);
+        rbMyProfile.setVisibility(View.VISIBLE);
+        rbHome.setText(R.string.rbHome);
+        rbMyProfile.setText(R.string.rbProfile);
 
 //      默认选中首页
         setTabSelection(0);
-
-
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId){
-                    case R.id.home:
+                    case R.id.rb1:
                         setTabSelection(0);
-                        rbHome.setBackgroundColor(getResources().getColor(R.color.colorBase));
-                        rbMyProfile.setBackgroundColor(getResources().getColor(R.color.color_white));
                         break;
-                    case  R.id.mProfile:
+                    case  R.id.rb2:
                         setTabSelection(1);
-                        rbHome.setBackgroundColor(getResources().getColor(R.color.color_white));
-                        rbMyProfile.setBackgroundColor(getResources().getColor(R.color.colorBase));
                         break;
                     default:
                         break;
@@ -105,11 +94,7 @@ public class MainActivity extends AppCompatActivity {
             if(iskill)
             {
                 //退出
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                System.exit(0);
+                AppExit.getInstance().exit();
             }
             else
             {
@@ -136,8 +121,17 @@ public class MainActivity extends AppCompatActivity {
         switch (index) {
             // 点击主页tab
             case 0:
-                tvTitle.setText("洲马物联");
-                ivLeftImage.setVisibility(View.VISIBLE);
+                rbHome.setChecked(true);
+                rbHome.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                rbMyProfile.setBackgroundColor(getResources().getColor(R.color.color_white));
+//                动态设置单选按钮文本上下左右的图片（不需要的地方设置为0）
+                Drawable drawable1 = getResources().getDrawable(R.drawable.home_selected);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.profile);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                rbHome.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbMyProfile.setCompoundDrawables(null,drawable2,null,null);//只放上边
+//                rbMyProfile.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.profile,0,0);
                 if (homeFragment == null) {
                     // 如果HomeFragment为空，则创建一个并添加到界面上
                     homeFragment = new HomeFragment();
@@ -149,9 +143,16 @@ public class MainActivity extends AppCompatActivity {
                 break;
             // 点击我的资料tab
             case 1:
-                tvTitle.setText("我的资料");
-                ivLeftImage.setVisibility(View.INVISIBLE);
-
+                rbMyProfile.setChecked(true);
+                rbHome.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbMyProfile.setBackgroundColor(getResources().getColor(R.color.colorBase));
+//                动态设置单选按钮文本上下左右的图片（不需要的地方设置为0）
+                Drawable drawable3 = getResources().getDrawable(R.drawable.home);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.profile_selected);
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+                rbHome.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbMyProfile.setCompoundDrawables(null,drawable4,null,null);//只放上边
                 if (profileFragment == null) {
                     // 如果profileFragment为空，则创建一个并添加到界面上
                     profileFragment = new ProfileFragment();

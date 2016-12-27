@@ -8,6 +8,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,17 +27,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
 import component.product.model.ProductInOrder;
 import component.product.model.ProductInOrderProduct;
@@ -44,10 +49,9 @@ import component.product.vo.InOrderStatusVo;
 import zxing.activity.CaptureActivity;
 
 public class ProductInOrderDetailActivity extends AppCompatActivity {
-
+    private Context context;
     private TextView tvName11, tvName12, tvName21, tvName22, tvName31;
     private TextView tvInOrder, tvInBatchNo, tvPlanNo, tvRemark, tvInOrderStatus;
-
     private TextView name1, name2, name3, name4;
     private TextView tvTitle;
     private MyListView listView;
@@ -75,24 +79,24 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_in_order_detail);
-
+        AppExit.getInstance().addActivity(this);
         //   从登陆页面取出用户的角色信息
-        role = LoginActivity.sp.getString("Role", "123");
-        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
+        role = SPHelper.getString(this, "Role", "");
+        isSuper = SPHelper.getBoolean(this, "isSuper", false);
 
         init();
         id = getIntent().getIntExtra("ID", 0);
+
         strUrl = UrlHelper.URL_PRODUCT_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
 
 //        保存从列表页面传递过来的id对应的URL地址，在扫描页面返回的时候用到
-        LoginActivity.editor.putString("productInURL", strUrl).commit();
+        SPHelper.putString(this, "productInURL", strUrl);
         getInOrderDetailFromNet();
-
-
     }
 
     public void init() {
+        context=ProductInOrderDetailActivity.this;
         tvName11 = (TextView) findViewById(R.id.name11);
         tvName12 = (TextView) findViewById(R.id.name12);
         tvName21 = (TextView) findViewById(R.id.name21);
@@ -105,9 +109,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductInOrderDetailActivity.this, ProductStockActivity.class);
-                intent.putExtra("flag", 1);
-                startActivity(intent);
+                ProductInOrderDetailActivity.this.finish();
             }
         });
         tvName11.setText("入库单号");
@@ -150,6 +152,8 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                 }
                 inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
                 preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+                //        每次点击提交入库按钮，将inNums设置为空，防止之前的数值对之后的数值产生影响
+                inNums = "";
                 for (int i = 0; i < map.size(); i++) {
                     inNums += map.get(i) + ",";
                 }
@@ -163,23 +167,24 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                         final String finalUrl = url;
                         new AlertDialog.Builder(ProductInOrderDetailActivity.this)
                                 .setTitle("系统提示")
-                                .setMessage("未全部入库，提交之后不能修改，确认入库吗？")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        sendRequest(finalUrl);
-                                    }
-                                })
-                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                .setMessage("部分入库，提交之后不能修改，确认入库吗？")
+                                .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        inNums = "";
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UniversalHelper.showProgressDialog(context);
+                                        sendRequest(finalUrl);
                                     }
                                 }).create().show();
                         return;
                     }
                 }
+                UniversalHelper.showProgressDialog(context);
                 sendRequest(url);
 
             }
@@ -188,32 +193,19 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            RequestQueue queue = Volley.newRequestQueue(ProductInOrderDetailActivity.this);
-            StringRequest stringRequest = new StringRequest(data.getStringExtra("result"), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    String json = VolleyHelper.getJson(s);
-                    component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                    if (!response.isStatus()) {
-                        Toast.makeText(ProductInOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        getInOrderDetailFromNet();
-                    }
-
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-
-                }
-            });
-            queue.add(stringRequest);
-        } else if (resultCode == 5) {
-            strUrl = LoginActivity.sp.getString("productInURL", "");
+        if (resultCode == 5) {
+            strUrl = SPHelper.getString(this, "productInURL", "");
             getInOrderDetailFromNet();
         }
     }
@@ -223,6 +215,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                UniversalHelper.dismissProgressDialog();
                 String json = VolleyHelper.getJson(s);
                 component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                 if (!response.isStatus()) {
@@ -236,7 +229,8 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                UniversalHelper.dismissProgressDialog();
+                Toast.makeText(context, "连接超时", Toast.LENGTH_SHORT).show();
             }
         });
         queue.add(stringRequest);
@@ -252,7 +246,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
-//                        Log.d("RRRRR",json);
+                        Log.d("RRRRR", json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         ProductInOrder productInOrder = JSON.parseObject(response.getData().toString(), ProductInOrder.class);
 //                        得到列表的数据源
@@ -269,7 +263,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                         }
 
 
-                        if (productInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey() && (role.contains("成品库管员") || isSuper)) {
+                        if (productInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey()) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             btnSubmit.setText("提交入库");
                             myAdapter = new MyAdapter(ProductInOrderDetailActivity.this, list1);
@@ -361,23 +355,87 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
 
             holder.tvCode.setText(list.get(position).getSpace().getProduct().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
+
+            holder.tvToBeInOrderNum.setText(list.get(position).getPreInStock()
+                    + list.get(position).getSpace().getProduct().getUnit().getName());
 
             inOrderSpaceIds += String.valueOf(list.get(position).getId()) + ",";
             preInStocks += String.valueOf(list.get(position).getPreInStock()) + ",";
 
             if (list.get(position).getSpace().getProduct().getStockType() == StockTypeVo.scan.getKey()) {
                 holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
-                holder.tvInNum.setFocusable(false);
-                holder.tvInNum.setFocusableInTouchMode(false);
-//                将扫码的每一行的出库数量保存到map中
-                map.put(position, String.valueOf(list.get(position).getInStock()));
-                holder.tvInNum.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(ProductInOrderDetailActivity.this, "该成品为扫描二维码出入库", Toast.LENGTH_SHORT).show();
+
+//                如果原料有包装类型（在扫码的前提下），并且成功扫描到原料之后（出库数不为0），允许用户手动输入数量，否则不允许输入数量
+                if (list.get(position).getSpace().getProduct().getPackType() != PackTypeVo.empty.getKey()) {
+//              设置数字颜色为蓝色，并将用户输入的数字保存到map中，与不能输入数字的(红色)区分开
+                    holder.tvInNum.setTextColor(context.getResources().getColor(R.color.colorBase));
+//                    出库数不为0才能点击
+                    if (list.get(position).getInStock() != 0) {
+                        map.put(position, String.valueOf(list.get(position).getInStock()));
+                        holder.tvInNum.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if (s.length() > 0) {
+                                    if (Integer.parseInt(s.toString()) > list.get(position).getPreInStock().intValue()) {
+                                        map.put(position, "?");
+                                    } else
+                                        map.put(position, s.toString());
+
+                                } else {
+                                    map.remove(position);
+                                }
+                            }
+                        });
+
+                    } else {
+                        holder.tvInNum.setFocusable(false);
+                        holder.tvInNum.setFocusableInTouchMode(false);
+                        map.put(position, String.valueOf(0));
+                        //            提示用户不能输入
+                        holder.tvInNum.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast toast = null;
+                                if (toast == null) {
+                                    toast = new Toast(ProductInOrderDetailActivity.this);
+                                    toast.makeText(ProductInOrderDetailActivity.this, "请扫描二维码", Toast.LENGTH_SHORT).show();
+                                } else
+                                    toast.show();
+
+                            }
+                        });
                     }
-                });
+
+                } else {
+                    holder.tvInNum.setFocusable(false);
+                    holder.tvInNum.setFocusableInTouchMode(false);
+
+                    map.put(position, String.valueOf(list.get(position).getInStock()));
+
+//            提示用户不能输入
+                    holder.tvInNum.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast toast = null;
+                            if (toast == null) {
+                                toast = new Toast(ProductInOrderDetailActivity.this);
+                                toast.makeText(ProductInOrderDetailActivity.this, "请扫描二维码", Toast.LENGTH_SHORT).show();
+                            } else
+                                toast.show();
+
+                        }
+                    });
+                }
 
             }
 //            若产品为手动输入数量的出入库产品，那么将输入的数量存入map中
@@ -463,7 +521,11 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
 
             holder.tvCode.setText(list.get(position).getSpace().getProduct().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvToBeInOrderNum.setText(String.valueOf(list.get(position).getPreInStock()));
+
+
+            holder.tvToBeInOrderNum.setText(list.get(position).getPreInStock()
+                    + list.get(position).getSpace().getProduct().getUnit().getName());
+
             holder.tvInNum.setText(String.valueOf(list.get(position).getInStock()));
             holder.tvInNum.setFocusable(false);
             holder.tvInNum.setFocusableInTouchMode(false);

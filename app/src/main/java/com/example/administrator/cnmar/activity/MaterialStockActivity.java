@@ -1,27 +1,27 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.fragment.InOrderFragment;
 import com.example.administrator.cnmar.fragment.MaterialCheckStockFragment;
 import com.example.administrator.cnmar.fragment.MaterialStockFragment;
 import com.example.administrator.cnmar.fragment.OutOrderFragment;
-import com.example.administrator.cnmar.helper.UniversalHelper;
+import com.example.administrator.cnmar.helper.SPHelper;
 
 public class MaterialStockActivity extends AppCompatActivity {
     private TextView tvTitle;
-    private ImageView ivLeftArrow, ivScann;
     private MaterialStockFragment materialStockFragment;
     private InOrderFragment inHouseBillFragment;
     private OutOrderFragment outHouseBillFragment;
@@ -36,42 +36,51 @@ public class MaterialStockActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_material_stock);
-
-        String sublist = LoginActivity.sp.getString(getResources().getString(R.string.HOME_YLCK), "库存，入库单，出库单，盘库");
+        AppExit.getInstance().addActivity(this);
+//        取出一级菜单name与其二级菜单url的对应关系
+        String sublist = SPHelper.getString(this,getResources().getString(R.string.HOME_YLCK), "");
 //        Log.d("subList",sublist);
-
 
         tvTitle = (TextView) findViewById(R.id.title);
         rg = (RadioGroup) findViewById(R.id.rg);
-        rbStock = (RadioButton) findViewById(R.id.stock);
-        rbInOrder = (RadioButton) findViewById(R.id.inHouseBill);
-        rbOutOrder = (RadioButton) findViewById(R.id.outHouseBill);
-        rbCheckStock = (RadioButton) findViewById(R.id.checkStock);
+        rbStock = (RadioButton) findViewById(R.id.rb1);
+        rbInOrder = (RadioButton) findViewById(R.id.rb2);
+        rbOutOrder = (RadioButton) findViewById(R.id.rb3);
+        rbCheckStock = (RadioButton) findViewById(R.id.rb4);
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
 
-        ivLeftArrow = (ImageView) findViewById(R.id.left_img);
-        UniversalHelper.backToLastActivity(this, llLeftArrow, new MainActivity());
+        llLeftArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MaterialStockActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
         tvTitle.setText("原料仓库");
 
 //       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-        if (sublist.contains("库存管理")) {
+        if (sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")) {
             rbStock.setVisibility(View.VISIBLE);
             setSelection(0);
         }
-        if (sublist.contains("入库单管理")) {
+        if (sublist.contains(","+getResources().getString(R.string.material_in_order_url)+",")) {
             rbInOrder.setVisibility(View.VISIBLE);
-            if (!sublist.contains("库存管理"))
+            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+","))
                 setSelection(1);
         }
-        if (sublist.contains("出库单管理")) {
+        if (sublist.contains(","+getResources().getString(R.string.material_out_order_url)+",")) {
             rbOutOrder.setVisibility(View.VISIBLE);
-            if (!sublist.contains("库存管理") && !sublist.contains("入库单管理"))
+            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.material_in_order_url)+","))
                 setSelection(2);
 
         }
-        if (sublist.contains("盘点")) {
+        if (sublist.contains(","+getResources().getString(R.string.material_stock_check_manage_url)+",")) {
             rbCheckStock.setVisibility(View.VISIBLE);
-            if (!sublist.contains("库存管理") && !sublist.contains("入库单管理") && !sublist.contains("出库单管理"))
+            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.material_in_order_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.material_out_order_url)+","))
                 setSelection(3);
         }
 
@@ -80,16 +89,16 @@ public class MaterialStockActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.stock:
+                    case R.id.rb1:
                         setSelection(0);
                         break;
-                    case R.id.inHouseBill:
+                    case R.id.rb2:
                         setSelection(1);
                         break;
-                    case R.id.outHouseBill:
+                    case R.id.rb3:
                         setSelection(2);
                         break;
-                    case R.id.checkStock:
+                    case R.id.rb4:
                         setSelection(3);
                         break;
                     default:
@@ -112,19 +121,7 @@ public class MaterialStockActivity extends AppCompatActivity {
         } else if (flag == 3) {
             setSelection(3);
         }
-//        else if (flag==4){
-//            setSelection(3);
-//        }
     }
-
-    //    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(resultCode==RESULT_OK){
-//            Toast.makeText(this,data.getStringExtra("result"),Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
 
     @Override
     public void onAttachFragment(android.support.v4.app.Fragment fragment) {
@@ -161,76 +158,117 @@ public class MaterialStockActivity extends AppCompatActivity {
         hideFragment(transaction);
 
         switch (id) {
-            case 0:
+            case 0:{
                 rbStock.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbOutOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbCheckStock.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.stock_selected);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.in_order);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.out_order);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.check_stock);
 
-                materialStockFragment = null;
-                materialStockFragment = new MaterialStockFragment();
-                transaction.add(R.id.content, materialStockFragment);
-//                if (materialStockFragment == null) {
-//                    materialStockFragment = new MaterialStockFragment();
-//                    transaction.add(R.id.content, materialStockFragment);
-//                } else
-//                    transaction.show(materialStockFragment);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+
+                if (materialStockFragment == null) {
+                    materialStockFragment = new MaterialStockFragment();
+                    transaction.add(R.id.content, materialStockFragment);
+                } else
+                    transaction.show(materialStockFragment);
                 break;
-            case 1:
+            }
+            case 1:{
                 rbInOrder.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbOutOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbCheckStock.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.stock);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.in_order_selected);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.out_order);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.check_stock);
 
-                inHouseBillFragment =null;
-                inHouseBillFragment = new InOrderFragment();
-                transaction.add(R.id.content, inHouseBillFragment);
-//                if (inHouseBillFragment == null) {
-//                    inHouseBillFragment = new InOrderFragment();
-//                    transaction.add(R.id.content, inHouseBillFragment);
-//                } else
-//                    transaction.show(inHouseBillFragment);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                if (inHouseBillFragment == null) {
+                    inHouseBillFragment = new InOrderFragment();
+                    transaction.add(R.id.content, inHouseBillFragment);
+                } else
+                    transaction.show(inHouseBillFragment);
                 break;
-            case 2:
+            }
+            case 2:{
                 rbOutOrder.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbOutOrder.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbCheckStock.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.stock);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.in_order);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.out_order_selected);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.check_stock);
 
-                outHouseBillFragment = null;
-                outHouseBillFragment = new OutOrderFragment();
-                transaction.add(R.id.content, outHouseBillFragment);
-//                if (outHouseBillFragment == null) {
-//                    outHouseBillFragment = new OutOrderFragment();
-//                    transaction.add(R.id.content, outHouseBillFragment);
-//                } else
-//                    transaction.show(outHouseBillFragment);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+
+                if (outHouseBillFragment == null) {
+                    outHouseBillFragment = new OutOrderFragment();
+                    transaction.add(R.id.content, outHouseBillFragment);
+                } else
+                    transaction.show(outHouseBillFragment);
                 break;
-            case 3:
+            }
+            case 3:{
                 rbCheckStock.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbOutOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbCheckStock.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.stock);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.in_order);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.out_order);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.check_stock_selected);
 
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
 
-                materialCheckStockFragment = null;
-                materialCheckStockFragment = new MaterialCheckStockFragment();
-                transaction.add(R.id.content, materialCheckStockFragment);
-//                if (materialCheckStockFragment == null) {
-//                    materialCheckStockFragment = new MaterialCheckStockFragment();
-//                    if(flag==4){
-//                        Bundle data=new Bundle();
-//                        data.putInt("SIGN",1);
-//                        materialCheckStockFragment.setArguments(data);
-//                    }
-//                    transaction.add(R.id.content, materialCheckStockFragment);
-//                } else
-//                    transaction.show(materialCheckStockFragment);
+                if (materialCheckStockFragment == null) {
+                    materialCheckStockFragment = new MaterialCheckStockFragment();
+                    transaction.add(R.id.content, materialCheckStockFragment);
+                } else
+                    transaction.show(materialCheckStockFragment);
                 break;
+            }
             default:
                 break;
         }

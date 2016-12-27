@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.AppExit;
 
 public class WelcomeActivity extends AppCompatActivity {
    private Handler handler=new Handler(){
@@ -22,7 +22,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
-        handler.sendEmptyMessageDelayed(0,3000);
+//        启动页显示的背景图跟其主题的 windowBackground一样的时候，不用调用setContentView
+//        setContentView(R.layout.activity_welcome);
+        AppExit.getInstance().addActivity(this);
+        handler.sendEmptyMessageDelayed(0,2000);
     }
 }

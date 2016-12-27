@@ -1,11 +1,9 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,68 +15,65 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import component.company.model.Company;
 
 public class CompanyInfoDetailActivity extends AppCompatActivity {
-    private Context context = CompanyInfoDetailActivity.this;
-    private TextView tvCompanyName, tvPhone, tvFax, tvAddress, tvPerson, tvPosition, tvMobilePhone, tvMailBox;
-    private static String strUrl;
-    private LinearLayout llLeftArrow;
-    private TextView tvTitle;
-    private WebView webView;
-    private int id;
-    private NetworkImageView ivImage;   //产品资质
+    private Context context;
+    private int id;//详情页面的id
+    private String strUrl;
+    @BindView(R.id.left_arrow)
+    LinearLayout llLeftArrow;
+    @BindView(R.id.title)
+    TextView tvTitle;
+    @BindView(R.id.tvCompanyName)
+    TextView tvCompanyName;
+    @BindView(R.id.tvPhone)
+    TextView tvPhone;
+    @BindView(R.id.tvFax)
+    TextView tvFax;
+    @BindView(R.id.tvAddress)
+    TextView tvAddress;
+    @BindView(R.id.tvPerson)
+    TextView tvPerson;
+    @BindView(R.id.tvPosition)
+    TextView tvPosition;
+    @BindView(R.id.tvMobilePhone)
+    TextView tvMobilePhone;
+    @BindView(R.id.tvMailBox)
+    TextView tvMailBox;
+    @BindView(R.id.ivImage)
+    NetworkImageView ivImage; //企业资质
+    @BindView(R.id.webView)
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_info_detail);
+        ButterKnife.bind(this);
+        AppExit.getInstance().addActivity(this);
 
-        init();
+        context=CompanyInfoDetailActivity.this;
+        tvTitle.setText("企业详情");
         id = getIntent().getIntExtra("ID", 0);
         strUrl = UrlHelper.URL_COMPANY_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
         getCompanyInfoFromNet();
     }
 
-    public void init() {
-        tvTitle = (TextView) findViewById(R.id.title);
-        tvTitle.setText("企业详情");
-        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
-        llLeftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CompanyManageActivity.class);
-                intent.putExtra("flag",0);
-                startActivity(intent);
-            }
-        });
-
-
-        tvCompanyName = (TextView) findViewById(R.id.tv11);
-        tvPhone = (TextView) findViewById(R.id.tv12);
-        tvFax = (TextView) findViewById(R.id.tv21);
-        tvAddress = (TextView) findViewById(R.id.tv22);
-        tvPerson = (TextView) findViewById(R.id.tv31);
-        tvPosition = (TextView) findViewById(R.id.tv32);
-        tvMobilePhone = (TextView) findViewById(R.id.tv41);
-        tvMailBox = (TextView) findViewById(R.id.tv42);
-
-        webView = (WebView) findViewById(R.id.webView);
-        ivImage = (NetworkImageView) findViewById(R.id.image);
-
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, CompanyManageActivity.class);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -93,10 +88,8 @@ public class CompanyInfoDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
-//                        Log.d("RRRRR",json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         Company company = JSON.parseObject(response.getData().toString(), Company.class);
-
 
                         tvCompanyName.setText(company.getName());
                         tvPhone.setText(company.getTel());
@@ -114,7 +107,7 @@ public class CompanyInfoDetailActivity extends AppCompatActivity {
                         }
 //                        得到简介内容
                         String introduction = company.getIntro();
-//                         loadData出现中文乱码，用loadDataWithBaseURL解决问题
+//                        loadData出现中文乱码，用loadDataWithBaseURL解决问题
 //                        webView.loadData(introduction,"text/html","UTF-8");
                         webView.loadDataWithBaseURL("file://", introduction, "text/html", "UTF-8", "about:blank");
                     }
@@ -127,5 +120,10 @@ public class CompanyInfoDetailActivity extends AppCompatActivity {
                 queue.add(stringRequest);
             }
         }).start();
+    }
+
+    @OnClick(R.id.left_arrow)
+    public void onClick() {
+        finish();
     }
 }

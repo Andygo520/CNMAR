@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,15 +28,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.DeliveryPlanDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,14 +47,18 @@ import component.custom.model.CustomDeliverPlan;
  * A simple {@link Fragment} subclass.
  */
 public class DeliveryPlanFragment extends Fragment {
-    //    page代表显示的是第几页内容，从1开始
-    int page = 1;
+    //    表头4个字段
+    private TextView tv1, tv2, tv3, tv4;
+    int page = 1;    //    page代表显示的是第几页内容，从1开始
+    private int total; // 总页数
+    private int num = 1; // 第几页
+    private int count; // 数据总条数
     private MyListView listView;
     private BillAdapter myAdapter;
     private LinearLayout llSearch;
     private EditText etSearchInput;
     private ImageView ivDelete;
-    private MaterialRefreshLayout materialRefreshLayout;
+    private TwinklingRefreshLayout refreshLayout;
     private Handler handler = new Handler();
     //    用来存放从后台取出的数据列表，作为adapter的数据源
     private List<CustomDeliverPlan> data = new ArrayList<>();
@@ -67,65 +73,24 @@ public class DeliveryPlanFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_delivery_plan, container, false);
+        View view = inflater.inflate(R.layout.refresh_frame, container, false);
+
+        tv1= (TextView) view.findViewById(R.id.tv1);
+        tv2= (TextView) view.findViewById(R.id.tv2);
+        tv3= (TextView) view.findViewById(R.id.tv3);
+        tv4= (TextView) view.findViewById(R.id.tv4);
+
+        tv1.setText("交付计划编号");
+        tv2.setText("交付订单号");
+        tv3.setText("交付日期");
+        tv4.setText("成品出库单号");
+
         listView = (MyListView) view.findViewById(R.id.listView);
 //        listView.addFooterView(new ViewStub(getActivity()));
 
-        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
-        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
-
-
-        materialRefreshLayout.setLoadMore(true);
-
-//        materialRefreshLayout.autoRefreshLoadMore();
-        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
-            @Override
-            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
-                //一般加载数据都是在子线程中，这里我用到了handler
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        myAdapter = null;
-//                      下拉刷新默认显示第一页（10条）内容
-                        page = 1;
-
-                        getPlanListFromNet(strUrl);
-                        Log.d("llSearch", strUrl);
-
-                        materialRefreshLayout.finishRefresh();
-                    }
-                }, 400);
-            }
-
-            @Override
-            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
-                materialRefreshLayout.setLoadMore(false);
-                if (page == 1 && myAdapter.getCount() < 10) {
-                    materialRefreshLayout.finishRefreshLoadMore();
-
-                } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myAdapter = new BillAdapter();
-                            page++;
-//                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCE_PLAN.replace("{page}", String.valueOf(page)));
-//                            Log.d("url2", url);
-//                            getPlanListFromNet(url);
-                            getPlanListFromNet(strUrl);
-
-                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
-                            // 结束上拉刷新...
-                            materialRefreshLayout.finishRefreshLoadMore();
-                        }
-                    }, 400);
-                }
-
-
-            }
-        });
-
-
+        refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
+        refresh();
+        
         llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
         etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
@@ -141,7 +106,6 @@ public class DeliveryPlanFragment extends Fragment {
                         String urlString = UrlHelper.URL_SEARCH_DELIVERY_PLAN.replace("{query.code}", input);
                         urlString = UniversalHelper.getTokenUrl(urlString);
                         Log.d("Search", urlString);
-                        myAdapter = null;
                         getPlanListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -169,7 +133,6 @@ public class DeliveryPlanFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
-                    myAdapter = null;
                     getPlanListFromNet(strUrl);
                 } else {
                     ivDelete.setVisibility(View.VISIBLE);
@@ -197,13 +160,68 @@ public class DeliveryPlanFragment extends Fragment {
                 }
                 String urlString = UrlHelper.URL_SEARCH_DELIVERY_PLAN.replace("{query.code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
-                myAdapter = null;
                 getPlanListFromNet(urlString);
             }
         });
-//        getPlanListFromNet(strUrl);
+        getPlanListFromNet(strUrl);
         return view;
     }
+
+    public void refresh() {
+//        刷新框架的初始化
+        UniversalHelper.initRefresh(getActivity(),refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+            @Override
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+//                      下拉刷新默认显示第一页（10条）内容
+                        page = 1;
+                        getPlanListFromNet(strUrl);
+                        refreshLayout.finishRefreshing();
+                    }
+                },400);
+            }
+            @Override
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            page++;
+                            //    当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
+                            if (page == total) {
+                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_DELIVERY_PLAN.replace("{page}", String.valueOf(page)));
+                                getPlanListFromNet(url);
+                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
+                                // 结束上拉刷新...
+                                refreshLayout.finishLoadmore();
+                                return;
+                            }
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_DELIVERY_PLAN.replace("{page}", String.valueOf(page)));
+                            getPlanListFromNet(url);
+                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            // 结束上拉刷新...
+                            refreshLayout.finishLoadmore();
+                        }
+                    },400);
+            }
+        });
+    }
+
+    /*
+* Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
+* */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+//        Fragment重新显示到最前端中
+        if (!hidden){
+            page=1;
+            getPlanListFromNet(strUrl);
+        }
+    }
+
 
     public void getPlanListFromNet(final String url) {
         new Thread(new Runnable() {
@@ -214,10 +232,18 @@ public class DeliveryPlanFragment extends Fragment {
                     @Override
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
-                        Log.d("sdfsdfsdf", s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         List<CustomDeliverPlan> list = JSON.parseArray(response.getData().toString(), CustomDeliverPlan.class);
-                        if (myAdapter == null) {
+                        count = response.getPage().getCount();
+                        total = response.getPage().getTotal();
+                        num = response.getPage().getNum();
+//      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
+                        if (count <= 10 || num==total)
+                            refreshLayout.setEnableLoadmore(false);
+                        else
+                            refreshLayout.setEnableLoadmore(true);
+                        //  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
+                        if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());
                             listView.setAdapter(myAdapter);
@@ -250,10 +276,6 @@ public class DeliveryPlanFragment extends Fragment {
             this.context = context;
         }
 
-        public BillAdapter() {
-
-        }
-
         @Override
         public int getCount() {
             return list.size();
@@ -274,18 +296,23 @@ public class DeliveryPlanFragment extends Fragment {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.in_order_item, parent, false);
-                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.tvInOrderNo);
-                holder.tvDeliveryOrder = (TextView) convertView.findViewById(R.id.tvArriveDate);
-                holder.tvProductOutOrder = (TextView) convertView.findViewById(R.id.tvInOrderStatus);
-                holder.detail = (TextView) convertView.findViewById(R.id.detail);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
+//                偶数行背景设为灰色
+                if (position % 2 == 0)
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
+                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvDeliveryOrder = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvDeliveryDate = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvProductOutOrder = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvPlanNo.setText(list.get(position).getCode());
-
             holder.tvDeliveryOrder.setText(list.get(position).getDeliverOrder());
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+            holder.tvDeliveryDate.setText(sdf.format(list.get(position).getDeliverDate()));
 
 //           没有成品出库单的，显示空字符
             if (list.get(position).getProductOutOrder() == null)
@@ -293,9 +320,8 @@ public class DeliveryPlanFragment extends Fragment {
             else
                 holder.tvProductOutOrder.setText(list.get(position).getProductOutOrder().getCode());
 
-            holder.detail.setText("详情");
-            holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.detail.setOnClickListener(new View.OnClickListener() {
+            holder.tvPlanNo.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvPlanNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, DeliveryPlanDetailActivity.class);
@@ -311,8 +337,8 @@ public class DeliveryPlanFragment extends Fragment {
         class ViewHolder {
             public TextView tvPlanNo;
             public TextView tvDeliveryOrder;
+            public TextView tvDeliveryDate;
             public TextView tvProductOutOrder;
-            public TextView detail;
         }
 
     }

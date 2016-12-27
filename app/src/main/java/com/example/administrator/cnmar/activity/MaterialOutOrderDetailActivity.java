@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,17 +28,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
 import component.material.model.MaterialOutOrder;
 import component.material.model.MaterialOutOrderMaterial;
@@ -46,14 +50,16 @@ import component.product.vo.OutOrderStatusVo;
 import zxing.activity.CaptureActivity;
 
 public class MaterialOutOrderDetailActivity extends AppCompatActivity {
+    private Context context;
     private TextView tvName11, tvName12, tvName21, tvName22, tvName31;
     private TextView tvOutOrder, tvOutBatchNo, tvPlanNo, tvRemark, tvOutOrderStatus;
-    private TextView name1, name2, name3, name4, name5;
+    private TextView name1, name2, name3, name4, name5, name6;
     private TextView tvTitle;
     private MyListView lvMaterialInfo;
     private static String strUrl;
     private ImageView ivScann;
     private LinearLayout llLeftArrow;
+    private TableLayout tableLayout;
     private Button btnSubmit;
     private HashMap<Integer, String> map = new HashMap<>();
 
@@ -74,10 +80,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_order_detail);
-
+        AppExit.getInstance().addActivity(this);
 //   从登陆页面取出用户的角色信息
-        role = LoginActivity.sp.getString("Role", "123");
-        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
+        role = SPHelper.getString(this, "Role", "");
+        isSuper = SPHelper.getBoolean(this, "isSuper", false);
 
         init();
 
@@ -87,7 +93,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         strUrl = UniversalHelper.getTokenUrl(strUrl);
 
 //        保存从列表页面传递过来的id对应的URL地址，在扫描页面返回的时候用到
-        LoginActivity.editor.putString("outURL", strUrl).commit();
+        SPHelper.putString(this, "outURL", strUrl);
         getOutOrderDetailFromNet();
 
 
@@ -96,20 +102,28 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(MaterialOutOrderDetailActivity.this, MaterialStockActivity.class);
-            intent.putExtra("flag", 2);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     public void init() {
+        context=MaterialOutOrderDetailActivity.this;
         tvName11 = (TextView) findViewById(R.id.name11);
         tvName12 = (TextView) findViewById(R.id.name12);
         tvName21 = (TextView) findViewById(R.id.name21);
         tvName22 = (TextView) findViewById(R.id.name22);
         tvName31 = (TextView) findViewById(R.id.name31);
+//      在仓位信息默认显示6列
+        tableLayout = (TableLayout) findViewById(R.id.tableLayout);
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
+
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
         ivScann = (ImageView) findViewById(R.id.scann);
         tvTitle = (TextView) findViewById(R.id.title);
@@ -117,10 +131,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MaterialOutOrderDetailActivity.this, MaterialStockActivity.class);
-                intent.putExtra("flag", 2);
-                startActivity(intent);
-                finish();
+                MaterialOutOrderDetailActivity.this.finish();
             }
         });
         tvName11.setText("出库单号");
@@ -134,6 +145,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         name3 = (TextView) findViewById(R.id.column3);
         name4 = (TextView) findViewById(R.id.column4);
         name5 = (TextView) findViewById(R.id.column5);
+        name6 = (TextView) findViewById(R.id.column6);
+
 
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         name1.setText("原料编码");
@@ -141,6 +154,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         name3.setText("待出库数量");
         name4.setText("入库批次号");
         name5.setText("已出库数量");
+        name6.setText("二维码序列号");
+
 
         tvOutOrder = (TextView) findViewById(R.id.tv11);
         tvOutBatchNo = (TextView) findViewById(R.id.tv12);
@@ -166,6 +181,9 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                 }
                 outOrderSpaceIds1 = outOrderSpaceIds.substring(0, outOrderSpaceIds.length() - 1);
                 preOutStocks1 = preOutStocks.substring(0, preOutStocks.length() - 1);
+
+                //            每次点击提交按钮，将outNums设置为空，防止之前的数值对之后的数值产生影响
+                outNums = "";
                 for (int i = 0; i < map.size(); i++) {
                     outNums += map.get(i) + ",";
                 }
@@ -180,23 +198,24 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                         final String finalUrl = url;
                         new AlertDialog.Builder(MaterialOutOrderDetailActivity.this)
                                 .setTitle("系统提示")
-                                .setMessage("未全部出库，提交之后不能修改，确认出库吗？")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        sendRequest(finalUrl);
-                                    }
-                                })
-                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                .setMessage("部分出库，提交之后不能修改，确认出库吗？")
+                                .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        outNums = "";
+                                    }
+                                })
+                                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UniversalHelper.showProgressDialog(context);
+                                        sendRequest(finalUrl);
                                     }
                                 }).create().show();
                         return;
                     }
                 }
+                UniversalHelper.showProgressDialog(context);
                 sendRequest(url);
 
             }
@@ -207,34 +226,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            RequestQueue queue = Volley.newRequestQueue(MaterialOutOrderDetailActivity.this);
-//            扫描条码后得到返回的URL，在后面加上单据的id从而知道扫描的是哪一单
-            String codeUrl = data.getStringExtra("result") + "?outOrderId=" + String.valueOf(id);
-            Log.d("codeUrl", codeUrl);
-
-            StringRequest stringRequest = new StringRequest(codeUrl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    String json = VolleyHelper.getJson(s);
-                    component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                    if (!response.isStatus()) {
-                        Toast.makeText(MaterialOutOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        getOutOrderDetailFromNet();
-                    }
-
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-
-                }
-            });
-            queue.add(stringRequest);
-        } else if (resultCode == 4) {
-            strUrl = LoginActivity.sp.getString("outURL", "");
+        if (resultCode == 4) {
+            strUrl = SPHelper.getString(this, "outURL", "");
             getOutOrderDetailFromNet();
         }
     }
@@ -244,6 +237,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                UniversalHelper.dismissProgressDialog();
                 String json = VolleyHelper.getJson(s);
                 component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                 if (!response.isStatus()) {
@@ -257,7 +251,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                UniversalHelper.dismissProgressDialog();
+                Toast.makeText(MaterialOutOrderDetailActivity.this, "连接超时", Toast.LENGTH_SHORT).show();
             }
         });
         queue.add(stringRequest);
@@ -289,12 +284,11 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                             list1.addAll(list2);
                         }
 
-
-                        if (materialOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey() && (role.contains("原料库管员") || isSuper)) {
+                        if (materialOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()) {
                             btnSubmit.setVisibility(View.VISIBLE);
+                            ivScann.setVisibility(View.VISIBLE);
                             myAdapter = new MaterialInfoAdapter(MaterialOutOrderDetailActivity.this, list1);
                             lvMaterialInfo.setAdapter(myAdapter);
-                            ivScann.setVisibility(View.VISIBLE);
                             ivScann.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -338,11 +332,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-
+    //  出库单状态为待出库的时候使用该Adapter，可以输入内容
     public class MaterialInfoAdapter extends BaseAdapter {
         private Context context;
         private List<MaterialOutOrderSpace> list = null;
-
 
         public MaterialInfoAdapter(Context context, List<MaterialOutOrderSpace> list) {
             this.context = context;
@@ -368,13 +361,14 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.list_item_5_edit, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.list_item_6_edit, parent, false);
                 holder = new ViewHolder();
                 holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvToBeOutOrderNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column4);
                 holder.tvOutNum = (EditText) convertView.findViewById(R.id.column5);
+                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column6);
 
                 convertView.setTag(holder);
             } else
@@ -382,27 +376,100 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 
             holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvToBeOutOrderNum.setText(String.valueOf(list.get(position).getPreOutStock()));
+
+//            二维码序列号只对扫码有包装的产品有用，根据这个编号去扫描，对于其他类型的产品设置为空字符
+            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.scan.getKey()
+                    && list.get(position).getSpace().getMaterial().getPackType() != PackTypeVo.empty.getKey()
+                    )
+                holder.tvInOrderSpaceId.setText(String.valueOf(list.get(position).getInOrderSpaceId()));
+            else
+                holder.tvInOrderSpaceId.setText("");
+
+            holder.tvToBeOutOrderNum.setText(list.get(position).getPreOutStock() + list.get(position).getSpace().getMaterial().getUnit().getName());
             //            入库批次的非空判断
             if (list.get(position).getSpace().getSpaceStock() != null)
                 holder.tvBatchNo.setText(list.get(position).getSpace().getSpaceStock().getInTime());
             else
                 holder.tvBatchNo.setText("");
+
             outOrderSpaceIds += String.valueOf(list.get(position).getId()) + ",";
             preOutStocks += String.valueOf(list.get(position).getPreOutStock()) + ",";
 
+//            处理扫描出库的情况
             if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.scan.getKey()) {
                 holder.tvOutNum.setText(String.valueOf(list.get(position).getOutStock()));
-                holder.tvOutNum.setFocusable(false);
-                holder.tvOutNum.setFocusableInTouchMode(false);
-//                将扫码的每一行的出库数量保存到map中
-                map.put(position, String.valueOf(list.get(position).getOutStock()));
-                holder.tvOutNum.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(MaterialOutOrderDetailActivity.this, "该原料为扫描二维码出入库", Toast.LENGTH_SHORT).show();
+
+//                如果原料有包装类型（在扫码的前提下），并且成功扫描到原料之后（出库数不为0），允许用户手动输入数量，否则不允许输入数量
+                if (list.get(position).getSpace().getMaterial().getPackType() != PackTypeVo.empty.getKey()) {
+//              设置数字颜色为蓝色，并将用户输入的数字保存到map中，与不能输入数字的(红色)区分开
+                    holder.tvOutNum.setTextColor(context.getResources().getColor(R.color.colorBase));
+//                    出库数不为0才能点击
+                    if (list.get(position).getOutStock() != 0) {
+                        map.put(position, String.valueOf(list.get(position).getOutStock()));
+                        holder.tvOutNum.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if (s.length() > 0) {
+                                    if (Integer.parseInt(s.toString()) > list.get(position).getPreOutStock().intValue()) {
+                                        map.put(position, "?");
+                                    } else
+                                        map.put(position, s.toString());
+
+                                } else {
+                                    map.remove(position);
+                                }
+                            }
+                        });
+
+                    } else {
+                        holder.tvOutNum.setFocusable(false);
+                        holder.tvOutNum.setFocusableInTouchMode(false);
+                        map.put(position, String.valueOf(0));
+                        //            提示用户不能输入
+                        holder.tvOutNum.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast toast = null;
+                                if (toast == null) {
+                                    toast = new Toast(MaterialOutOrderDetailActivity.this);
+                                    toast.makeText(MaterialOutOrderDetailActivity.this, "请扫描二维码", Toast.LENGTH_SHORT).show();
+                                } else
+                                    toast.show();
+
+                            }
+                        });
                     }
-                });
+
+                } else {
+                    holder.tvOutNum.setFocusable(false);
+                    holder.tvOutNum.setFocusableInTouchMode(false);
+
+                    map.put(position, String.valueOf(list.get(position).getOutStock()));
+
+//            提示用户不能输入
+                    holder.tvOutNum.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast toast = null;
+                            if (toast == null) {
+                                toast = new Toast(MaterialOutOrderDetailActivity.this);
+                                toast.makeText(MaterialOutOrderDetailActivity.this, "请扫描二维码", Toast.LENGTH_SHORT).show();
+                            } else
+                                toast.show();
+
+                        }
+                    });
+                }
 
             }
 //            若产品为手动输入数量的出入库产品，那么将输入的数量存入map中
@@ -433,8 +500,6 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                     }
                 });
             }
-
-//            }
             return convertView;
         }
 
@@ -444,9 +509,11 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
             TextView tvToBeOutOrderNum;
             TextView tvBatchNo;
             EditText tvOutNum;
+            TextView tvInOrderSpaceId;  //二维码序列号
         }
     }
 
+    //  出库单状态不是待出库的时候使用该Adapter，显示内容
     public class MaterialInfoAdapter1 extends BaseAdapter {
         private Context context;
         private List<MaterialOutOrderSpace> list = null;
@@ -476,22 +543,32 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.list_item_5_edit, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.list_item_6_edit, parent, false);
                 holder = new ViewHolder();
                 holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvToBeOutOrderNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column4);
                 holder.tvOutNum = (EditText) convertView.findViewById(R.id.column5);
-
+                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column6);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvMaterialCode.setText(list.get(position).getSpace().getMaterial().getCode());
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvToBeOutOrderNum.setText(String.valueOf(list.get(position).getPreOutStock()));
-            //            入库批次的非空判断
+
+//            二维码序列号只对扫码有包装的产品有用，根据这个编号去扫描，对于其他类型的产品设置为空字符
+            if (list.get(position).getSpace().getMaterial().getStockType() == StockTypeVo.scan.getKey()
+                    && list.get(position).getSpace().getMaterial().getPackType() != PackTypeVo.empty.getKey()
+                    )
+                holder.tvInOrderSpaceId.setText(String.valueOf(list.get(position).getInOrderSpaceId()));
+            else
+                holder.tvInOrderSpaceId.setText("");
+
+            holder.tvToBeOutOrderNum.setText(list.get(position).getPreOutStock() + list.get(position).getSpace().getMaterial().getUnit().getName());
+
+//            入库批次的非空判断
             if (list.get(position).getSpace().getSpaceStock() != null)
                 holder.tvBatchNo.setText(list.get(position).getSpace().getSpaceStock().getInTime());
             else
@@ -509,6 +586,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
             TextView tvToBeOutOrderNum;
             TextView tvBatchNo;    // 入库批次
             EditText tvOutNum;
+            TextView tvInOrderSpaceId;  //二维码序列号
         }
     }
+
 }

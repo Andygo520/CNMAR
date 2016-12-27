@@ -1,26 +1,21 @@
 package com.example.administrator.cnmar.helper;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-import android.widget.LinearLayout;
+
+import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.entity.CustomDialog;
+import com.lcodecore.tkrefreshlayout.Footer.LoadingView;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.progresslayout.ProgressLayout;
 
 import java.security.MessageDigest;
+
 
 /**
  * Created by Administrator on 2016/9/6.
  */
 public class UniversalHelper {
-    public static void backToLastActivity(final Context context, LinearLayout leftArrow, final Activity lastActivity){
-        leftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(context,lastActivity.getClass());
-                context.startActivity(intent);
-            }
-        });
-    }
+    private static CustomDialog dialog=null;
     public static String getTokenUrl(String url) {
         String token = url.replaceAll(UrlHelper.URL_BASE, "");
         String strUrl="";
@@ -41,6 +36,7 @@ public class UniversalHelper {
         }
         return strUrl;
     }
+
     public static String md5Encode(String inStr) throws Exception {
         MessageDigest md5 = null;
         try {
@@ -64,5 +60,33 @@ public class UniversalHelper {
         return hexValue.toString();
     }
 
+    /**
+     * 显示进度条
+     * @param pContext 上下文
+     */
+    public static void showProgressDialog(Context pContext) {
+        dialog=new CustomDialog(pContext, R.style.CustomDialog);
+        dialog.show();
+    }
 
+    /**
+     * 取消进度条
+     */
+    public static void dismissProgressDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+    /**
+     * 处理刷新的初始化
+     */
+    public static void initRefresh(Context context,TwinklingRefreshLayout refreshLayout) {
+//        设置刷新头部
+        ProgressLayout headerView = new ProgressLayout(context);
+        headerView.setColorSchemeResources(R.color.colorBase);
+        refreshLayout.setHeaderView(headerView);
+//        设置刷新尾部
+        LoadingView loadingView = new LoadingView(context);
+        refreshLayout.setBottomView(loadingView);
+    }
 }

@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,15 +31,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.ProductInOrderDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,8 @@ import component.product.vo.InOrderStatusVo;
  * A simple {@link Fragment} subclass.
  */
 public class ProductInOrderFragment extends Fragment {
+    //    表头4个字段
+    private TextView tv1, tv2, tv3, tv4;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
     private int total; // 总页数
     private int num = 1; // 第几页
@@ -64,7 +68,7 @@ public class ProductInOrderFragment extends Fragment {
     private Spinner spinner;
     //    配合Spinner使用的分割线
     private TextView tvLine;
-    private MaterialRefreshLayout materialRefreshLayout;
+    private TwinklingRefreshLayout refreshLayout;
     private Handler handler = new Handler();
     //    用来存放从后台取出的数据列表，作为adapter的数据源
     private List<ProductInOrder> data = new ArrayList<>();
@@ -83,8 +87,19 @@ public class ProductInOrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_product_in_order, container, false);
-        lvInOrder = (MyListView) view.findViewById(R.id.lvInOrder);
+        View view = inflater.inflate(R.layout.refresh_frame, container, false);
+
+        tv1= (TextView) view.findViewById(R.id.tv1);
+        tv2= (TextView) view.findViewById(R.id.tv2);
+        tv3= (TextView) view.findViewById(R.id.tv3);
+        tv4= (TextView) view.findViewById(R.id.tv4);
+
+        tv1.setText("入库单号");
+        tv2.setText("入库批次号");
+        tv3.setText("加工单编号");
+        tv4.setText("入库单状态");
+
+        lvInOrder = (MyListView) view.findViewById(R.id.listView);
 //        lvInOrder.addFooterView(new ViewStub(getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
@@ -118,7 +133,6 @@ public class ProductInOrderFragment extends Fragment {
                 String urlString = UrlHelper.URL_SEARCH_PRODUCT_IN_ORDER.replace("{query.code}", "").replace("{query.status}", String.valueOf(map.get(status[position])));
                 urlString = UniversalHelper.getTokenUrl(urlString);
                 Log.d("status", urlString);
-                myAdapter = null;
                 getInOrderListFromNet(urlString);
             }
 
@@ -130,41 +144,27 @@ public class ProductInOrderFragment extends Fragment {
 
 
 
-        materialRefreshLayout = (MaterialRefreshLayout) view.findViewById(R.id.refresh);
-        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
-
-        materialRefreshLayout.setLoadMore(true);
-
-//        materialRefreshLayout.autoRefreshLoadMore();
-        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+        refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
+        UniversalHelper.initRefresh(getActivity(),refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
             @Override
-            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
-                //一般加载数据都是在子线程中，这里我用到了handler
-                handler.postDelayed(new Runnable() {
+            public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        myAdapter = null;
 //                      下拉刷新默认显示第一页（10条）内容
                         page = 1;
                         getInOrderListFromNet(strUrl);
-                        materialRefreshLayout.finishRefresh();
+                        refreshLayout.finishRefreshing();
                     }
-                }, 400);
+                },400);
             }
 
             @Override
-            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
-
-                if (count <= 10) {
-                    materialRefreshLayout.setLoadMore(false);
-                    materialRefreshLayout.finishRefreshLoadMore();
-
-                } else {
-                    handler.postDelayed(new Runnable() {
+            public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
+                    new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-
-                            myAdapter = new BillAdapter();
                             page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
                             if (page == total) {
@@ -173,8 +173,7 @@ public class ProductInOrderFragment extends Fragment {
                                 getInOrderListFromNet(url);
                                 Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                                 // 结束上拉刷新...
-                                materialRefreshLayout.finishRefreshLoadMore();
-                                materialRefreshLayout.setLoadMore(false);
+                                refreshLayout.finishLoadmore();
                                 return;
                             }
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_IN_ORDER.replace("{page}", String.valueOf(page)));
@@ -182,15 +181,11 @@ public class ProductInOrderFragment extends Fragment {
                             getInOrderListFromNet(url);
                             Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
-                            materialRefreshLayout.finishRefreshLoadMore();
+                            refreshLayout.finishLoadmore();
                         }
-                    }, 400);
-                }
-
-
+                    },400);
             }
         });
-
 
         llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
         etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
@@ -205,7 +200,6 @@ public class ProductInOrderFragment extends Fragment {
                     } else {
                         String urlString = UrlHelper.URL_SEARCH_PRODUCT_IN_ORDER.replace("{query.code}", input);
                         urlString = UniversalHelper.getTokenUrl(urlString);
-                        myAdapter = null;
                         getInOrderListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -233,7 +227,6 @@ public class ProductInOrderFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
-                    myAdapter = null;
                     getInOrderListFromNet(strUrl);
 
                 } else {
@@ -263,13 +256,26 @@ public class ProductInOrderFragment extends Fragment {
 
                 String urlString = UrlHelper.URL_SEARCH_PRODUCT_IN_ORDER.replace("{query.code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
-                myAdapter = null;
                 getInOrderListFromNet(urlString);
             }
         });
-//        getInOrderListFromNet(strUrl);
+        getInOrderListFromNet(strUrl);
         return view;
     }
+
+    /*
+* Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
+* */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+//        Fragment重新显示到最前端中
+        if (!hidden){
+            page=1;
+            getInOrderListFromNet(strUrl);
+        }
+    }
+
 
     public void getInOrderListFromNet(final String url) {
         new Thread(new Runnable() {
@@ -287,7 +293,13 @@ public class ProductInOrderFragment extends Fragment {
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
-                        if (myAdapter == null) {
+                        //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
+                        if (count <= 10 || num==total)
+                            refreshLayout.setEnableLoadmore(false);
+                        else
+                            refreshLayout.setEnableLoadmore(true);
+                        //  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
+                        if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());
                             lvInOrder.setAdapter(myAdapter);
@@ -320,10 +332,6 @@ public class ProductInOrderFragment extends Fragment {
             this.context = context;
         }
 
-        public BillAdapter() {
-
-        }
-
         @Override
         public int getCount() {
             return list.size();
@@ -344,17 +352,26 @@ public class ProductInOrderFragment extends Fragment {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.in_order_item, parent, false);
-                holder.tvInOrderNo = (TextView) convertView.findViewById(R.id.tvInOrderNo);
-                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.tvArriveDate);
-                holder.tvInOrderStatus = (TextView) convertView.findViewById(R.id.tvInOrderStatus);
-                holder.detail = (TextView) convertView.findViewById(R.id.detail);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
+//                偶数行背景设为灰色
+                if (position % 2 == 0)
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
+                holder.tvInOrderNo = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvInOrderStatus = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 //            Log.d("GGGG", DateFormat.getDateInstance().format(list.get(position).getArrivalDate()));
             holder.tvInOrderNo.setText(list.get(position).getCode());
-
+//            取出入库时间作为入库批次号
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            if (list.get(position).getInTime() != null)
+                holder.tvBatchNo.setText(sdf.format(list.get(position).getInTime()));
+            else
+                holder.tvBatchNo.setText("");
             //       设置加工单内容
             if (list.get(position).getProducePlan() != null)
                 holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
@@ -362,15 +379,13 @@ public class ProductInOrderFragment extends Fragment {
                 holder.tvPlanNo.setText("");
 
             holder.tvInOrderStatus.setText(list.get(position).getInOrderStatusVo().getValue());
-            holder.detail.setText("详情");
-            holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.detail.setOnClickListener(new View.OnClickListener() {
+
+            holder.tvInOrderNo.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvInOrderNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ProductInOrderDetailActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("ID", list.get(position).getId());
-                    intent.putExtras(bundle);
+                    intent.putExtra("ID", list.get(position).getId());
                     context.startActivity(intent);
                 }
             });
@@ -379,9 +394,9 @@ public class ProductInOrderFragment extends Fragment {
 
         class ViewHolder {
             public TextView tvInOrderNo;
+            public TextView tvBatchNo;
             public TextView tvPlanNo;
             public TextView tvInOrderStatus;
-            public TextView detail;
         }
 
     }

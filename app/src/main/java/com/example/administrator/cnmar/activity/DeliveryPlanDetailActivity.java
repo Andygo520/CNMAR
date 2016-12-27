@@ -1,7 +1,6 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -18,79 +17,70 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import component.custom.model.CustomDeliverPlan;
 import component.custom.model.CustomDeliverProduct;
 
 public class DeliveryPlanDetailActivity extends AppCompatActivity {
-
-    private TextView tvPlanCode, tvDeliveryOrder, tvDeliveryDate, tvProductOutOrder;
-    private TextView name1, name2, name3, name4;
-    private MyListView listView;
-    private static String strUrl;
-    private LinearLayout llLeftArrow;
-    private TextView tvTitle;
+    @BindView(R.id.left_arrow)
+    LinearLayout llLeftArrow;
+    @BindView(R.id.title)
+    TextView tvTitle;
+    @BindView(R.id.tvPlanCode)
+    TextView tvPlanCode;
+    @BindView(R.id.tvDeliveryOrder)
+    TextView tvDeliveryOrder;
+    @BindView(R.id.tvDeliveryDate)
+    TextView tvDeliveryDate;
+    @BindView(R.id.tvProductOutOrder)
+    TextView tvProductOutOrder;
+    @BindView(R.id.column1)
+    TextView column1;
+    @BindView(R.id.column2)
+    TextView column2;
+    @BindView(R.id.column3)
+    TextView column3;
+    @BindView(R.id.column4)
+    TextView column4;
+    @BindView(R.id.lvTable)
+    MyListView lvTable;
+    private String strUrl;
     private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_plan_detail);
+        ButterKnife.bind(this);
+        AppExit.getInstance().addActivity(this);
 
-        init();
         id = getIntent().getIntExtra("ID", 0);
+
+        tvTitle.setText("销售管理");
+        column1.setText("成品编码");
+        column2.setText("成品名称");
+        column4.setText("交付数量");
         strUrl = UrlHelper.URL_DELIVERY_PLAN_DETAIL.replace("{ID}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
         getListFromNet();
     }
 
-    public void init() {
-        tvTitle = (TextView) findViewById(R.id.title);
-        tvTitle.setText("销售管理");
-        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
-        llLeftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DeliveryPlanDetailActivity.this, PlanManageActivity.class);
-                intent.putExtra("flag", 2);
-                startActivity(intent);
-            }
-        });
-
-
-        name1 = (TextView) findViewById(R.id.column1);
-        name2 = (TextView) findViewById(R.id.column2);
-        name3 = (TextView) findViewById(R.id.column3);
-        name4 = (TextView) findViewById(R.id.column4);
-        name1.setText("成品编码");
-        name2.setText("成品名称");
-        name4.setText("交付数量");
-
-        tvPlanCode = (TextView) findViewById(R.id.tv11);
-        tvDeliveryOrder = (TextView) findViewById(R.id.tv12);
-        tvDeliveryDate = (TextView) findViewById(R.id.tv21);
-        tvProductOutOrder = (TextView) findViewById(R.id.tv22);
-
-
-
-        listView = (MyListView) findViewById(R.id.lvTable);
-//        listView.addFooterView(new ViewStub(this));
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, PlanManageActivity.class);
-            intent.putExtra("flag", 1);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -111,14 +101,14 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
                         List<CustomDeliverProduct> list = deliverPlan.getDeliverProducts();
 
 //                       如果有成品出库单就显示规格，没有就显示库存数量
-                        if (deliverPlan.getProductOutOrder()==null){
-                            name3.setText("库存数量");
+                        if (deliverPlan.getProductOutOrder() == null) {
+                            column3.setText("库存数量");
                             MyAdapter1 myAdapter = new MyAdapter1(DeliveryPlanDetailActivity.this, list);
-                            listView.setAdapter(myAdapter);
-                        }else{
-                            name3.setText("规格");
+                            lvTable.setAdapter(myAdapter);
+                        } else {
+                            column3.setText("规格");
                             MyAdapter myAdapter = new MyAdapter(DeliveryPlanDetailActivity.this, list);
-                            listView.setAdapter(myAdapter);
+                            lvTable.setAdapter(myAdapter);
                         }
 
 
@@ -129,9 +119,9 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
 
                         tvDeliveryDate.setText(sdf.format(deliverPlan.getDeliverDate()));
 
-                        if (deliverPlan.getProductOutOrder()==null){
+                        if (deliverPlan.getProductOutOrder() == null) {
                             tvProductOutOrder.setText("");
-                        }else
+                        } else
                             tvProductOutOrder.setText(deliverPlan.getProductOutOrder().getCode());
 
 
@@ -145,6 +135,11 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
                 queue.add(stringRequest);
             }
         }).start();
+    }
+
+    @OnClick(R.id.left_arrow)
+    public void onClick() {
+        finish();
     }
 
     public class MyAdapter extends BaseAdapter {
@@ -190,7 +185,7 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
             holder.tvProductCode.setText(list.get(position).getProduct().getCode());
             holder.tvProductName.setText(list.get(position).getProduct().getName());
             holder.tvSize.setText(list.get(position).getProduct().getSpec());
-            holder.tvNum.setText(String.valueOf(list.get(position).getDeliverNum())+list.get(position).getProduct().getUnit().getName());
+            holder.tvNum.setText(String.valueOf(list.get(position).getDeliverNum()) + list.get(position).getProduct().getUnit().getName());
 
             return convertView;
         }
@@ -238,15 +233,20 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
                 holder.tvProductName = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvStockNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvNum = (TextView) convertView.findViewById(R.id.column4);
-
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvProductCode.setText(list.get(position).getProduct().getCode());
             holder.tvProductName.setText(list.get(position).getProduct().getName());
-            holder.tvStockNum.setText(String.valueOf(list.get(position).getProduct().getStock().getStock())+list.get(position).getProduct().getUnit().getName());
-            holder.tvNum.setText(String.valueOf(list.get(position).getDeliverNum())+list.get(position).getProduct().getUnit().getName());
+
+//          库存非空判断
+            if (list.get(position).getProduct().getStock() != null)
+                holder.tvStockNum.setText(String.valueOf(list.get(position).getProduct().getStock().getStock()) + list.get(position).getProduct().getUnit().getName());
+            else
+                holder.tvStockNum.setText("");
+
+            holder.tvNum.setText(String.valueOf(list.get(position).getDeliverNum()) + list.get(position).getProduct().getUnit().getName());
 
             return convertView;
         }

@@ -21,7 +21,6 @@ public class ProductCheckStockFragment extends Fragment {
     private ProductCheckStockFragmentManage fragmentManage;
     private ProductCheckStockFragmentQuery fragmentQuery;
     private FragmentTransaction transaction;
-    //    int sign=0;
     public ProductCheckStockFragment() {
         // Required empty public constructor
     }
@@ -33,10 +32,9 @@ public class ProductCheckStockFragment extends Fragment {
         // Inflate the layout for this fragment
         View   view= inflater.inflate(R.layout.fragment_product_check_stock, container, false);
         radioGroup= (RadioGroup) view.findViewById(R.id.rg);
-//          sign=getArguments().getInt("SIGN");
-//        if(sign==1) {
-//            setSelection(2);
-//        }else
+        rbManage= (RadioButton) view.findViewById(R.id.rbCheckManage);
+        rbQuery= (RadioButton) view.findViewById(R.id.rbCheckQuery);
+
         setSelection(1);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -63,6 +61,7 @@ public class ProductCheckStockFragment extends Fragment {
         transaction=getChildFragmentManager().beginTransaction();
         switch (i) {
             case 1:
+                rbManage.setChecked(true);
                 if (fragmentQuery != null) {
                     transaction.hide(fragmentQuery);
                 }
@@ -73,6 +72,7 @@ public class ProductCheckStockFragment extends Fragment {
                     transaction.show(fragmentManage);
                 break;
             case 2:
+                rbQuery.setChecked(true);
                 if(fragmentManage!=null){
                     transaction.hide(fragmentManage);
                 }

@@ -1,7 +1,6 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -16,10 +15,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import component.supply.model.Supply;
 
@@ -36,7 +36,7 @@ public class SupplyManageDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supply_manage_detail);
-
+        AppExit.getInstance().addActivity(this);
         init();
         id = getIntent().getIntExtra("ID", 0);
         strUrl = UrlHelper.URL_SUPPLY_DETAIL.replace("{id}", String.valueOf(id));
@@ -51,8 +51,7 @@ public class SupplyManageDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, SupplyManageActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -73,8 +72,7 @@ public class SupplyManageDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, SupplyManageActivity.class);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);

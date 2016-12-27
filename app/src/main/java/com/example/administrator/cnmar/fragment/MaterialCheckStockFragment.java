@@ -16,12 +16,12 @@ import com.example.administrator.cnmar.R;
  * A simple {@link Fragment} subclass.
  */
 public class MaterialCheckStockFragment extends Fragment {
-   private RadioButton rbManage,rbQuery;
+    private RadioButton rbManage, rbQuery;
     private RadioGroup radioGroup;
     private MaterialCheckStockFragmentManage fragmentManage;
     private MaterialCheckStockFragmentQuery fragmentQuery;
     private FragmentTransaction transaction;
-//    int sign=0;
+
     public MaterialCheckStockFragment() {
         // Required empty public constructor
     }
@@ -31,38 +31,38 @@ public class MaterialCheckStockFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-            View   view= inflater.inflate(R.layout.fragment_check_stock, container, false);
-            radioGroup= (RadioGroup) view.findViewById(R.id.rg);
-//          sign=getArguments().getInt("SIGN");
-//        if(sign==1) {
-//            setSelection(2);
-//        }else
-            setSelection(1);
+        View view = inflater.inflate(R.layout.fragment_check_stock, container, false);
+        radioGroup = (RadioGroup) view.findViewById(R.id.rg);
+        rbManage = (RadioButton) view.findViewById(R.id.rbCheckManage);
+        rbQuery = (RadioButton) view.findViewById(R.id.rbCheckQuery);
+//        默认选中盘点管理
+        setSelection(1);
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId){
-                        case R.id.rbCheckManage:
-                            setSelection(1);
-                            break;
-                        case R.id.rbCheckQuery:
-                            setSelection(2);
-                            break;
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rbCheckManage:
+                        setSelection(1);
+                        break;
+                    case R.id.rbCheckQuery:
+                        setSelection(2);
+                        break;
 
-                    }
                 }
-            });
+            }
+        });
 
         return view;
     }
-//    i等于1表示选择了库存管理，i等于2表示选择了库存查询
 
+//    i等于1表示选择了库存管理，i等于2表示选择了库存查询
     public void setSelection(int i) {
 //      fragment嵌套里面不能再用getFragmentManager(),要用getChildFragmentManager()
-        transaction=getChildFragmentManager().beginTransaction();
+        transaction = getChildFragmentManager().beginTransaction();
         switch (i) {
             case 1:
+                rbManage.setChecked(true);
                 if (fragmentQuery != null) {
                     transaction.hide(fragmentQuery);
                 }
@@ -73,13 +73,14 @@ public class MaterialCheckStockFragment extends Fragment {
                     transaction.show(fragmentManage);
                 break;
             case 2:
-                if(fragmentManage!=null){
+                rbQuery.setChecked(true);
+                if (fragmentManage != null) {
                     transaction.hide(fragmentManage);
                 }
-                if(fragmentQuery==null){
-                    fragmentQuery=new MaterialCheckStockFragmentQuery();
-                    transaction.add(R.id.content,fragmentQuery);
-                }else
+                if (fragmentQuery == null) {
+                    fragmentQuery = new MaterialCheckStockFragmentQuery();
+                    transaction.add(R.id.content, fragmentQuery);
+                } else
                     transaction.show(fragmentQuery);
                 break;
             default:
@@ -88,12 +89,4 @@ public class MaterialCheckStockFragment extends Fragment {
         }
         transaction.commit();
     }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if(sign==1){
-//            setSelection(2);
-//        }
-//    }
 }

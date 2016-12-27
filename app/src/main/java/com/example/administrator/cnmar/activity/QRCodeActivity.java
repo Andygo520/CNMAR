@@ -16,9 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,13 +31,12 @@ public class QRCodeActivity extends Activity {
     private NetworkImageView imageView;
     //    判断是从哪个Fragment跳转到该页面的判断标志
     private int FLAG;
-//    FileOutputStream fos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
-
+        AppExit.getInstance().addActivity(this);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         imageView = (NetworkImageView) findViewById(R.id.ivQRCode);
 

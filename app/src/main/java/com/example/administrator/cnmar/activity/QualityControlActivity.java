@@ -1,318 +1,247 @@
 package com.example.administrator.cnmar.activity;
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
+import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.entity.MyListView;
-import com.example.administrator.cnmar.helper.UniversalHelper;
-import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import component.material.model.MaterialInOrder;
-import component.material.vo.InOrderStatusVo;
-
+import com.example.administrator.cnmar.fragment.MaterialQualityControlFragment;
+import com.example.administrator.cnmar.fragment.ProductQualityControlFragment;
+import com.example.administrator.cnmar.fragment.TraceBackFragment;
+import com.example.administrator.cnmar.helper.SPHelper;
 
 public class QualityControlActivity extends AppCompatActivity {
     private TextView tvTitle;
-    private MyListView lvOutOrder;
-    private LinearLayout llSearch,llReturn;
-    private EditText etSearchInput;
-    private ImageView ivDelete;
-    private MaterialRefreshLayout materialRefreshLayout;
-    private Handler handler = new Handler();
-    private BillAdapter myAdapter;
-    //    page代表显示的是第几页内容，从1开始
-    int page = 1;
-    //    用来存放从后台取出的数据列表，作为adapter的数据源
-    private List<MaterialInOrder> data = new ArrayList<>();
-    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_QC_LIST.replace("{page}", String.valueOf(page)));
+    private RadioGroup radioGroup;
+    private RadioButton rbQC, rbProductQC,rbTraceBack;
+    private MaterialQualityControlFragment qcFragment;
+    private ProductQualityControlFragment productQCFragment;
+    private TraceBackFragment traceFragment;
+    private LinearLayout llLeftArrow;
+    //    判断从哪个页面跳转过来的标志
+    private int flag = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quality_control);
+        AppExit.getInstance().addActivity(this);
+//       取出登录界面获得的一级菜单与其二级菜单的对应关系
+        String sublist = SPHelper.getString(this,getResources().getString(R.string.HOME_PKGL), "");
 
-        tvTitle= (TextView) findViewById(R.id.title);
-        tvTitle.setText("原料入库检验流水");
-        ivDelete = (ImageView) findViewById(R.id.ivDelete);
+        tvTitle = (TextView) findViewById(R.id.title);
+        tvTitle.setText("品控管理");
 
-        llReturn= (LinearLayout) findViewById(R.id.left_arrow);
-        llReturn.setOnClickListener(new View.OnClickListener() {
+        radioGroup = (RadioGroup) findViewById(R.id.rg);
+        rbQC = (RadioButton) findViewById(R.id.rb1);
+        rbProductQC = (RadioButton) findViewById(R.id.rb2);
+        rbTraceBack = (RadioButton) findViewById(R.id.rb3);
+
+        rbQC.setText(R.string.rbQC);
+        rbProductQC.setText(R.string.rbProductQC);
+        rbTraceBack.setText(R.string.rbTraceBack);
+
+
+        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
+
+        llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(QualityControlActivity.this,MainActivity.class);
+                Intent intent = new Intent(QualityControlActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
-        lvOutOrder = (MyListView) findViewById(R.id.lvOutOrder);
-//        lvOutOrder.addFooterView(new ViewStub(getActivity()));
+//       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
+        if (sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")) {
+            rbQC.setVisibility(View.VISIBLE);
+            setTabSelection(0);
+        }
+        if (sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
+            rbProductQC.setVisibility(View.VISIBLE);
+            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+","))
+            setTabSelection(1);
+        }
+        if (sublist.contains(","+getResources().getString(R.string.material_back_url)+",")) {
+            rbTraceBack.setVisibility(View.VISIBLE);
+            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+","))
+                setTabSelection(2);
+        }
 
-        materialRefreshLayout = (MaterialRefreshLayout) findViewById(R.id.refresh);
-        materialRefreshLayout.autoRefresh();//drop-down refresh automatically
-        materialRefreshLayout.setLoadMore(true);
-
-//        materialRefreshLayout.autoRefreshLoadMore();
-        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onRefresh(final MaterialRefreshLayout materialRefreshLayout) {
-                //一般加载数据都是在子线程中，这里我用到了handler
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        myAdapter = null;
-//                      下拉刷新默认显示第一页（10条）内容
-                        page = 1;
-                        getQCListFromNet(url);
-                        materialRefreshLayout.finishRefresh();
-                    }
-                }, 400);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb1:
+                        setTabSelection(0);
+                        break;
+                    case R.id.rb2:
+                        setTabSelection(1);
+                        break;
+                    case R.id.rb3:
+                        setTabSelection(2);
+                        break;
+                    default:
+                        break;
+                }
             }
+        });
 
-            @Override
-            public void onRefreshLoadMore(final MaterialRefreshLayout materialRefreshLayout) {
-                if (page == 1 && myAdapter.getCount() < 10) {
-                    materialRefreshLayout.setLoadMore(false);
-                    materialRefreshLayout.finishRefreshLoadMore();
+    }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        flag = getIntent().getIntExtra("flag", 999);
+        if (flag == 0) {
+            setTabSelection(0);
+        } else if (flag == 1) {
+            setTabSelection(1);
+        }else if (flag == 2) {
+            setTabSelection(2);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (qcFragment == null && fragment instanceof MaterialQualityControlFragment) {
+            qcFragment = (MaterialQualityControlFragment) fragment;
+        } else if (traceFragment == null && fragment instanceof TraceBackFragment) {
+            traceFragment = (TraceBackFragment) fragment;
+        }else if (productQCFragment == null && fragment instanceof ProductQualityControlFragment) {
+            productQCFragment = (ProductQualityControlFragment) fragment;
+        }
+    }
+
+
+    /**
+     * 根据传入的index参数来设置选中的tab页。
+     *
+     * @param index 每个tab页对应的下标。0表示原料检验流水，1表示成品检验流水，2表示质量追溯
+     */
+    private void setTabSelection(int index) {
+        // 开启一个Fragment事务
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况
+        hideFragment(transaction);
+        switch (index) {
+            case 0:{
+                rbQC.setChecked(true);
+                rbQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                rbProductQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbTraceBack.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc_selected);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                if (qcFragment == null) {
+                    qcFragment = new MaterialQualityControlFragment();
+                    transaction.add(R.id.content, qcFragment);
                 } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            myAdapter = new BillAdapter();
-                            page++;
-                            String strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
-//                        Log.d("url2", strUrl);
-                            getQCListFromNet(strUrl);
-                            Toast.makeText(QualityControlActivity.this, "已加载更多", Toast.LENGTH_SHORT).show();
-                            // 结束上拉刷新...
-                            materialRefreshLayout.finishRefreshLoadMore();
-                        }
-                    }, 400);
+                    transaction.show(qcFragment);
                 }
+                break;
             }
-        });
-        llSearch = (LinearLayout) findViewById(R.id.llSearch);
-        etSearchInput = (EditText) findViewById(R.id.etSearchInput);
-        etSearchInput.setHint("入库单号查询");
-        etSearchInput.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
-                    String input = etSearchInput.getText().toString().trim();
-                    if (input.equals("")) {
-                        Toast.makeText(QualityControlActivity.this, "请输入内容后再查询", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_QC_LIST.replace("{query.code}", input));
-                        myAdapter = null;
-                        getQCListFromNet(urlString);
-                    }
-                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm.isActive()) {
-                        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                    }
-                    return true;
+            case 1:{
+                rbProductQC.setChecked(true);
+                rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbProductQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                rbTraceBack.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc_selected);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                if (productQCFragment == null) {
+                    productQCFragment = new ProductQualityControlFragment();
+                    transaction.add(R.id.content, productQCFragment);
+                } else {
+                    transaction.show(productQCFragment);
                 }
-                return false;
+                break;
             }
-
-        });
-        etSearchInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().equals("")) {
-                    ivDelete.setVisibility(View.GONE);
-                    myAdapter = null;
-                    getQCListFromNet(url);
-
-                }else{
-                    ivDelete.setVisibility(View.VISIBLE);
-                    ivDelete.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            etSearchInput.setText("");
-                        }
-                    });
+            case 2:{
+                rbTraceBack.setChecked(true);
+                rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbProductQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbTraceBack.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back_selected);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                if (traceFragment == null) {
+                    traceFragment = new TraceBackFragment();
+                    transaction.add(R.id.content, traceFragment);
+                } else {
+                    transaction.show(traceFragment);
                 }
+                break;
             }
-        });
-        llSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                }
-                String input = etSearchInput.getText().toString().trim();
-                if (input.equals("")) {
-                    Toast.makeText(QualityControlActivity.this, "请输入内容后再查询", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
-                String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_QC_LIST.replace("{query.code}", input));
-                myAdapter = null;
-                getQCListFromNet(urlString);
-            }
-        });
+        }
+        transaction.commit();
     }
 
-
-
-
-    public void getQCListFromNet(final String url) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RequestQueue quene = Volley.newRequestQueue(QualityControlActivity.this);
-//                Log.d("Tag","开始执行");
-                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        String json = VolleyHelper.getJson(s);
-//                        Log.d("GGGG",json);
-                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        List<MaterialInOrder> list = JSON.parseArray(response.getData().toString(), MaterialInOrder.class);
-                        if (myAdapter == null) {
-                            data = list;
-                            myAdapter = new BillAdapter(data, QualityControlActivity.this);
-                            lvOutOrder.setAdapter(myAdapter);
-                        } else {
-                            data.addAll(list);
-//                            myAdapter.notifyDataSetChanged();
-                            myAdapter = new BillAdapter(data, QualityControlActivity.this);
-                            lvOutOrder.setAdapter(myAdapter);
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("Tag", volleyError.toString());
-
-                    }
-                });
-                quene.add(stringRequest);
-            }
-        }).start();
-    }
-
-    class BillAdapter extends BaseAdapter {
-        private Context context;
-        private List<MaterialInOrder> list = null;
-
-        public BillAdapter(List<MaterialInOrder> list, Context context) {
-            this.list = list;
-            this.context = context;
+    /**
+     * 将所有的Fragment都置为隐藏状态。
+     *
+     * @param transaction 用于对Fragment执行操作的事务
+     */
+    private void hideFragment(FragmentTransaction transaction) {
+        if (qcFragment != null) {
+            transaction.hide(qcFragment);
         }
-
-        public BillAdapter() {
-
+        if (productQCFragment != null) {
+            transaction.hide(productQCFragment);
         }
-
-        @Override
-        public int getCount() {
-            return list.size();
+        if (traceFragment != null) {
+            transaction.hide(traceFragment);
         }
-
-        @Override
-        public Object getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            if (convertView == null) {
-                holder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.list_item_5, parent, false);
-                holder.tvInOrderNo = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvTestPerson = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvTestDate = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvTestStatus = (TextView) convertView.findViewById(R.id.column4);
-                holder.detail = (TextView) convertView.findViewById(R.id.column5);
-                convertView.setTag(holder);
-            } else
-                holder = (ViewHolder) convertView.getTag();
-            holder.tvInOrderNo.setText(list.get(position).getCode());
-            holder.tvTestPerson.setText(list.get(position).getTest().getName());
-
-            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-            holder.tvTestDate.setText(sdf.format(list.get(position).getTestTime()));
-
-            if(list.get(position).getStatus()== InOrderStatusVo.test_fail.getKey()){
-                holder.tvTestStatus.setText("检验不合格");
-            }else if (list.get(position).getStatus()== InOrderStatusVo.pre_test.getKey()){
-                holder.tvTestStatus.setText("待检验");
-            }else
-                holder.tvTestStatus.setText("检验合格");
-
-
-
-            holder.detail.setText("详情");
-            holder.detail.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.detail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, QualityControlDetailActivity.class);
-                    intent.putExtra("ID", list.get(position).getId());
-                    context.startActivity(intent);
-                }
-            });
-            return convertView;
-        }
-
-        class ViewHolder {
-            public TextView tvInOrderNo;
-            public TextView tvTestPerson;
-            public TextView tvTestDate;
-            public TextView tvTestStatus;
-            public TextView detail;
-        }
-
     }
 }
