@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.activity.HalfProductCheckStockDetailActivity;
+import com.example.administrator.cnmar.activity.ProductQualityControlDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -37,57 +38,76 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import component.basic.vo.StockTypeVo;
-import component.half.model.HalfStockCheck;
+import component.produce.model.ProducePlan;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HalfProductCheckStockFragmentQuery extends Fragment {
-    //    表头4个字段
-    private TextView tv1, tv2, tv3, tv4;
-    private MyListView lvCheckQuery;
-    private LinearLayout llSearch;
+public class ProductQualityControlFragment extends Fragment {
+
+    //    表头5个字段
+    private TextView tv1, tv2, tv3, tv4,tv5,tv6;
+    private TableLayout tableLayout;
+    private TextView tvTitle;
+    private MyListView listView;
+    private LinearLayout llSearch, llReturn;
     private EditText etSearchInput;
     private ImageView ivDelete;
     private TwinklingRefreshLayout refreshLayout;
+    private Handler handler = new Handler();
     private BillAdapter myAdapter;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
     private int total; // 总页数
     private int num = 1; // 第几页
     private int count; // 数据总条数
-
     //    用来存放从后台取出的数据列表，作为adapter的数据源
-    private List<HalfStockCheck> data = new ArrayList<>();
-    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_HALF_PRODUCT_CHECK_QUERY.replace("{page}", String.valueOf(page)));
+    private List<ProducePlan> data = new ArrayList<>();
+    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_QC_LIST.replace("{page}", String.valueOf(page)));
 
-    public HalfProductCheckStockFragmentQuery() {
-
+    public ProductQualityControlFragment() {
+        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.refresh_frame, container, false);
+        View view = inflater.inflate(R.layout.fragment_product_quality_control, container, false);
+        init(view);
+        return view;
+    }
 
-        tv1= (TextView) view.findViewById(R.id.tv1);
-        tv2= (TextView) view.findViewById(R.id.tv2);
-        tv3= (TextView) view.findViewById(R.id.tv3);
-        tv4= (TextView) view.findViewById(R.id.tv4);
+    private void init(View view) {
+        tableLayout= (TableLayout) view.findViewById(R.id.tableLayout);
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
+        
+        tv1 = (TextView) view.findViewById(R.id.tv1);
+        tv2 = (TextView) view.findViewById(R.id.tv2);
+        tv3 = (TextView) view.findViewById(R.id.tv3);
+        tv4 = (TextView) view.findViewById(R.id.tv4);
+        tv5 = (TextView) view.findViewById(R.id.tv5);
+        tv6 = (TextView) view.findViewById(R.id.tv6);
 
-        tv1.setText("半成品编码");
-        tv2.setText("半成品名称");
-        tv3.setText("盘点前总量");
-        tv4.setText("盘点后总量");
+        tv1.setText("加工单编号");
+        tv2.setText("成品编码");
+        tv3.setText("实际生产数量");
+        tv4.setText("合格品数量");
+        tv5.setText("检验员");
+        tv6.setText("检验时间");
 
-        lvCheckQuery = (MyListView) view.findViewById(R.id.listView);
-//        lvCheckQuery.addFooterView(new ViewStub(context));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
+
+        listView = (MyListView) view.findViewById(R.id.listView);
+//        listView.addFooterView(new ViewStub(getActivity()));
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
         UniversalHelper.initRefresh(getActivity(),refreshLayout);
@@ -99,7 +119,7 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
                     public void run() {
 //                      下拉刷新默认显示第一页（10条）内容
                         page = 1;
-                        getCheckStockQueryListFromNet(url);
+                        getQCListFromNet(url);
                         refreshLayout.finishRefreshing();
                     }
                 },400);
@@ -107,33 +127,32 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
 
             @Override
             public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            page++;
-//                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
-                            if (page==total){
-                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_HALF_PRODUCT_CHECK_QUERY.replace("{page}", String.valueOf(page)));
-                                Log.d("urlfinish", url);
-                                getCheckStockQueryListFromNet(url);
-                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
-                                // 结束上拉刷新...
-                                refreshLayout.finishLoadmore();
-                                return;
-                            }
-                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_HALF_PRODUCT_CHECK_QUERY.replace("{page}", String.valueOf(page)));
-                            Log.d("urlmore", url);
-                            getCheckStockQueryListFromNet(url);
-                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page++;
+//                          当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
+                        if (page == total) {
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_QC_LIST.replace("{page}", String.valueOf(page)));
+                            getQCListFromNet(url);
+                            Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
                             refreshLayout.finishLoadmore();
+                            return;
                         }
-                    },400);
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_QC_LIST.replace("{page}", String.valueOf(page)));
+                        getQCListFromNet(url);
+                        Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                        // 结束上拉刷新...
+                        refreshLayout.finishLoadmore();
+                    }
+                },400);
             }
         });
+
         llSearch = (LinearLayout) view.findViewById(R.id.llSearch);
         etSearchInput = (EditText) view.findViewById(R.id.etSearchInput);
-        etSearchInput.setHint("半成品编码查询");
+        etSearchInput.setHint("加工单编号查询");
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -142,9 +161,8 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
                     if (input.equals("")) {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
-                        String urlString = UrlHelper.URL_SEARCH_HALF_PRODUCT_CHECK_QUERY.replace("{query.code}", input);
-                        urlString = UniversalHelper.getTokenUrl(urlString);
-                        getCheckStockQueryListFromNet(urlString);
+                        String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_PRODUCT_QC_LIST.replace("{query.code}", input));
+                        getQCListFromNet(urlString);
                     }
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm.isActive()) {
@@ -171,8 +189,9 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
-                    getCheckStockQueryListFromNet(url);
-                }else{
+                    getQCListFromNet(url);
+
+                } else {
                     ivDelete.setVisibility(View.VISIBLE);
                     ivDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -195,13 +214,12 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
                     Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String urlString = UrlHelper.URL_SEARCH_HALF_PRODUCT_CHECK_QUERY.replace("{query.code}", input);
-                urlString = UniversalHelper.getTokenUrl(urlString);
-                getCheckStockQueryListFromNet(urlString);
+
+                String urlString = UniversalHelper.getTokenUrl(UrlHelper.URL_SEARCH_PRODUCT_QC_LIST.replace("{query.code}", input));
+                getQCListFromNet(urlString);
             }
         });
-        getCheckStockQueryListFromNet(url);
-        return view;
+        getQCListFromNet(url);
     }
 
     /*
@@ -210,31 +228,29 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-//        Fragment重新显示到最前端中
         if (!hidden){
             page=1;
-            getCheckStockQueryListFromNet(url);
+            getQCListFromNet(url);
         }
     }
 
-
-    public void getCheckStockQueryListFromNet(final String url) {
+    public void getQCListFromNet(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue quene = Volley.newRequestQueue(getParentFragment().getActivity());
-                Log.d("Tag", "开始执行");
+                RequestQueue quene = Volley.newRequestQueue(getActivity());
+//                Log.d("Tag","开始执行");
                 StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
+//                        Log.d("GGGG",json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        List<HalfStockCheck> list = JSON.parseArray(response.getData().toString(), HalfStockCheck.class);
+                        List<ProducePlan> list = JSON.parseArray(response.getData().toString(), ProducePlan.class);
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
-
-                       //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
+                        //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
                         if (count <= 10 || num==total)
                             refreshLayout.setEnableLoadmore(false);
                         else
@@ -243,12 +259,12 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
                         if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());
-                            lvCheckQuery.setAdapter(myAdapter);
+                            listView.setAdapter(myAdapter);
                         } else {
                             data.addAll(list);
 //                            myAdapter.notifyDataSetChanged();
                             myAdapter = new BillAdapter(data, getActivity());
-                            lvCheckQuery.setAdapter(myAdapter);
+                            listView.setAdapter(myAdapter);
                         }
 
                     }
@@ -266,9 +282,9 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
 
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<HalfStockCheck> list = null;
+        private List<ProducePlan> list = null;
 
-        public BillAdapter(List<HalfStockCheck> list, Context context) {
+        public BillAdapter(List<ProducePlan> list, Context context) {
             this.list = list;
             this.context = context;
         }
@@ -294,45 +310,60 @@ public class HalfProductCheckStockFragmentQuery extends Fragment {
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                TableLayout tableLayout = (TableLayout) convertView.findViewById(R.id.tableLayout);
+                tableLayout.setColumnCollapsed(9, false);
+                tableLayout.setColumnCollapsed(10, false);
+                tableLayout.setColumnCollapsed(11, false);
+                tableLayout.setColumnCollapsed(12, false);
+                tableLayout.setColumnStretchable(9, true);
+                tableLayout.setColumnStretchable(11, true);
                 TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
 //                偶数行背景设为灰色
                 if (position % 2 == 0)
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
-                holder.tvCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column4);
+                holder.tv1 = (TextView) convertView.findViewById(R.id.column1);
+                holder.tv2 = (TextView) convertView.findViewById(R.id.column2);
+                holder.tv3 = (TextView) convertView.findViewById(R.id.column3);
+                holder.tv4 = (TextView) convertView.findViewById(R.id.column4);
+                holder.tv5 = (TextView) convertView.findViewById(R.id.column5);
+                holder.tv6 = (TextView) convertView.findViewById(R.id.column6);
+
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
-//            Log.d("GGGG", DateFormat.getDateInstance().format(list.get(position).getArrivalDate()));
-            holder.tvCode.setText(list.get(position).getHalf().getCode());
-            holder.tvPreNum.setText(list.get(position).getBeforeStock()+list.get(position).getHalf().getUnit().getName());
-            holder.tvAfterNum.setText(list.get(position).getAfterStock()+list.get(position).getHalf().getUnit().getName());
-            holder.tvName.setText(list.get(position).getHalf().getName());
-            holder.tvCode.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.tvCode.setOnClickListener(new View.OnClickListener() {
+
+            holder.tv1.setText(list.get(position).getCode());
+            holder.tv2.setText(list.get(position).getProduct().getCode());
+            holder.tv3.setText(list.get(position).getActualNum()+ list.get(position).getProduct().getUnit().getName());
+            holder.tv4.setText(list.get(position).getSuccessNum()+"");
+            holder.tv5.setText(list.get(position).getTest().getName());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            holder.tv6.setText(sdf.format(list.get(position).getTestTime()));
+
+            holder.tv1.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, HalfProductCheckStockDetailActivity.class);
+                    Intent intent = new Intent(context, ProductQualityControlDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());
- //                    将半成品是扫码还是输入数量入库的类型传递给盘点详情页面，扫码传递0，反之传递1
-                    if (list.get(position).getHalf().getStockType() == StockTypeVo.scan.getKey())
-                        intent.putExtra("type", 0);
-                    else
-                        intent.putExtra("type", 1);
-                    startActivity(intent);
+                    context.startActivity(intent);
                 }
             });
             return convertView;
         }
 
         class ViewHolder {
-            public TextView tvCode;
-            public TextView tvName;
-            public TextView tvPreNum;
-            public TextView tvAfterNum;
+            public TextView tv1;
+            public TextView tv2;
+            public TextView tv3;
+            public TextView tv4;
+            public TextView tv5;
+            public TextView tv6;
+
         }
 
     }
+
+
 }

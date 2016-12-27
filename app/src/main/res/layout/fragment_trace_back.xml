@@ -1,0 +1,384 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btnScann"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_bg"
+        android:text="扫描二维码追溯"
+        android:textColor="@color/color_white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="追溯详情"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llMaterial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="3,7">
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="原料编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvMaterialCode"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="原料名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvMaterialName"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="仓位编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvSpaceCode"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="仓位名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvSpaceName"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="原料入库单"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvMaterialInOrder"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <com.example.administrator.cnmar.entity.MyListView
+                    android:id="@+id/lvMaterial"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@color/color_dark_grey"
+                    android:dividerHeight="1dip"
+                    android:fastScrollEnabled="true"
+                    android:focusable="true"
+                    android:scrollingCache="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="3,7">
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="成品编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvProductCode"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="成品名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvProductName"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="仓位编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvSpaceCode1"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="仓位名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvSpaceName1"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="成品入库单"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvProductInOrder"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="加工单"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvPlan"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <com.example.administrator.cnmar.entity.MyListView
+                    android:id="@+id/lvProduct"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@color/color_dark_grey"
+                    android:dividerHeight="1dip"
+                    android:fastScrollEnabled="true"
+                    android:focusable="true"
+                    android:scrollingCache="true" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+</LinearLayout>
+

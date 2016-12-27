@@ -1,0 +1,132 @@
+<!--所有包含刷新框架的布局-->
+<com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/refreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    app:tr_head_height="100dp"
+    app:tr_wave_height="180dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/search"></include>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!--设置表格的1、3、5、7列可以伸展，隐藏第9、10、11、12列，因为大部分表格都只有四列-->
+                    <TableLayout
+                        android:id="@+id/tableLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:collapseColumns="9,10,11,12"
+                        android:stretchColumns="1,3,5,7">
+
+                        <TableRow android:id="@+id/list_header_row">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv1"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv2"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv3"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv4"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv5"
+                                android:layout_width="50dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv6"
+                                android:layout_width="50dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <com.example.administrator.cnmar.entity.MyListView
+                    android:id="@+id/listView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:cacheColorHint="#00000000"
+                    android:divider="@color/color_dark_grey"
+                    android:dividerHeight="1dip"
+                    android:fastScrollEnabled="true"
+                    android:focusable="true"
+                    android:scrollingCache="true" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>

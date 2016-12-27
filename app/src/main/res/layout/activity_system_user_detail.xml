@@ -1,0 +1,208 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/top"></include>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:gravity="center"
+        android:text="用户详情"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="vertical">
+
+        <View style="@style/list_item_seperator_layout" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="3,7">
+
+                <TableRow android:background="@drawable/table_frame">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name11"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="账号"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv11"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name12"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="姓名"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv12"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+                </TableRow>
+
+                <TableRow android:background="@drawable/table_frame">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name21"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="性别"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv21"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name22"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="出生日期"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv22"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+                </TableRow>
+
+                <TableRow android:background="@drawable/table_frame">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name31"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="账号状态"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv31"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/name32"
+                        android:layout_width="65dip"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv32"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+        <View style="@style/list_item_seperator_layout" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:text="头像"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv"
+            android:layout_marginTop="5dp"
+            android:gravity="center">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
