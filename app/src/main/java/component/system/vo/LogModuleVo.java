@@ -13,12 +13,8 @@ public enum LogModuleVo {
 	system_menu("system_menu", "菜单"),
 	/** 权限 */
 	system_auth("system_auth", "权限"),
-	/** 原料单位 */
-	material_unit("material_unit", "原料单位"),
-	/** 半成品单位 */
-	half_unit("half_unit", "半成品单位"),
-	/** 成品单位 */
-	product_unit("product_unit", "成品单位"),
+	/** 单位 */
+	unit("unit", "单位"),
 	/** 原料抽样标准 */
 	material_sample_standard("material_sample_standard", "原料抽样标准"),
 
@@ -36,11 +32,17 @@ public enum LogModuleVo {
 	material("material", "原料"),
 	/** 半成品 */
 	half("half", "半成品"),
+	/** 半成品BOM */
+	bom_half("bom_half", "半成品BOM"),
 	/** 成品 */
 	product("product", "成品"),
+	/** 成品BOM */
+	bom_product("bom_product", "成品BOM"),
 
 	/** 加工单 */
 	produce_plan("produce_plan", "加工单"),
+	/** 领料单退料 */
+	material_out_order_return("material_out_order_return", "领料单退料"),
 	/** 交付计划 */
 	custom_deliver_plan("custom_deliver_plan", "交付计划"),
 

@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TableLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:stretchColumns="3,7">
                         <TableRow
@@ -48,7 +48,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name11"
                                 android:text="交付计划编号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -61,7 +60,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv11"
+                                android:id="@+id/tvPlanCode"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -71,7 +70,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name12"
                                 android:text="交付订单号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -84,7 +82,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv12"
+                                android:id="@+id/tvDeliveryOrder"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -102,7 +100,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name21"
                                 android:text="交付日期"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -115,7 +112,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv21"
+                                android:id="@+id/tvDeliveryDate"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -125,7 +122,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name22"
                                 android:text="成品出库单号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -138,7 +134,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv22"
+                                android:id="@+id/tvProductOutOrder"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"

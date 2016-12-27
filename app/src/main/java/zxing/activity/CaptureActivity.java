@@ -51,8 +51,9 @@ import com.example.administrator.cnmar.activity.MaterialInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductOutOrderDetailActivity;
+import com.example.administrator.cnmar.activity.QualityControlActivity;
 import com.example.administrator.cnmar.helper.UrlHelper;
-import com.example.administrator.cnmar.http.VolleyHelper;
+import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.google.zxing.Result;
 
 import java.io.IOException;
@@ -119,6 +120,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 //        获取原料、成品或者半成品出库页面传递过来的出库单id（避免扫描到其他单据）
         id = getIntent().getIntExtra("id", 0);
+//        获取标志位FLAG
+        FLAG = getIntent().getIntExtra("FLAG", 0);
 
         scanPreview = (SurfaceView) findViewById(R.id.capture_preview);
         scanContainer = (RelativeLayout) findViewById(R.id.capture_container);
@@ -131,17 +134,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         scanLine = (ImageView) findViewById(R.id.capture_scan_line);
         llReturn = (LinearLayout) findViewById(R.id.left_arrow);
-
-
-//        llReturn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(CaptureActivity.this, MaterialInOrderDetailActivity.class);
-//                setResult(3, intent);
-//                finish();
-//            }
-//        });
-
 
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
@@ -158,7 +150,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            FLAG = getIntent().getIntExtra("FLAG", 0);
             if (FLAG == 1) {
                 Intent intent = new Intent(CaptureActivity.this, MaterialInOrderDetailActivity.class);
                 setResult(3, intent);
@@ -175,13 +166,19 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 Intent intent = new Intent(CaptureActivity.this, ProductOutOrderDetailActivity.class);
                 setResult(6, intent);
                 CaptureActivity.this.finish();
-            }else if (FLAG == 5) {
+            } else if (FLAG == 5) {
                 Intent intent = new Intent(CaptureActivity.this, HalfProductInOrderDetailActivity.class);
                 setResult(7, intent);
                 CaptureActivity.this.finish();
-            }else if (FLAG == 6) {
+            } else if (FLAG == 6) {
                 Intent intent = new Intent(CaptureActivity.this, HalfProductOutOrderDetailActivity.class);
                 setResult(8, intent);
+                CaptureActivity.this.finish();
+            }
+//            返回到追溯页面
+            else if (FLAG == 100) {
+                Intent intent = new Intent(CaptureActivity.this, QualityControlActivity.class);
+                setResult(1, intent);
                 CaptureActivity.this.finish();
             }
             return true;
@@ -278,42 +275,61 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         Log.d("result", rawResult.getText());
         resultIntent.putExtras(bundle);
         this.setResult(RESULT_OK, resultIntent);
+//      得到扫描二维码返回的结果
+        String result= rawResult.getText();
+//      对返回结果进行处理后，赋值给strUrl
+        String strUrl;
 
-        scanCropView.setVisibility(View.INVISIBLE);
-        goOnScanView.setVisibility(View.VISIBLE);
-
-//            只能扫描洲马二维码
-        if (!rawResult.getText().contains(UrlHelper.URL_MATERIAL_SCAN)
-                && !rawResult.getText().contains(UrlHelper.URL_PRODUCT_SCAN)
-                 && !rawResult.getText().contains(UrlHelper.URL_HALF_PRODUCT_SCAN)
+//      只能扫描洲马二维码
+        if (!result.contains(UrlHelper.URL_BASE)
                 ) {
             Toast.makeText(this, R.string.only_scan_cnmar, Toast.LENGTH_SHORT).show();
+            finish();
         }
 
+//      处理原料出库、成品出库以及半成品出库扫描结果,将二维码返回的结果加上单据id后发送请求
+//      处理原料入库、成品入库以及半成品入库扫描结果，直接用二维码返回的结果发送请求
+//      处理原料、成品追溯的，要将二维码返回的结果做replace("qrcode", "back")操作
 
-        //      处理原料入库、成品入库以及半成品入库扫描结果，入库单直接用二维码返回的URL地址发送请求
-        String strUrl;
-        if (FLAG == 1 || FLAG == 3|| FLAG == 5) {
-            strUrl = rawResult.getText();
-        }
-        //      处理原料出库、成品出库以及半成品出库扫描结果,出库单用二维码返回的URL地址加上单据id后发送请求
-        else {
-            strUrl = rawResult.getText() + "?outOrderId=" + String.valueOf(id);
+        if (FLAG == 2 || FLAG == 4 || FLAG == 6) {
+            strUrl = result + "?outOrderId=" + String.valueOf(id);
             Log.d("strUrl", strUrl);
-        }
+        } else if (FLAG == 1 || FLAG == 3 || FLAG == 5) {
+            strUrl = result;
+        } else
+            strUrl = result.replace("qrcode", "back");
 
-//        处理原料出入库扫描
+        //        处理原料出入库扫描
         if (strUrl.contains(UrlHelper.URL_MATERIAL_SCAN)) {
-            getCodeInfoFromNet(strUrl);
+            scanCropView.setVisibility(View.INVISIBLE);
+            goOnScanView.setVisibility(View.VISIBLE);
+            getMaterialInfoFromNet(strUrl);
         }
         //        处理成品出入库扫描
-
         else if (strUrl.contains(UrlHelper.URL_PRODUCT_SCAN)) {
+            scanCropView.setVisibility(View.INVISIBLE);
+            goOnScanView.setVisibility(View.VISIBLE);
             getProductInfoFromNet(strUrl);
         }
         //        处理半成品出入库扫描
-        else if (strUrl.contains(UrlHelper.URL_HALF_PRODUCT_SCAN)){
+        else if (strUrl.contains(UrlHelper.URL_HALF_PRODUCT_SCAN)) {
+            scanCropView.setVisibility(View.INVISIBLE);
+            goOnScanView.setVisibility(View.VISIBLE);
             getHalfProductInfoFromNet(strUrl);
+        }
+        //        处理原料追溯扫描
+        else if (strUrl.contains(UrlHelper.URL_MATERIAL_TRACE_BACK_SCAN)) {
+            Intent intent = new Intent(this, QualityControlActivity.class);
+            intent.putExtra("result", strUrl);
+            setResult(0, intent);
+            CaptureActivity.this.finish();
+        }
+        //        处理成品追溯扫描
+        else if (strUrl.contains(UrlHelper.URL_PRODUCT_TRACE_BACK_SCAN)) {
+            Intent intent = new Intent(this, QualityControlActivity.class);
+            intent.putExtra("result", strUrl);
+            setResult(0, intent);
+            CaptureActivity.this.finish();
         }
 
         btnGoOnScan.setOnClickListener(new View.OnClickListener() {
@@ -330,7 +346,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FLAG = getIntent().getIntExtra("FLAG", 0);
                 if (FLAG == 1) {
                     Intent intent = new Intent(CaptureActivity.this, MaterialInOrderDetailActivity.class);
                     setResult(3, intent);
@@ -347,11 +362,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     Intent intent = new Intent(CaptureActivity.this, ProductOutOrderDetailActivity.class);
                     setResult(6, intent);
                     CaptureActivity.this.finish();
-                }else if (FLAG == 5) {
+                } else if (FLAG == 5) {
                     Intent intent = new Intent(CaptureActivity.this, HalfProductInOrderDetailActivity.class);
                     setResult(7, intent);
                     CaptureActivity.this.finish();
-                }else if (FLAG == 6) {
+                } else if (FLAG == 6) {
                     Intent intent = new Intent(CaptureActivity.this, HalfProductOutOrderDetailActivity.class);
                     setResult(8, intent);
                     CaptureActivity.this.finish();
@@ -364,7 +379,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     }
 
-    public void getCodeInfoFromNet(String url) {
+    public void getMaterialInfoFromNet(String url) {
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
             @Override
@@ -375,7 +390,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
 //                扫描成功的时候显示条码相关信息
                 if (response.isStatus()) {
-
 //                    出入库扫描结果都转化为MaterialInOrderSpace对象
                     MaterialInOrderSpace materialInOrderSpace = JSON.parseObject(response.getData().toString(), MaterialInOrderSpace.class);
 

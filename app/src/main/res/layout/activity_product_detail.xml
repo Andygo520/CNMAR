@@ -31,7 +31,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/productCode"
+                    android:id="@+id/tvProductCode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
@@ -60,7 +60,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/productName"
+                    android:id="@+id/tvProductName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
@@ -89,7 +89,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/size"
+                    android:id="@+id/tvSize"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
@@ -125,7 +125,7 @@
                     >
 
                     <com.android.volley.toolbox.NetworkImageView
-                        android:id="@+id/image"
+                        android:id="@+id/ivImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/ic_launcher" />

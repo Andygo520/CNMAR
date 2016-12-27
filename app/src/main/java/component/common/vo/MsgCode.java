@@ -15,7 +15,8 @@ public interface MsgCode {
 	public static final String param_error = "参数错误";
 	public static final String status_error = "状态错误";
 
-	public static final String scan_error = "已扫描";
+	public static final String scan_error = "二维码已扫描";
 	public static final String stock_error = "库存不足";
+	public static final String space_error = "仓位不足";
 
 }

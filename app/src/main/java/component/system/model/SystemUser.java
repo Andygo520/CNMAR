@@ -1,9 +1,9 @@
 package component.system.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.ImgModel;
 import component.common.vo.IsEnableVo;
@@ -13,24 +13,44 @@ import component.system.vo.GenderVo;
 public class SystemUser extends ImgModel {
 
 	@JSONField(ordinal = 1)
-	private String username; // 账号
+	private int deptId;
 	@JSONField(ordinal = 2)
-	private String password; // 密码
+	private int jobId;
 	@JSONField(ordinal = 3)
-	private String name; // 姓名
+	private int dutyId;
 	@JSONField(ordinal = 4)
-	private String gender; // 性别 - M男F女
-	@JSONField(ordinal = 5, format = "yyyy-MM-dd")
-	private Date birthday; // 出生日期
+	private String username; // 账号
+	@JSONField(ordinal = 5)
+	private String password; // 密码
 	@JSONField(ordinal = 6)
-	private Boolean isSuper; // 是否超级管理员 - 0否1是
+	private String name; // 姓名
 	@JSONField(ordinal = 7)
+	private String gender; // 性别 - M男F女
+	@JSONField(ordinal = 8, format = "yyyy-MM-dd")
+	private Date birthday; // 出生日期
+	@JSONField(ordinal = 9)
+	private String card;
+	@JSONField(ordinal = 10)
+	private String phone;
+	@JSONField(ordinal = 11)
+	private String qq;
+	@JSONField(ordinal = 12)
+	private String address;
+	@JSONField(ordinal = 13)
+	private Boolean isSuper; // 是否超级管理员 - 0否1是
+	@JSONField(ordinal = 14)
 	private Boolean isEnable; // 状态 - 0禁用1启用
 
-	@JSONField(ordinal = 8)
+	@JSONField(ordinal = 15)
 	private List<SystemRole> roles;
-	@JSONField(ordinal = 9)
+	@JSONField(ordinal = 16)
 	private List<SystemMenu> menus;
+	@JSONField(ordinal = 17)
+	private SystemDept dept;
+	@JSONField(ordinal = 18)
+	private SystemJob job;
+	@JSONField(ordinal = 19)
+	private SystemDuty duty;
 
 	public SystemUser() {
 
@@ -46,6 +66,30 @@ public class SystemUser extends ImgModel {
 		this.isEnable = isEnable;
 		this.cid = cid;
 		this.ctime = ctime;
+	}
+
+	public int getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(int deptId) {
+		this.deptId = deptId;
+	}
+
+	public int getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(int jobId) {
+		this.jobId = jobId;
+	}
+
+	public int getDutyId() {
+		return dutyId;
+	}
+
+	public void setDutyId(int dutyId) {
+		this.dutyId = dutyId;
 	}
 
 	public String getUsername() {
@@ -88,6 +132,38 @@ public class SystemUser extends ImgModel {
 		this.birthday = birthday;
 	}
 
+	public String getCard() {
+		return card;
+	}
+
+	public void setCard(String card) {
+		this.card = card;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getQq() {
+		return qq;
+	}
+
+	public void setQq(String qq) {
+		this.qq = qq;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public Boolean getIsSuper() {
 		return isSuper;
 	}
@@ -118,6 +194,30 @@ public class SystemUser extends ImgModel {
 
 	public void setMenus(List<SystemMenu> menus) {
 		this.menus = menus;
+	}
+
+	public SystemDept getDept() {
+		return dept;
+	}
+
+	public void setDept(SystemDept dept) {
+		this.dept = dept;
+	}
+
+	public SystemJob getJob() {
+		return job;
+	}
+
+	public void setJob(SystemJob job) {
+		this.job = job;
+	}
+
+	public SystemDuty getDuty() {
+		return duty;
+	}
+
+	public void setDuty(SystemDuty duty) {
+		this.duty = duty;
 	}
 
 	@JSONField(serialize = false)

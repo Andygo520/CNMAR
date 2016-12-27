@@ -2,6 +2,8 @@ package component.material.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.List;
+
 /** 入库单原料仓位关系 */
 public class MaterialInOrderSpace {
 
@@ -26,6 +28,11 @@ public class MaterialInOrderSpace {
 	private MaterialSpace space;
 	@JSONField(ordinal = 10)
 	private String inOrOut;
+
+	@JSONField(ordinal = 11)
+	private MaterialInOrder inOrder;
+	@JSONField(ordinal = 12)
+	private List<MaterialOutOrder> outOrders;
 
 	public MaterialInOrderSpace() {
 
@@ -116,6 +123,22 @@ public class MaterialInOrderSpace {
 
 	public void setInOrOut(String inOrOut) {
 		this.inOrOut = inOrOut;
+	}
+
+	public MaterialInOrder getInOrder() {
+		return inOrder;
+	}
+
+	public void setInOrder(MaterialInOrder inOrder) {
+		this.inOrder = inOrder;
+	}
+
+	public List<MaterialOutOrder> getOutOrders() {
+		return outOrders;
+	}
+
+	public void setOutOrders(List<MaterialOutOrder> outOrders) {
+		this.outOrders = outOrders;
 	}
 
 }

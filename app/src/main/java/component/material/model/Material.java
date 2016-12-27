@@ -1,9 +1,10 @@
 package component.material.model;
 
-import java.util.List;
-
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.List;
+
+import component.basic.model.Unit;
 import component.basic.vo.MixTypeVo;
 import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
@@ -37,19 +38,17 @@ public class Material extends BaseModel {
 	@JSONField(ordinal = 11)
 	private int packNum; // 包装数量
 	@JSONField(ordinal = 12)
-	private int packUnitId; // 包装单位id
-	@JSONField(ordinal = 13)
 	private int minStock; // 预警最小库存
-	@JSONField(ordinal = 14)
+	@JSONField(ordinal = 13)
 	private int maxStock; // 预警最大库存
 
-	@JSONField(ordinal = 15)
+	@JSONField(ordinal = 14)
 	private Supply supply;
+	@JSONField(ordinal = 15)
+	private Unit unit;
 	@JSONField(ordinal = 16)
-	private MaterialUnit unit;
-	@JSONField(ordinal = 17)
 	private Category category;
-	@JSONField(ordinal = 18)
+	@JSONField(ordinal = 17)
 	private MaterialStock stock;
 	@JSONField(serialize = false)
 	private List<MaterialSpace> spaces;
@@ -142,14 +141,6 @@ public class Material extends BaseModel {
 		this.packNum = packNum;
 	}
 
-	public int getPackUnitId() {
-		return packUnitId;
-	}
-
-	public void setPackUnitId(int packUnitId) {
-		this.packUnitId = packUnitId;
-	}
-
 	public int getMinStock() {
 		return minStock;
 	}
@@ -174,11 +165,11 @@ public class Material extends BaseModel {
 		this.supply = supply;
 	}
 
-	public MaterialUnit getUnit() {
+	public Unit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(MaterialUnit unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
 

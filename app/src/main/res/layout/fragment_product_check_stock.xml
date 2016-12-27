@@ -25,7 +25,6 @@
                 android:text="盘点管理"
                 android:textColor="@color/color_black"
                 android:textSize="15sp"
-                android:checked="true"
                 android:button="@null"
                 android:gravity="center"
                 android:drawableBottom="@drawable/line_selector"

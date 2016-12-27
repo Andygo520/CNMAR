@@ -146,58 +146,93 @@
                         style="@style/list_item_cell_seperator_layout"
                         />
                 </TableRow>
-                <TableRow
-                    android:background="@drawable/table_frame"
-                    >
-                    <View
-                        style="@style/list_item_cell_seperator_layout"
-                        />
+                <TableRow android:background="@drawable/table_frame">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
                     <TextView
-                        android:id="@+id/name41"
-                        android:text="不同批次混仓"
-                        android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        android:layout_width="65dip"
+                        android:layout_width="65dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:padding="2dip"
-                        />
-                    <View
-                        style="@style/list_item_cell_seperator_layout"
-                        />
+                        android:text="出入库操作"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv31"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="不同批次混仓"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:id="@+id/tv32"
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+                </TableRow>
+                <TableRow android:background="@drawable/table_frame">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <TextView
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="2dip"
+                        android:text="备注"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
                     <TextView
                         android:id="@+id/tv41"
                         android:layout_width="35dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="2dip"
-                        />
-                    <View
-                        style="@style/list_item_cell_seperator_layout"
-                        />
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
                     <TextView
-                        android:id="@+id/name42"
-                        android:textColor="@android:color/black"
-                        android:text="盘点时间"
-                        android:textStyle="bold"
-                        android:layout_width="65dip"
+                        android:layout_width="65dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:padding="2dip"
-                        />
-                    <View
-                        style="@style/list_item_cell_seperator_layout"
-                        />
+                        android:text="盘点时间"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
                     <TextView
                         android:id="@+id/tv42"
                         android:layout_width="35dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="2dip"
-                        />
-                    <View
-                        style="@style/list_item_cell_seperator_layout"
-                        />
+                        android:padding="2dip" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
                 </TableRow>
                 <TableRow
                     android:background="@drawable/table_frame"

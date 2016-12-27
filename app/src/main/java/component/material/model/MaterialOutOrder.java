@@ -1,9 +1,9 @@
 package component.material.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.material.vo.OutOrderStatusVo;
@@ -30,6 +30,8 @@ public class MaterialOutOrder extends BaseModel {
 	private ProducePlan producePlan;
 	@JSONField(ordinal = 8)
 	private List<MaterialOutOrderMaterial> outOrderMaterials;
+	@JSONField(ordinal = 9)
+	private boolean showPrint;
 
 	public MaterialOutOrder() {
 
@@ -105,6 +107,14 @@ public class MaterialOutOrder extends BaseModel {
 
 	public void setOutOrderMaterials(List<MaterialOutOrderMaterial> outOrderMaterials) {
 		this.outOrderMaterials = outOrderMaterials;
+	}
+
+	public boolean isShowPrint() {
+		return showPrint;
+	}
+
+	public void setShowPrint(boolean showPrint) {
+		this.showPrint = showPrint;
 	}
 
 	@JSONField(serialize = false)

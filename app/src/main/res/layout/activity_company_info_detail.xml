@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TableLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:stretchColumns="3,7">
                         <TableRow
@@ -48,7 +48,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name11"
                                 android:text="企业名称"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -61,7 +60,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv11"
+                                android:id="@+id/tvCompanyName"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -71,7 +70,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name12"
                                 android:text="电话"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -84,7 +82,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv12"
+                                android:id="@+id/tvPhone"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -101,7 +99,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name21"
                                 android:text="传真"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -114,7 +111,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv21"
+                                android:id="@+id/tvFax"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -124,7 +121,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name22"
                                 android:text="地址"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -137,7 +133,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv22"
+                                android:id="@+id/tvAddress"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -154,7 +150,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name31"
                                 android:text="联系人"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -167,7 +162,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv31"
+                                android:id="@+id/tvPerson"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -177,7 +172,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name32"
                                 android:textColor="@android:color/black"
                                 android:text="职位"
                                 android:textStyle="bold"
@@ -190,7 +184,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv32"
+                                android:id="@+id/tvPosition"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -207,7 +201,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name41"
                                 android:text="手机号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
@@ -220,7 +213,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv41"
+                                android:id="@+id/tvMobilePhone"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -230,7 +223,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name42"
                                 android:textColor="@android:color/black"
                                 android:text="邮箱"
                                 android:textStyle="bold"
@@ -243,7 +235,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv42"
+                                android:id="@+id/tvMailBox"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -284,7 +276,7 @@
                     >
 
                     <com.android.volley.toolbox.NetworkImageView
-                        android:id="@+id/image"
+                        android:id="@+id/ivImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:src="@mipmap/ic_launcher" />

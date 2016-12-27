@@ -8,8 +8,8 @@ public enum OutOrderStatusVo {
 	pre_out_stock(2, "待出库"),
 	/** 已出库 */
 	out_stock(3, "已出库"),
-	/** 未全部出库 */
-	not_all(4, "未全部出库");
+	/** 部分出库 */
+	not_all(4, "部分出库");
 
 	private Integer key;
 	private String value;

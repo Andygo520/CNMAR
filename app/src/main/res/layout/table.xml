@@ -1,3 +1,4 @@
+<!--默认显示3行，第4行设置为不可见-->
 <LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
@@ -163,6 +164,60 @@
                     />
                 <TextView
                     android:id="@+id/tv32"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+            </TableRow>
+            <TableRow
+                android:id="@+id/row"
+                android:background="@drawable/table_frame"
+                android:visibility="gone"
+                >
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/name41"
+                    android:text="文本"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/tv41"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/name42"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/tv42"
                     android:layout_width="35dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

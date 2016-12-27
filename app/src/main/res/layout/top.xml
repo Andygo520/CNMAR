@@ -1,46 +1,42 @@
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/colorBase"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:background="@color/colorBase">
 
-        <LinearLayout
-            android:id="@+id/left_arrow"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            >
-                <ImageView
-                    android:id="@+id/left_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:src="@mipmap/arrow_left_white"
-                    />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="文本"
-            android:lines="1"
-            android:textColor="#fff"
-            android:layout_centerInParent="true"
-            />
-
+    <LinearLayout
+        android:id="@+id/left_arrow"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:gravity="center">
 
         <ImageView
-            android:id="@+id/scann"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="10dp"
-            android:src="@mipmap/scann"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:visibility="invisible"
-            />
+            android:id="@+id/left_img"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:src="@mipmap/arrow_left_white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:lines="1"
+        android:text="文本"
+        android:textColor="#fff" />
+
+
+    <ImageView
+        android:id="@+id/scann"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/scann"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -22,4 +22,9 @@
         <item>@string/NOT_ALL_OUT</item>
         <item>@string/OUT_STOCK</item>
     </string-array>
+    <string-array name="receiveOrderStatus">
+        <item>@string/ALL</item>
+        <item>@string/not_received</item>
+        <item>@string/received</item>
+    </string-array>
 </resources>

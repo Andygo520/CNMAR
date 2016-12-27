@@ -12,20 +12,23 @@ public class MaterialSpaceStockCheck {
 	@JSONField(ordinal = 3)
 	private int spaceId; // 仓位id
 	@JSONField(ordinal = 4)
-	private int beforeStock; // 盘点前数量
+	private int inOrderSpaceId; // 入库单原料仓位关系id
 	@JSONField(ordinal = 5)
+	private int beforeStock; // 盘点前数量
+	@JSONField(ordinal = 6)
 	private int afterStock; // 盘点后数量
 
-	@JSONField(ordinal = 6)
+	@JSONField(ordinal = 7)
 	private MaterialSpace space;
 
 	public MaterialSpaceStockCheck() {
 
 	}
 
-	public MaterialSpaceStockCheck(int checkId, int spaceId, int beforeStock, int afterStock) {
+	public MaterialSpaceStockCheck(int checkId, int spaceId, int inOrderSpaceId, int beforeStock, int afterStock) {
 		this.checkId = checkId;
 		this.spaceId = spaceId;
+		this.inOrderSpaceId = inOrderSpaceId;
 		this.beforeStock = beforeStock;
 		this.afterStock = afterStock;
 	}
@@ -52,6 +55,14 @@ public class MaterialSpaceStockCheck {
 
 	public void setSpaceId(int spaceId) {
 		this.spaceId = spaceId;
+	}
+
+	public int getInOrderSpaceId() {
+		return inOrderSpaceId;
+	}
+
+	public void setInOrderSpaceId(int inOrderSpaceId) {
+		this.inOrderSpaceId = inOrderSpaceId;
 	}
 
 	public int getBeforeStock() {

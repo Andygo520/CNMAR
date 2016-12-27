@@ -209,7 +209,7 @@
                                 />
                             <TextView
                                 android:id="@+id/name41"
-                                android:text="规格"
+                                android:text="生产数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -233,7 +233,7 @@
                             <TextView
                                 android:id="@+id/name42"
                                 android:textColor="@android:color/black"
-                                android:text="生产数量"
+                                android:text="单位"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"

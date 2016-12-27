@@ -7,34 +7,49 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.material.vo.InOrderStatusVo;
+import component.supply.model.Supply;
 import component.system.model.SystemUser;
 
 /** 原料入库单 */
 public class MaterialInOrder extends BaseModel {
 
 	@JSONField(ordinal = 1)
+	private int supplyId;
+	@JSONField(ordinal = 2)
 	private String code; // 入库单号
-	@JSONField(ordinal = 2, format = "yyyyMMddHHmmss")
+	@JSONField(ordinal = 3, format = "yyyyMMddHHmmss")
 	private Date inTime; // 入库时间
-	@JSONField(ordinal = 3)
+	@JSONField(ordinal = 4)
 	private String purchaseOrder; // 采购订单号
-	@JSONField(ordinal = 4, format = "yyyy-MM-dd")
+	@JSONField(ordinal = 5, format = "yyyy-MM-dd")
 	private Date arrivalDate; // 到货日期
-	@JSONField(ordinal = 5)
-	private String remark; // 备注
 	@JSONField(ordinal = 6)
-	private int status; // 入库单状态 - 1待打印2待入库3已入库4未全部入库5待检验6检验不合格
+	private String remark; // 备注
 	@JSONField(ordinal = 7)
+	private int status; // 入库单状态 - 1待打印2待入库3已入库4未全部入库5待检验6检验不合格
+	@JSONField(ordinal = 8)
 	private int testId;
-	@JSONField(ordinal = 8, format = "yyyy-MM-dd HH:mm:ss")
+	@JSONField(ordinal = 9, format = "yyyy-MM-dd HH:mm:ss")
 	private Date testTime;
 
-	@JSONField(ordinal = 9)
-	private SystemUser test;
 	@JSONField(ordinal = 10)
+	private Supply supply;
+	@JSONField(ordinal = 11)
+	private SystemUser test;
+	@JSONField(ordinal = 12)
+	private String testStatus;
+	@JSONField(ordinal = 13)
 	private List<MaterialInOrderMaterial> inOrderMaterials;
 	@JSONField(serialize = false)
 	private boolean showPrint;
+
+	public int getSupplyId() {
+		return supplyId;
+	}
+
+	public void setSupplyId(int supplyId) {
+		this.supplyId = supplyId;
+	}
 
 	public String getCode() {
 		return code;
@@ -100,12 +115,28 @@ public class MaterialInOrder extends BaseModel {
 		this.testTime = testTime;
 	}
 
+	public Supply getSupply() {
+		return supply;
+	}
+
+	public void setSupply(Supply supply) {
+		this.supply = supply;
+	}
+
 	public SystemUser getTest() {
 		return test;
 	}
 
 	public void setTest(SystemUser test) {
 		this.test = test;
+	}
+
+	public String getTestStatus() {
+		return testStatus;
+	}
+
+	public void setTestStatus(String testStatus) {
+		this.testStatus = testStatus;
 	}
 
 	public List<MaterialInOrderMaterial> getInOrderMaterials() {

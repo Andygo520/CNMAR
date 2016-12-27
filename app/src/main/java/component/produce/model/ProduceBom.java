@@ -1,7 +1,5 @@
 package component.produce.model;
 
-import java.math.BigDecimal;
-
 import com.alibaba.fastjson.annotation.JSONField;
 
 import component.material.model.Material;
@@ -16,21 +14,18 @@ public class ProduceBom {
 	@JSONField(ordinal = 3)
 	private int materialId; // 原料id
 	@JSONField(ordinal = 4)
-	private BigDecimal scale; // bom比例
-	@JSONField(ordinal = 5)
 	private int receiveNum; // 领料数量
 
-	@JSONField(ordinal = 6)
+	@JSONField(ordinal = 5)
 	private Material material;
 
 	public ProduceBom() {
 
 	}
 
-	public ProduceBom(int produceId, int materialId, BigDecimal scale, int receiveNum) {
+	public ProduceBom(int produceId, int materialId, int receiveNum) {
 		this.produceId = produceId;
 		this.materialId = materialId;
-		this.scale = scale;
 		this.receiveNum = receiveNum;
 	}
 
@@ -56,14 +51,6 @@ public class ProduceBom {
 
 	public void setMaterialId(int materialId) {
 		this.materialId = materialId;
-	}
-
-	public BigDecimal getScale() {
-		return scale;
-	}
-
-	public void setScale(BigDecimal scale) {
-		this.scale = scale;
 	}
 
 	public int getReceiveNum() {

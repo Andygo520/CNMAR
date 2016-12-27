@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import component.basic.model.Unit;
 import component.basic.vo.MixTypeVo;
 import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
@@ -34,17 +35,15 @@ public class Product extends BaseModel {
 	@JSONField(ordinal = 10)
 	private int packNum; // 包装数量
 	@JSONField(ordinal = 11)
-	private int packUnitId; // 包装单位id
-	@JSONField(ordinal = 12)
 	private int minStock; // 预警最小库存
-	@JSONField(ordinal = 13)
+	@JSONField(ordinal = 12)
 	private int maxStock; // 预警最大库存
 
+	@JSONField(ordinal = 13)
+	private Unit unit;
 	@JSONField(ordinal = 14)
-	private ProductUnit unit;
-	@JSONField(ordinal = 15)
 	private Category category;
-	@JSONField(ordinal = 16)
+	@JSONField(ordinal = 15)
 	private ProductStock stock;
 	@JSONField(serialize = false)
 	private List<ProductSpace> spaces;
@@ -133,14 +132,6 @@ public class Product extends BaseModel {
 		this.packNum = packNum;
 	}
 
-	public int getPackUnitId() {
-		return packUnitId;
-	}
-
-	public void setPackUnitId(int packUnitId) {
-		this.packUnitId = packUnitId;
-	}
-
 	public int getMinStock() {
 		return minStock;
 	}
@@ -157,11 +148,11 @@ public class Product extends BaseModel {
 		this.maxStock = maxStock;
 	}
 
-	public ProductUnit getUnit() {
+	public Unit getUnit() {
 		return unit;
 	}
 
-	public void setUnit(ProductUnit unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
 

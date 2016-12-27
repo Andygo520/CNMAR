@@ -1,14 +1,15 @@
 package component.produce.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.material.model.MaterialOutOrder;
 import component.product.model.Product;
 import component.product.model.ProductInOrder;
+import component.system.model.SystemUser;
 
 /** 加工单 */
 public class ProducePlan extends BaseModel {
@@ -24,22 +25,30 @@ public class ProducePlan extends BaseModel {
 	@JSONField(ordinal = 6)
 	private String name; // 加工单名称
 	@JSONField(ordinal = 7)
-	private int produceNum; // 生产数量
+	private int produceNum; // 计划生产数量
 	@JSONField(ordinal = 8)
+	private int actualNum; // 实际生产数量
+	@JSONField(ordinal = 9)
 	private int successNum; // 合格品数量
-	@JSONField(ordinal = 9, format = "yyyy-MM-dd")
-	private Date startDate; // 开始日期
 	@JSONField(ordinal = 10, format = "yyyy-MM-dd")
+	private Date startDate; // 开始日期
+	@JSONField(ordinal = 11, format = "yyyy-MM-dd")
 	private Date endDate; // 结束日期
-
-	@JSONField(ordinal = 11)
-	private Product product;
 	@JSONField(ordinal = 12)
-	private MaterialOutOrder materialOutOrder;
-	@JSONField(ordinal = 13)
-	private ProductInOrder productInOrder;
+	private int testId;
+	@JSONField(ordinal = 13, format = "yyyy-MM-dd HH:mm:ss")
+	private Date testTime;
 
 	@JSONField(ordinal = 14)
+	private Product product;
+	@JSONField(ordinal = 15)
+	private SystemUser test;
+	@JSONField(ordinal = 16)
+	private MaterialOutOrder materialOutOrder;
+	@JSONField(ordinal = 17)
+	private ProductInOrder productInOrder;
+
+	@JSONField(ordinal = 18)
 	private List<ProduceBom> produceBoms;
 
 	public int getProductId() {
@@ -90,6 +99,14 @@ public class ProducePlan extends BaseModel {
 		this.produceNum = produceNum;
 	}
 
+	public int getActualNum() {
+		return actualNum;
+	}
+
+	public void setActualNum(int actualNum) {
+		this.actualNum = actualNum;
+	}
+
 	public int getSuccessNum() {
 		return successNum;
 	}
@@ -114,12 +131,36 @@ public class ProducePlan extends BaseModel {
 		this.endDate = endDate;
 	}
 
+	public int getTestId() {
+		return testId;
+	}
+
+	public void setTestId(int testId) {
+		this.testId = testId;
+	}
+
+	public Date getTestTime() {
+		return testTime;
+	}
+
+	public void setTestTime(Date testTime) {
+		this.testTime = testTime;
+	}
+
 	public Product getProduct() {
 		return product;
 	}
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public SystemUser getTest() {
+		return test;
+	}
+
+	public void setTest(SystemUser test) {
+		this.test = test;
 	}
 
 	public MaterialOutOrder getMaterialOutOrder() {

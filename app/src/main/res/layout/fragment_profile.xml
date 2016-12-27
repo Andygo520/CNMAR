@@ -1,176 +1,257 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-   >
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="50dp"
-       android:orientation="horizontal"
-       android:layout_margin="5dp"
-       >
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="match_parent"
-           android:text="账号"
-           android:textSize="17sp"
-           android:gravity="center_vertical"
-           />
-       <TextView
-           android:id="@+id/account"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:text="账号"
-           android:textStyle="bold"
-           android:textColor="#000"
-           android:textSize="17sp"
-           android:gravity="right|center_vertical"
-           />
-   </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#666"
-        android:layout_margin="5dp"
-        />
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_margin="5dp"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="姓名"
-            android:textSize="17sp"
-            android:gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="姓名"
-            android:textStyle="bold"
-            android:textColor="#000"
-            android:textSize="17sp"
-            android:gravity="right|center_vertical"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#666"
-        android:layout_margin="5dp"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_margin="5dp"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="性别"
-            android:textSize="17sp"
-            android:gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/sex"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="性别"
-            android:textStyle="bold"
-            android:textColor="#000"
-            android:textSize="17sp"
-            android:gravity="right|center_vertical"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#666"
-        android:layout_margin="5dp"
-        />
+            android:layout_height="110dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_margin="5dp"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="出生日期"
-            android:textSize="17sp"
-            android:gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/birthday"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="出生日期"
-            android:textStyle="bold"
-            android:textColor="#000"
-            android:textSize="17sp"
-            android:gravity="right|center_vertical"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#666"
-        android:layout_margin="5dp"
-        />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_margin="5dp"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="头像"
-            android:textSize="17sp"
-            android:gravity="center_vertical"
-            />
-        <LinearLayout
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            >
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/image"
+                android:textColor="@color/color_black"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/color_light_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/divider"
+            android:orientation="vertical"
+            android:showDividers="middle">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/ic_launcher"
-                />
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="账号"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="部门"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/department"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="职务"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/duty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="岗位"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/position"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#666"
-        android:layout_margin="5dp"
-        />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/color_light_grey" />
 
-    <Button
-        android:id="@+id/logoff"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="注销账号"
-        android:textColor="#f00"
-        android:textSize="17sp"
-        android:layout_marginTop="10dp"
-        >
-    </Button>
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/divider"
+            android:orientation="vertical"
+            android:showDividers="middle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="性别"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/sex"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="出生日期"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="手机号"
+                    android:textColor="@color/color_black"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="5dp"
+                    android:textColor="#000"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/color_light_grey" />
+
+        <Button
+            android:id="@+id/logoff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_bg"
+            android:text="注销账号"
+            android:textColor="@color/color_white"
+            android:textSize="17sp"></Button>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/color_light_grey" />
+    </LinearLayout>
+
+</ScrollView>

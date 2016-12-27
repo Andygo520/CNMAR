@@ -1,8 +1,33 @@
 <resources>
     <string name="app_name">洲马物联</string>
 
-    <!--菜单项-->
-    <string name="MENUS">原料仓库，成品仓库，计划管理，相关方管理，企业管理，系统管理，品控管理，报表管理，半成品仓库</string>
+    <!--RadioButton-->
+    <string name="rbHome">首页</string>
+    <string name="rbProfile">我的资料</string>
+    <string name="rbStock">库存</string>
+    <string name="rbInBill">入库单</string>
+    <string name="rbOutBill">出库单</string>
+    <string name="rbCheckStock">盘点</string>
+    <string name="rbUser">用户管理</string>
+    <string name="rbLog">操作日志</string>
+    <string name="rbCompanyInfo">企业信息</string>
+    <string name="rbProductManage">产品管理</string>
+    <string name="rbProductionPlan">加工单</string>
+    <string name="rbReceiveMaterialOrder">领料单</string>
+    <string name="rbDeliveryPlan">交付计划</string>
+    <string name="rbQC">原料检验</string>
+    <string name="rbProductQC">成品检验</string>
+    <string name="rbTraceBack">质量追溯</string>
+    <string name="rbMaterialReport">原料库存报表</string>
+    <string name="rbHalfReport">半成品库存报表</string>
+    <string name="rbProductReport">成品库存报表</string>
+
+
+
+
+
+    <!--菜单名-->
+    <string name="MENUS">原料仓库,成品仓库,计划管理,相关方管理,企业管理,系统管理,品控管理,报表管理,半成品仓库</string>
     <string name="HOME_YLCK">原料仓库</string>
     <string name="HOME_CPCK">成品仓库</string>
     <string name="HOME_JHGL">计划管理</string>
@@ -13,17 +38,48 @@
     <string name="HOME_BBGL">报表管理</string>
     <string name="HOME_BCPCK">半成品仓库</string>
 
+
+    <!--二级菜单列表的url字段，该字段不会变，用来唯一标示该菜单项-->
+    <string name="system_user_url">system_user/list</string> //用户管理的url字段
+    <string name="system_log_url">system_log/list</string>  //操作日志的url字段
+    <string name="company_url">company/list</string>  //企业信息的url字段
+    <string name="company_product_url">company_product/list</string> //产品管理的url字段
+    <string name="produce_plan_url">produce_plan/list</string>  //加工单的url字段
+    <string name="material_out_order_receive_url">material_out_order_receive/list</string> //领料单的url字段
+    <string name="custom_deliver_plan_url">custom_deliver_plan/list</string>  //交付计划的url字段
+    <string name="material_stock_url">material_stock/list</string>  //原料库存的url字段
+    <string name="material_in_order_url">material_in_order/list</string>  //原料入库单的url字段
+    <string name="material_out_order_url">material_out_order/list</string>  //原料出库单的url字段
+    <string name="material_stock_check_manage_url">material_stock_check_manage/list</string> //原料盘点的url字段
+    <string name="half_stock_url">half_stock/list</string> //半成品库存的url字段
+    <string name="half_in_order_url">half_in_order/list</string> //半成品入库单的url字段
+    <string name="half_out_order_url">half_out_order/list</string> //半成品出库单的url字段
+    <string name="half_stock_check_manage_url">half_stock_check_manage/list</string> //半成品盘点的url字段
+    <string name="product_stock_url">product_stock/list</string> //成品库存的url字段
+    <string name="product_in_order_url">product_in_order/list</string> //成品入库的url字段
+    <string name="product_out_order_url">product_out_order/list</string> //成品出库的url字段
+    <string name="product_stock_check_manage_url">product_stock_check_manage/list</string> //成品盘点的url字段
+    <string name="material_in_order_test_url">material_in_order_test/list</string> //原料检验的url字段
+    <string name="produce_product_test_url">produce_product_test/list</string>  //成品检验的url字段
+    <string name="material_back_url">material_back/list</string> //追溯的url字段
+    <string name="material_report_url">material_report/list</string> //原料报表的url字段
+    <string name="half_report_url">half_report/list</string> //半成品报表的url字段
+    <string name="product_report_url">product_report/list</string> //成品报表的url字段
+
+
+
+
     <!--入库单状态-->
-    <string name="ALL">所有状态</string>
+    <string name="ALL">状态</string>
     <string name="PRE_PRINT">待打印</string>
     <string name="PRE_IN_STOCK">待入库</string>
     <string name="IN_STOCK">已入库</string>
-    <string name="NOT_ALL_IN">未全部入库</string>
+    <string name="NOT_ALL_IN">部分入库</string>
     <string name="PRE_TEST">待检验</string>
     <string name="TEST_FAIL">检验不合格</string>
 
     <string name="PRE_OUT_STOCK">待出库</string>
-    <string name="NOT_ALL_OUT">未全部出库</string>
+    <string name="NOT_ALL_OUT">部分出库</string>
     <string name="OUT_STOCK">已出库</string>
 
 
@@ -39,10 +95,26 @@
     <string name="cube_ptr_hours_ago">&#160;小时之前</string>
 
     <!--Toast-->
-    <string name="only_scan_cnmar">请扫描系统生成的二维码</string>
+    <string name="only_scan_cnmar">无效二维码</string>
     <string name="input_fail_num">请输入不合格数量</string>
     <string name="more_than_pre_in">已入库数量不能超过待入库数量</string>
     <string name="more_than_pre_out">已出库数量不能超过待出库数量</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- App update -->
+    <string name="update_title">检查软件版本</string>
+    <string name="update_msg">软件已发现的新的版本，赶快下载体验吧</string>
+    <string name="update_no">软件没有发现更新的版本</string>
+    <string name="button_download">确定</string>
+    <string name="button_ignore">忽略</string>
+    <string name="button_cancel">取消</string>
+
+    <!--领料单状态-->
+    <string name="not_received">未领料</string>
+    <string name="received">已领料</string>
+    <string name="returned">有退料</string>
 
 </resources>

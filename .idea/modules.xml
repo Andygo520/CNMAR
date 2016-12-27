@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CNMAR.iml" filepath="$PROJECT_DIR$/CNMAR.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CNMARTest.iml" filepath="$PROJECT_DIR$/CNMARTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TwinklingRefreshLayout/TwinklingRefreshLayout.iml" filepath="$PROJECT_DIR$/TwinklingRefreshLayout/TwinklingRefreshLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
     </modules>
   </component>
 </project>

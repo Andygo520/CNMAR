@@ -3,8 +3,8 @@ package component.basic.vo;
 public enum PackTypeVo {
 
 	empty(0, ""),
-	/** 袋装 */
-	bag(1, "袋装"),
+	/** 装袋 */
+	bag(1, "装袋"),
 	/** 装箱 */
 	box(2, "装箱"),
 	/** 捆包 */

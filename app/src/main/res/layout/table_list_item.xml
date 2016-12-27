@@ -1,14 +1,17 @@
+<!--所有ListView列表项的布局（默认显示四列也可以显示更多列-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TableLayout
-        android:id="@+id/stock_list_item_table_layout"
-        android:layout_width="fill_parent"
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1,3,5,7">
+        android:stretchColumns="1,3,5,7"
+        android:collapseColumns="9,10,11,12"
+        >
         <TableRow
-            android:id="@+id/stock_list_row"
+            android:id="@+id/table_row"
             android:minHeight="?android:attr/listPreferredItemHeight"
             >
             <View
@@ -17,27 +20,28 @@
             <TextView
                 android:id="@+id/column1"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
+                />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView
                 android:id="@+id/column2"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
             <TextView android:id="@+id/column3"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
@@ -45,9 +49,29 @@
             <TextView
                 android:id="@+id/column4"
                 android:layout_width="60dip"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="2dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
+                />
+            <View
+                style="@style/list_item_cell_seperator_layout"
+                />
+            <TextView
+                android:id="@+id/column5"
+                android:layout_width="50dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
+                />
+            <View
+                style="@style/list_item_cell_seperator_layout"
+                />
+            <TextView
+                android:id="@+id/column6"
+                android:layout_width="50dip"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

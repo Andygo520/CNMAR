@@ -34,6 +34,14 @@ public class HalfOutOrderSpace {
 		this.preOutStock = preOutStock;
 	}
 
+	public HalfOutOrderSpace(int outOrderId, int halfId, int spaceId, Integer preOutStock, int inOrderSpaceId) {
+		this.outOrderId = outOrderId;
+		this.halfId = halfId;
+		this.spaceId = spaceId;
+		this.preOutStock = preOutStock;
+		this.inOrderSpaceId = inOrderSpaceId;
+	}
+
 	public int getId() {
 		return id;
 	}

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import component.common.model.BaseModel;
 
 /** 成品仓位 */
-public class ProductSpace extends BaseModel {
+public class ProductSpace extends BaseModel implements Cloneable {
 
 	@JSONField(ordinal = 1)
 	private String code; // 仓位编码
@@ -82,6 +82,10 @@ public class ProductSpace extends BaseModel {
 
 	public void setSpaceStock(ProductSpaceStock spaceStock) {
 		this.spaceStock = spaceStock;
+	}
+
+	public ProductSpace clone() throws CloneNotSupportedException {
+		return (ProductSpace) super.clone();
 	}
 
 }

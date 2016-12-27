@@ -156,7 +156,7 @@ android:orientation="vertical"
                             />
                         <TextView
                             android:id="@+id/name31"
-                            android:text="规格"
+                            android:text="成品规格"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:layout_width="65dip"
@@ -209,7 +209,7 @@ android:orientation="vertical"
                             />
                         <TextView
                             android:id="@+id/name41"
-                            android:text="生产数量"
+                            android:text="计划生产数量"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:layout_width="65dip"
@@ -233,7 +233,7 @@ android:orientation="vertical"
                         <TextView
                             android:id="@+id/name42"
                             android:textColor="@android:color/black"
-                            android:text="合格品数量"
+                            android:text="实际生产数量"
                             android:textStyle="bold"
                             android:layout_width="65dip"
                             android:layout_height="wrap_content"
@@ -252,8 +252,8 @@ android:orientation="vertical"
                             android:inputType="number"
                             android:padding="2dip"
                             android:background="@null"
-                            android:hint="请输入"
-                            android:textColorHint="@android:color/darker_gray"
+                            android:textColor="@color/color_red"
+                            android:textColorHint="@color/color_red"
                             />
                         <View
                             style="@style/list_item_cell_seperator_layout"
@@ -267,7 +267,7 @@ android:orientation="vertical"
                             />
                         <TextView
                             android:id="@+id/name51"
-                            android:text="开始日期"
+                            android:text="检验员"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:layout_width="65dip"
@@ -291,7 +291,7 @@ android:orientation="vertical"
                         <TextView
                             android:id="@+id/name52"
                             android:textColor="@android:color/black"
-                            android:text="结束日期"
+                            android:text="合格品数量"
                             android:textStyle="bold"
                             android:layout_width="65dip"
                             android:layout_height="wrap_content"
@@ -301,12 +301,17 @@ android:orientation="vertical"
                         <View
                             style="@style/list_item_cell_seperator_layout"
                             />
-                        <TextView
+                        <EditText
                             android:id="@+id/tv52"
                             android:layout_width="35dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:gravity="center"
+                            android:inputType="number"
                             android:padding="2dip"
+                            android:background="@null"
+                            android:textColor="@color/color_red"
+                            android:textColorHint="@color/color_red"
                             />
                         <View
                             style="@style/list_item_cell_seperator_layout"
@@ -321,7 +326,7 @@ android:orientation="vertical"
                             />
                         <TextView
                             android:id="@+id/name61"
-                            android:text="原料出库单号"
+                            android:text="开始日期"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:layout_width="65dip"
@@ -344,7 +349,7 @@ android:orientation="vertical"
                             />
                         <TextView
                             android:id="@+id/name62"
-                            android:text="成品入库单号"
+                            android:text="结束日期"
                             android:textColor="@android:color/black"
                             android:textStyle="bold"
                             android:layout_width="65dip"
@@ -366,6 +371,61 @@ android:orientation="vertical"
                             style="@style/list_item_cell_seperator_layout"
                             />
                     </TableRow>
+
+                    <TableRow
+                        android:background="@drawable/table_frame"
+                        >
+                        <View
+                            style="@style/list_item_cell_seperator_layout"
+                            />
+                        <TextView
+                            android:id="@+id/name71"
+                            android:text="原料出库单号"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold"
+                            android:layout_width="65dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dip"
+                            />
+                        <View
+                            style="@style/list_item_cell_seperator_layout"
+                            />
+                        <TextView
+                            android:id="@+id/tv71"
+                            android:layout_width="35dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dip"
+                            />
+                        <View
+                            style="@style/list_item_cell_seperator_layout"
+                            />
+                        <TextView
+                            android:id="@+id/name72"
+                            android:text="成品入库单号"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold"
+                            android:layout_width="65dip"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dip"
+                            />
+                        <View
+                            style="@style/list_item_cell_seperator_layout"
+                            />
+                        <TextView
+                            android:id="@+id/tv72"
+                            android:layout_width="35dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="2dip"
+                            />
+                        <View
+                            style="@style/list_item_cell_seperator_layout"
+                            />
+                    </TableRow>
+
                 </TableLayout>
             </LinearLayout>
             <View

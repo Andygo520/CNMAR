@@ -1,6 +1,7 @@
 package component.product.model;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import component.half.model.Half;
 
@@ -13,6 +14,7 @@ public class ProductHalfBom {
 	private BigDecimal scale; // 比例
 
 	private Half half;
+	private BigDecimal num;
 
 	public ProductHalfBom() {
 
@@ -56,12 +58,28 @@ public class ProductHalfBom {
 		this.scale = scale;
 	}
 
+	public String getScaleStr() {
+		return NumberFormat.getInstance().format(scale).replaceAll(",", "");
+	}
+
 	public Half getHalf() {
 		return half;
 	}
 
 	public void setHalf(Half half) {
 		this.half = half;
+	}
+
+	public BigDecimal getNum() {
+		return num;
+	}
+
+	public void setNum(BigDecimal num) {
+		this.num = num;
+	}
+
+	public String getNumStr() {
+		return num == null ? "" : NumberFormat.getInstance().format(num).replaceAll(",", "");
 	}
 
 }

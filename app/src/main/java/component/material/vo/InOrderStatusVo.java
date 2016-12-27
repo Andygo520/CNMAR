@@ -10,8 +10,8 @@ public enum InOrderStatusVo {
 	pre_in_stock(2, "待入库"),
 	/** 已入库 */
 	in_stock(3, "已入库"),
-	/** 未全部入库 */
-	not_all(4, "未全部入库"),
+	/** 部分入库 */
+	not_all(4, "部分入库"),
 	/** 待检验 */
 	pre_test(5, "待检验"),
 	/** 检验不合格 */

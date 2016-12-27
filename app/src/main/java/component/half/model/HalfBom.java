@@ -1,6 +1,7 @@
 package component.half.model;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 import component.material.model.Material;
 
@@ -13,6 +14,7 @@ public class HalfBom {
 	private BigDecimal scale; // 比例
 
 	private Material material;
+	private BigDecimal num;
 
 	public HalfBom() {
 
@@ -56,12 +58,28 @@ public class HalfBom {
 		this.scale = scale;
 	}
 
+	public String getScaleStr() {
+		return NumberFormat.getInstance().format(scale).replaceAll(",", "");
+	}
+
 	public Material getMaterial() {
 		return material;
 	}
 
 	public void setMaterial(Material material) {
 		this.material = material;
+	}
+
+	public BigDecimal getNum() {
+		return num;
+	}
+
+	public void setNum(BigDecimal num) {
+		this.num = num;
+	}
+
+	public String getNumStr() {
+		return num == null ? "" : NumberFormat.getInstance().format(num).replaceAll(",", "");
 	}
 
 }

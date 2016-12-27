@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:layout_margin="5dp"
+    android:layout_marginBottom="5dp"
     android:background="@drawable/linear_bg"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -30,7 +30,7 @@
             android:id="@+id/ivDelete"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/delete"
+            android:background="@mipmap/delete"
             android:visibility="invisible" />
     </LinearLayout>
 
@@ -42,9 +42,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@mipmap/ic_search" />
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@mipmap/search" />
     </LinearLayout>
 
     <LinearLayout

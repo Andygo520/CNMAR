@@ -10,14 +10,14 @@ public class HalfStockSnapshot {
 	private String name; // 半成品名称
 	private String spec; // 规格
 	private String unit; // 单位
-	private int stock; // 库存数量
+	private String stock; // 库存数量
 	private Date ctime; // 创建时间
 
 	public HalfStockSnapshot() {
 
 	}
 
-	public HalfStockSnapshot(String code, String name, String spec, String unit, int stock, Date ctime) {
+	public HalfStockSnapshot(String code, String name, String spec, String unit, String stock, Date ctime) {
 		this.code = code;
 		this.name = name;
 		this.spec = spec;
@@ -66,11 +66,11 @@ public class HalfStockSnapshot {
 		this.unit = unit;
 	}
 
-	public int getStock() {
+	public String getStock() {
 		return stock;
 	}
 
-	public void setStock(int stock) {
+	public void setStock(String stock) {
 		this.stock = stock;
 	}
 
