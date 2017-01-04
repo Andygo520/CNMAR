@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rlMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="top"
-    >
-    <GridView
-            android:id="@+id/gvMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:listSelector="@android:color/transparent"
-            android:numColumns="3"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="40dp">
+    android:gravity="top">
 
-    </GridView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"></android.support.v7.widget.RecyclerView>
+
 </RelativeLayout>
 

@@ -19,6 +19,9 @@ import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.fragment.HomeFragment;
 import com.example.administrator.cnmar.fragment.ProfileFragment;
 
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
+
 public class MainActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton rbHome,rbMyProfile;
@@ -45,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AppExit.getInstance().addActivity(this);
+
+        UpdateKey.API_TOKEN = "de8532237f19e2b10cf1f85c8df09fff";
+        UpdateKey.APP_ID = "580722daca87a82746000907";
+        //下载方式:
+        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
+        //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
+        UpdateFunGO.init(this);
+
+
         radioGroup= (RadioGroup) findViewById(R.id.rg);
         rbHome= (RadioButton) findViewById(R.id.rb1);
         rbMyProfile= (RadioButton) findViewById(R.id.rb2);
@@ -74,6 +86,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateFunGO.onResume(this);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        UpdateFunGO.onStop(this);
     }
 
     @Override

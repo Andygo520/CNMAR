@@ -33,7 +33,8 @@ import component.system.model.SystemRole;
 import component.system.model.SystemUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    public  String strUrl;
+
+    public String strUrl;
     private Button mLoginButton;
     private EditText etUserName, etPassword;
     private CheckBox auto_login;
@@ -57,17 +58,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         AppExit.getInstance().addActivity(this);
+
         etUserName = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
         auto_login = (CheckBox) findViewById(R.id.chkPassword);
         mLoginButton = (Button) findViewById(R.id.btnLogin);
-        
-        etUserName.setText(SPHelper.getString(this,"username", ""));
+
+        etUserName.setText(SPHelper.getString(this, "username", ""));
 
 //      实现自动登录
-        if (SPHelper.getBoolean(this,"isChecked", false) && !SPHelper.getString(this,"password", "").equals("")) {
-            etUserName.setText(SPHelper.getString(this,"username", ""));
-            etPassword.setText(SPHelper.getString(this,"password", ""));
+        if (SPHelper.getBoolean(this, "isChecked", false) && !SPHelper.getString(this, "password", "").equals("")) {
+            etUserName.setText(SPHelper.getString(this, "username", ""));
+            etPassword.setText(SPHelper.getString(this, "password", ""));
             auto_login.setChecked(true);
             onClick(mLoginButton);
         }
@@ -122,90 +124,91 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(String s) {
                 UniversalHelper.dismissProgressDialog();
-                    component.common.model.Response response = JSON.parseObject(VolleyHelper.getJson(s), component.common.model.Response.class);
+                component.common.model.Response response = JSON.parseObject(VolleyHelper.getJson(s), component.common.model.Response.class);
 //                只有状态为true才能登陆系统
-                    if (response.isStatus()) {
-                        SystemUser userInfor = JSON.parseObject(response.getData().toString(), SystemUser.class);
-                        if (auto_login.isChecked()) {
-                            SPHelper.putString(LoginActivity.this,"username", etUserName.getText().toString().trim());
-                            SPHelper.putString(LoginActivity.this,"password", etPassword.getText().toString().trim());
-                            SPHelper.putBoolean(LoginActivity.this,"isChecked", true);
-                        } else
-                            SPHelper.putBoolean(LoginActivity.this,"isChecked", false);
+                if (response.isStatus()) {
+                    SystemUser userInfor = JSON.parseObject(response.getData().toString(), SystemUser.class);
+                    if (auto_login.isChecked()) {
+                        SPHelper.putString(LoginActivity.this, "username", etUserName.getText().toString().trim());
+                        SPHelper.putString(LoginActivity.this, "password", etPassword.getText().toString().trim());
+                        SPHelper.putBoolean(LoginActivity.this, "isChecked", true);
+                    } else
+                        SPHelper.putBoolean(LoginActivity.this, "isChecked", false);
 
 //                  判断是否是超级管理员，如果是就显示所有按钮
-                        Boolean isSuper = userInfor.getIsSuper();
-                        SPHelper.putBoolean(LoginActivity.this,"isSuper", isSuper);
+                    Boolean isSuper = userInfor.getIsSuper();
+                    SPHelper.putBoolean(LoginActivity.this, "isSuper", isSuper);
 
 //                  得到用户id,原料检验的时候需要提交该id,并且在我的资料Fragment也会用到
-                        int id = userInfor.getId();
-                        SPHelper.putInt(LoginActivity.this,"userId", id);
+                    int id = userInfor.getId();
+                    SPHelper.putInt(LoginActivity.this, "userId", id);
 
-                        List<SystemMenu> menuList = userInfor.getMenus();
-                        List<SystemRole> roles = userInfor.getRoles();
+
+                    List<SystemMenu> menuList = userInfor.getMenus();
+                    List<SystemRole> roles = userInfor.getRoles();
 
 //                    用来存放用户的角色以及可以查看的菜单信息
-                        String strMenus = "";
-                        String strRoles = "";
+                    String strMenus = "";
+                    String strRoles = "";
 
 //                  通过一层循环取出角色名
-                        for (int i = 0; i < roles.size(); i++) {
-                            strRoles += roles.get(i).getName()+"，";
-                        }
-                        SPHelper.putString(LoginActivity.this,"Role", strRoles.substring(0,strRoles.length()-1));
+                    for (int i = 0; i < roles.size(); i++) {
+                        strRoles += roles.get(i).getName() + "，";
+                    }
+                    SPHelper.putString(LoginActivity.this, "Role", strRoles.substring(0, strRoles.length() - 1));
 
 //                  通过二层循环取出菜单与其子列表
-                        for (SystemMenu firstMenu:menuList) {
-                            strMenus +=firstMenu.getName()+",";// 取出一级菜单名
-                            List<SystemMenu> subList = firstMenu.getSubList();
-                            String strSublist = ","; //存放二级菜单的所有url字段
-                            String thirdSublist = ",";  //存放三级菜单的所有url字段
-                            for (SystemMenu secondMenu:subList) {
-                                //  如果存在三级菜单，就取出二级菜单名赋值给strMenus，将三级菜单的url赋值给thirdSublist
-                               //   否则，将二级菜单的url赋值给strSublist
-                                if (secondMenu.getSubList()!=null){
-                                    List<SystemMenu> threeList = secondMenu.getSubList();
-                                    strMenus += secondMenu.getName()+",";
-                                    for(SystemMenu thirdMenu:threeList){
-                                        thirdSublist += thirdMenu.getUrl()+",";
-                                    }
-//                       将二级菜单与它对应的三级子列表存入sp中（二级菜单的name作为key，其包含的三级列表的url作为data）
-                                    SPHelper.putString(LoginActivity.this,secondMenu.getName(), thirdSublist);
-                                }else{
-                                    strSublist += secondMenu.getUrl()+",";
+                    for (SystemMenu firstMenu : menuList) {
+                        strMenus += firstMenu.getName() + ",";// 取出一级菜单名
+                        List<SystemMenu> subList = firstMenu.getSubList();
+                        String strSublist = ","; //存放二级菜单的所有url字段
+                        String thirdSublist = ",";  //存放三级菜单的所有url字段
+                        for (SystemMenu secondMenu : subList) {
+                            //  如果存在三级菜单，就取出二级菜单名赋值给strMenus，将三级菜单的url赋值给thirdSublist
+                            //   否则，将二级菜单的url赋值给strSublist
+                            if (secondMenu.getSubList() != null) {
+                                List<SystemMenu> threeList = secondMenu.getSubList();
+                                strMenus += secondMenu.getName() + ",";
+                                for (SystemMenu thirdMenu : threeList) {
+                                    thirdSublist += thirdMenu.getUrl() + ",";
                                 }
+//                       将二级菜单与它对应的三级子列表存入sp中（二级菜单的name作为key，其包含的三级列表的url作为data）
+                                SPHelper.putString(LoginActivity.this, secondMenu.getName(), thirdSublist);
+                            } else {
+                                strSublist += secondMenu.getUrl() + ",";
                             }
+                        }
 //                       将一级菜单与它对应的二级子列表存入sp中（一级菜单的name作为key，其包含的二级列表的url作为data）
 //                       在二级列表strSublist前后加上“，”，防止之后使用contain方法出现类似"a,ab".contain("b")的错误
 //                       这样在出现类似问题的时候可以用",a,ab,".contain(",b,")方法规避该问题
-                            SPHelper.putString(LoginActivity.this,firstMenu.getName(), strSublist);
-                        }
-                        String[] menus = strMenus.split(",");
-                        String roleMenu = "";
+                        SPHelper.putString(LoginActivity.this, firstMenu.getName(), strSublist);
+                    }
+                    String[] menus = strMenus.split(",");
+                    String roleMenu = "";
 //                    得到app所有菜单对应的名称字段
-                        String allMenus = LoginActivity.this.getResources().getString(R.string.MENUS);
+                    String allMenus = LoginActivity.this.getResources().getString(R.string.MENUS);
 
-                        for (int j = 0; j < menus.length; j++) {
-                            if (allMenus.contains(menus[j])) {
-                                roleMenu += menus[j] + ",";
-                            }
+                    for (int j = 0; j < menus.length; j++) {
+                        if (allMenus.contains(menus[j])) {
+                            roleMenu += menus[j] + ",";
                         }
-                        roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
+                    }
+                    roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
 //                        将用户拥有的app模块菜单名存入sp中
-                        SPHelper.putString(LoginActivity.this,"Menu", roleMenu);
+                    SPHelper.putString(LoginActivity.this, "Menu", roleMenu);
 
 //                   登陆成功后，设置按钮不能再点击
-                        mLoginButton.setEnabled(false);
-                        mLoginButton.setClickable(false);
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
+                    mLoginButton.setEnabled(false);
+                    mLoginButton.setClickable(false);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
 
-                    } else {
-                        Toast.makeText(LoginActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                        etUserName.setText(strUserName);
-                        etPassword.setText("");
-                        auto_login.setChecked(true);
-                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                    etUserName.setText(strUserName);
+                    etPassword.setText("");
+                    auto_login.setChecked(true);
+                }
             }
         }, new Response.ErrorListener() {
             @Override

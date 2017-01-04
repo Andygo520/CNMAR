@@ -51,7 +51,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     private static String strUrl;
     private LinearLayout llLeftArrow;
     private TextView tvTitle;
-    private int id, receiveId;
+    private int id, receiveId,flag;
     private Button btn;
     private String successNum; //记录合格品数量
     private String actualNum; //记录实际生产数量
@@ -64,15 +64,20 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_production_plan_detail);
+        AppExit.getInstance().addActivity(this);
+
         id = getIntent().getIntExtra("ID", 0);
+
+        flag = getIntent().getIntExtra("FLAG", 0); //页面跳转的标志
+
         receiveId = SPHelper.getInt(this, "userId", 0);
 
         //   从登陆页面取出用户的角色以及二级子菜单信息
         role = SPHelper.getString(this, "Role", "");
         menu = SPHelper.getString(this, "品控管理", "");
         isSuper = SPHelper.getBoolean(this, "isSuper", false);
-        AppExit.getInstance().addActivity(this);
         init();
+
         strUrl = UrlHelper.URL_PRODUCE_PLAN_DETAIL.replace("{ID}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
         getListFromNet();
@@ -91,6 +96,36 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
         });
 
         btn = (Button) findViewById(R.id.btnSubmit);
+        name1 = (TextView) findViewById(R.id.column1);
+        name2 = (TextView) findViewById(R.id.column2);
+        name3 = (TextView) findViewById(R.id.column3);
+        name4 = (TextView) findViewById(R.id.column4);
+        name1.setText("原料编码");
+        name2.setText("原料名称");
+        name4.setText("领料数量");
+
+        tvPlanCode = (TextView) findViewById(R.id.tv11);
+        tvPlanName = (TextView) findViewById(R.id.tv12);
+        tvProductCode = (TextView) findViewById(R.id.tv21);
+        tvProductName = (TextView) findViewById(R.id.tv22);
+        tvSize = (TextView) findViewById(R.id.tv31);
+        tvUnit = (TextView) findViewById(R.id.tv32);
+        tvProduceNum = (TextView) findViewById(R.id.tv41);
+        tvCheckMan = (TextView) findViewById(R.id.tv51);
+        tvBeginDate = (TextView) findViewById(R.id.tv61);
+        tvEndDate = (TextView) findViewById(R.id.tv62);
+        tvMaterialOutOrder = (TextView) findViewById(R.id.tv71);
+        tvProductInOrder = (TextView) findViewById(R.id.tv72);
+
+        etActualNum = (EditText) findViewById(R.id.tv42);
+        etSuccessNum = (EditText) findViewById(R.id.tv52);
+        etActualNum.setFocusable(false);
+        etSuccessNum.setFocusable(false);
+        etActualNum.setFocusableInTouchMode(false);
+        etSuccessNum.setFocusableInTouchMode(false);
+
+        listView = (MyListView) findViewById(R.id.lvTable);
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,37 +207,6 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
-        name1 = (TextView) findViewById(R.id.column1);
-        name2 = (TextView) findViewById(R.id.column2);
-        name3 = (TextView) findViewById(R.id.column3);
-        name4 = (TextView) findViewById(R.id.column4);
-        name1.setText("原料编码");
-        name2.setText("原料名称");
-        name4.setText("领料数量");
-
-        tvPlanCode = (TextView) findViewById(R.id.tv11);
-        tvPlanName = (TextView) findViewById(R.id.tv12);
-        tvProductCode = (TextView) findViewById(R.id.tv21);
-        tvProductName = (TextView) findViewById(R.id.tv22);
-        tvSize = (TextView) findViewById(R.id.tv31);
-        tvUnit = (TextView) findViewById(R.id.tv32);
-        tvProduceNum = (TextView) findViewById(R.id.tv41);
-        tvCheckMan = (TextView) findViewById(R.id.tv51);
-        tvBeginDate = (TextView) findViewById(R.id.tv61);
-        tvEndDate = (TextView) findViewById(R.id.tv62);
-        tvMaterialOutOrder = (TextView) findViewById(R.id.tv71);
-        tvProductInOrder = (TextView) findViewById(R.id.tv72);
-
-        etActualNum = (EditText) findViewById(R.id.tv42);
-        etSuccessNum = (EditText) findViewById(R.id.tv52);
-        etActualNum.setFocusable(false);
-        etSuccessNum.setFocusable(false);
-        etActualNum.setFocusableInTouchMode(false);
-        etSuccessNum.setFocusableInTouchMode(false);
-
-        listView = (MyListView) findViewById(R.id.lvTable);
-//        listView.addFooterView(new ViewStub(this));
     }
 
     @Override
@@ -316,15 +320,15 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                         if (producePlan.getMaterialOutOrder() == null) {
                             etActualNum.setText("");
                             tvMaterialOutOrder.setText("");
-//                            用户拥有“领料单”子菜单就可以领料
-                            if (subList1.contains(","+getResources().getString(R.string.material_out_order_receive_url)+",")) {
+//                            用户拥有“领料单”子菜单并且不是从追溯页跳转而来（flag!=999），就可以领料
+                            if (subList1.contains(","+getResources().getString(R.string.material_out_order_receive_url)+",")&& flag!=999) {
                                 btn.setVisibility(View.VISIBLE);
                                 btn.setText("领料");
                             }
                         } else{
                             tvMaterialOutOrder.setText(producePlan.getMaterialOutOrder().getCode());
 //                            当已领料（原料出库单非空）的时候，若实际生产数为0，就提示用户输入，否则显示其数值
-                            if (producePlan.getActualNum() == 0 ) {
+                            if (producePlan.getActualNum() == 0 && flag!=999) {
                                 btn.setVisibility(View.VISIBLE);
                                 btn.setText("提交待检验");
                                 etActualNum.setHint("请输入");
@@ -342,7 +346,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                             if (producePlan.getMaterialOutOrder() != null&& producePlan.getActualNum() > 0
                                     && (producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.not_all.getKey()
                                     || producePlan.getMaterialOutOrder().getStatus() == OutOrderStatusVo.out_stock.getKey())
-                                    && subList.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
+                                    && subList.contains(","+getResources().getString(R.string.produce_product_test_url)+",")&& flag!=999) {
                                 btn.setVisibility(View.VISIBLE);
                                 btn.setText("提交待入库");
                                 etSuccessNum.setHint("请输入");

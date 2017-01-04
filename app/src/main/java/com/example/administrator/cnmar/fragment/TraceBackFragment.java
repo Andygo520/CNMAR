@@ -157,6 +157,7 @@ public class TraceBackFragment extends Fragment {
                                     public void onClick(View v) {
                                         Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
                                         intent.putExtra("ID",inOrderSpace.getInOrder().getProducePlan().getId());
+                                        intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                                         startActivity(intent);
                                     }
                                 });
@@ -249,6 +250,7 @@ public class TraceBackFragment extends Fragment {
                     public void onClick(View v) {
                         Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
                         intent.putExtra("ID", list.get(position).getProducePlan().getId());
+                        intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                         startActivity(intent);
                     }
                 });
