@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         AppExit.getInstance().addActivity(this);
 
+//     利用fir.im的第三方包实现软件更新
         UpdateKey.API_TOKEN = "de8532237f19e2b10cf1f85c8df09fff";
         UpdateKey.APP_ID = "580722daca87a82746000907";
         //下载方式:
