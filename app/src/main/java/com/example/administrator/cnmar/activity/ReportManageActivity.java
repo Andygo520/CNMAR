@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.helper.SPHelper;
+import com.example.administrator.cnmar.helper.UrlHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -124,7 +125,7 @@ public class ReportManageActivity extends AppCompatActivity {
                 WebSettings mWebSettings = webMaterial.getSettings();
 //              调用JS方法.安卓版本大于17,加上注解 @JavascriptInterface
                 mWebSettings.setJavaScriptEnabled(true);
-                webMaterial.loadUrl("http://benxiao.cnmar.com:8091/material_report/show");
+                webMaterial.loadUrl(UrlHelper.URL_MATERIAL_REPORT);
                 break;
             }
             case 1: {
@@ -148,7 +149,7 @@ public class ReportManageActivity extends AppCompatActivity {
                 WebSettings mWebSettings = webHalf.getSettings();
 //              调用JS方法.安卓版本大于17,加上注解 @JavascriptInterface
                 mWebSettings.setJavaScriptEnabled(true);
-                webHalf.loadUrl("http://benxiao.cnmar.com:8091/half_report/show");
+                webHalf.loadUrl(UrlHelper.URL_HALF_REPORT);
                 break;
             }
 
@@ -173,7 +174,7 @@ public class ReportManageActivity extends AppCompatActivity {
                 WebSettings mWebSettings = webProduct.getSettings();
 //              调用JS方法.安卓版本大于17,加上注解 @JavascriptInterface
                 mWebSettings.setJavaScriptEnabled(true);
-                webProduct.loadUrl("http://benxiao.cnmar.com:8091/product_report/show");
+                webProduct.loadUrl(UrlHelper.URL_PRODUCT_REPORT);
                 break;
             }
         }

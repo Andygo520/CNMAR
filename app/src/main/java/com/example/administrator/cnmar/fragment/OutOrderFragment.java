@@ -368,8 +368,8 @@ public class OutOrderFragment extends Fragment {
             else
                 holder.tvBatchNo.setText("");
 
-            if (list.get(position).getProducePlan() != null)
-                holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
+            if (list.get(position).getProduceReceive() != null)
+                holder.tvPlanNo.setText(list.get(position).getProduceReceive().getCode());
             else
                 holder.tvPlanNo.setText("");
 

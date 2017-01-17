@@ -27,28 +27,82 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import component.basic.vo.PackTypeVo;
-import component.material.model.MaterialOutOrder;
-import component.material.model.MaterialOutOrderMaterial;
-import component.material.vo.OutOrderStatusVo;
+import component.produce.model.ProduceBom;
+import component.produce.model.ProduceReceive;
 
 public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
-    private TextView tvReceiveMaterialOrder, tvTime, tvProduceNo, tvProduceName, tvProductCode,
-            tvProductName, tvUnit, tvProduceNum, tvBeginDate, tvEndDate, tvPerson, tvStatus;
-    private TextView name1, name2, name3, name4;
-    private MyListView listView;
     private static String strUrl;
-    private LinearLayout llLeftArrow;
-    private TextView tvTitle;
     private int id;
+    private Context context;
 
+    @BindView(R.id.name11)
+    TextView name11;
+    @BindView(R.id.name21)
+    TextView name21;
+    @BindView(R.id.name22)
+    TextView name22;
+    @BindView(R.id.name41)
+    TextView name41;
+    @BindView(R.id.name42)
+    TextView name42;
+    @BindView(R.id.name51)
+    TextView name51;
+    @BindView(R.id.name52)
+    TextView name52;
+    @BindView(R.id.name61)
+    TextView name61;
+    @BindView(R.id.name62)
+    TextView name62;
+    @BindView(R.id.left_arrow)
+    LinearLayout leftArrow;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.tv11)
+    TextView tvReceiveMaterialOrder;
+    @BindView(R.id.name12)
+    TextView name12;
+    @BindView(R.id.tv12)
+    TextView tvPlanNo;
+    @BindView(R.id.tv21)
+    TextView tvMaterialOutOrder;
+    @BindView(R.id.tv22)
+    TextView tvHalfOutOrder;
+    @BindView(R.id.name31)
+    TextView name31;
+    @BindView(R.id.tv31)
+    TextView tvCode;
+    @BindView(R.id.name32)
+    TextView name32;
+    @BindView(R.id.tv32)
+    TextView tvName;
+    @BindView(R.id.tv41)
+    TextView tvSize;
+    @BindView(R.id.tv42)
+    TextView tvUnit;
+    @BindView(R.id.tv51)
+    TextView tvProduceNum;
+    @BindView(R.id.tv52)
+    TextView tvStatus;
+    @BindView(R.id.tv61)
+    TextView tvPerson;
+    @BindView(R.id.tv62)
+    TextView tvTime;
+    @BindView(R.id.lvTableMaterial)
+    MyListView lvTableMaterial;
+    @BindView(R.id.lvTableHalf)
+    MyListView lvTableHalf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_material_order_detail);
-        id = getIntent().getIntExtra("ID", 0);
+        ButterKnife.bind(this);
         AppExit.getInstance().addActivity(this);
+
+        id = getIntent().getIntExtra("ID", 0);
         //   从登陆页面取出用户的角色信息
 //        role = LoginActivity.sp.getString("Role", "123");
 //        isSuper = LoginActivity.sp.getBoolean("isSuper", false);
@@ -60,40 +114,22 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
-        tvTitle = (TextView) findViewById(R.id.title);
-        tvTitle.setText("领料单详情");
-        llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
-        llLeftArrow.setOnClickListener(new View.OnClickListener() {
+        name11.setText("领料单编号");
+        name21.setText("原料出库单号");
+        name22.setText("半成品出库单号");
+        name51.setText("计划生产数量");
+        name52.setText("领料单状态");
+        name61.setText("领料人");
+        name62.setText("领料时间");
+
+        context = ReceiveMaterialOrderDetailActivity.this;
+        title.setText("领料单详情");
+        leftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-
-        name1 = (TextView) findViewById(R.id.column1);
-        name2 = (TextView) findViewById(R.id.column2);
-        name3 = (TextView) findViewById(R.id.column3);
-        name4 = (TextView) findViewById(R.id.column4);
-        name1.setText("原料编码");
-        name2.setText("原料名称");
-        name3.setText("规格");
-
-        tvReceiveMaterialOrder = (TextView) findViewById(R.id.tv11);
-        tvTime = (TextView) findViewById(R.id.tv12);
-        tvProduceNo = (TextView) findViewById(R.id.tv21);
-        tvProduceName = (TextView) findViewById(R.id.tv22);
-        tvProductCode = (TextView) findViewById(R.id.tv31);
-        tvProductName = (TextView) findViewById(R.id.tv32);
-        tvProduceNum = (TextView) findViewById(R.id.tv41);
-        tvUnit = (TextView) findViewById(R.id.tv42);
-        tvBeginDate = (TextView) findViewById(R.id.tv51);
-        tvEndDate = (TextView) findViewById(R.id.tv52);
-        tvPerson = (TextView) findViewById(R.id.tv61);
-        tvStatus = (TextView) findViewById(R.id.tv62);
-
-
-        listView = (MyListView) findViewById(R.id.lvTable);
-//        listView.addFooterView(new ViewStub(this));
     }
 
     @Override
@@ -116,86 +152,67 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        MaterialOutOrder materialOutOrder = JSON.parseObject(response.getData().toString(), MaterialOutOrder.class);
-//                        得到列表的数据源
-                        List<MaterialOutOrderMaterial> list = materialOutOrder.getOutOrderMaterials();
+                        ProduceReceive produceReceive = JSON.parseObject(response.getData().toString(), ProduceReceive.class);
+//       根据PlanId字段来判断显示加工单还是子加工单，PlanId()>0显示加工单
+                        if (produceReceive.getPlanId() > 0) {
+                            name12.setText("加工单编号");
+                            name31.setText("成品编码");
+                            name32.setText("成品名称");
+                            name41.setText("成品规格");
+                            name42.setText("成品单位");
 
-//                       未领料显示待出库数量，领料后显示出库数量
-                        if (materialOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()) {
-                            name4.setText("待领料数量");
-                            tvStatus.setText("未领料");
-                            MyAdapter myAdapter = new MyAdapter(ReceiveMaterialOrderDetailActivity.this, list);
-                            listView.setAdapter(myAdapter);
+                            tvPlanNo.setText(produceReceive.getPlan().getCode());
+                            tvCode.setText(produceReceive.getPlan().getProduct().getCode());
+                            tvName.setText(produceReceive.getPlan().getProduct().getName());
+                            tvSize.setText(produceReceive.getPlan().getProduct().getSpec());
+                            //                        有包装的，单位格式为“9个/袋”
+                            if (produceReceive.getPlan().getProduct().getPackType() != PackTypeVo.empty.getKey())
+                                tvUnit.setText(produceReceive.getPlan().getProduct().getPackNum()
+                                        + produceReceive.getPlan().getProduct().getUnit().getName()
+                                        + " / " + produceReceive.getPlan().getProduct().getPackTypeVo().getValue().substring(1, 2));
+                            else
+                                tvUnit.setText(produceReceive.getPlan().getProduct().getUnit().getName());
+
+                            tvProduceNum.setText(produceReceive.getPlan().getProduceNum() + produceReceive.getPlan().getProduct().getUnit().getName());
+                            lvTableMaterial.setAdapter(new MaterialAdapter(context, produceReceive.getPlan().getMaterialSubs()));
+                            lvTableHalf.setAdapter(new HalfAdapter(context, produceReceive.getPlan().getHalfSubs()));
+
                         } else {
-                            name4.setText("已领料数量");
-                            tvStatus.setText("已领料");
-                            MyAdapter1 myAdapter = new MyAdapter1(ReceiveMaterialOrderDetailActivity.this, list);
-                            listView.setAdapter(myAdapter);
+                            name12.setText("子加工单编号");
+                            name31.setText("半成品编码");
+                            name32.setText("半成品名称");
+                            name41.setText("半成品规格");
+                            name42.setText("半成品单位");
+                            tvPlanNo.setText(produceReceive.getBom().getCode());
+                            tvCode.setText(produceReceive.getBom().getHalf().getCode());
+                            tvName.setText(produceReceive.getBom().getHalf().getName());
+                            tvSize.setText(produceReceive.getBom().getHalf().getSpec());
+                            //                        有包装的，单位格式为“9个/袋”
+                            if (produceReceive.getBom().getHalf().getPackType() != PackTypeVo.empty.getKey())
+                                tvUnit.setText(produceReceive.getBom().getHalf().getPackNum()
+                                        + produceReceive.getBom().getHalf().getUnit().getName()
+                                        + " / " + produceReceive.getBom().getHalf().getPackTypeVo().getValue().substring(1, 2));
+                            else
+                                tvUnit.setText(produceReceive.getBom().getHalf().getUnit().getName());
+
+                            tvProduceNum.setText(produceReceive.getBom().getReceiveNum() + produceReceive.getBom().getHalf().getUnit().getName());
+                            lvTableMaterial.setAdapter(new MaterialAdapter(context, produceReceive.getBom().getMaterialSubs()));
+                            lvTableHalf.setAdapter(new HalfAdapter(context, produceReceive.getBom().getHalfSubs()));
                         }
 
+                        tvReceiveMaterialOrder.setText(produceReceive.getCode());
+                        tvMaterialOutOrder.setText(produceReceive.getMaterialOutOrder() == null ? "" : produceReceive.getMaterialOutOrder().getCode());
+                        tvHalfOutOrder.setText(produceReceive.getHalfOutOrder() == null ? "" : produceReceive.getHalfOutOrder().getCode());
+                        tvStatus.setText(produceReceive.getReceiveStatusVo().getValue());
+                        tvPerson.setText(produceReceive.getReceiveUser().getName());
 
-                        tvReceiveMaterialOrder.setText(materialOutOrder.getCode());
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 //                        只有已领料才有领料时间，否则设置为空
-                        if (materialOutOrder.getOutTime() == null)
+                        if (produceReceive.getReceiveTime() == null)
                             tvTime.setText("");
                         else
-                            tvTime.setText(sdf1.format(materialOutOrder.getOutTime()));
-
-
-                        tvProduceNo.setText(materialOutOrder.getProducePlan().getCode());
-                        tvProduceName.setText(materialOutOrder.getProducePlan().getName());
-                        tvProductCode.setText(materialOutOrder.getProducePlan().getProduct().getCode());
-                        tvProductName.setText(materialOutOrder.getProducePlan().getProduct().getName());
-//                        有包装的，单位格式为“9个/袋”
-                        if (materialOutOrder.getProducePlan().getProduct().getPackType() != PackTypeVo.empty.getKey())
-                            tvUnit.setText(materialOutOrder.getProducePlan().getProduct().getPackNum()
-                                    + materialOutOrder.getProducePlan().getProduct().getUnit().getName()
-                                    + " / " + materialOutOrder.getProducePlan().getProduct().getPackTypeVo().getValue().substring(1, 2));
-                        else
-                            tvUnit.setText(materialOutOrder.getProducePlan().getProduct().getUnit().getName());
-
-                        tvProduceNum.setText(String.valueOf(materialOutOrder.getProducePlan().getProduceNum()) + materialOutOrder.getProducePlan().getProduct().getUnit().getName());
-//   起始日期、结束日期的非空判断
-                        if (materialOutOrder.getProducePlan().getStartDate() != null)
-                            tvBeginDate.setText(sdf.format(materialOutOrder.getProducePlan().getStartDate()));
-                        else
-                            tvBeginDate.setText("");
-
-                        if (materialOutOrder.getProducePlan().getEndDate() != null)
-                            tvEndDate.setText(sdf.format(materialOutOrder.getProducePlan().getEndDate()));
-                        else
-                            tvEndDate.setText("");
-
-                        tvPerson.setText(materialOutOrder.getReceive().getName());
-
-////     只有原料出库单状态为空并且用户为超级管理员或车间班组长，才显示“领料”按钮
-//                        if (materialOutOrder.getMaterialOutOrder() == null && (role.contains("车间班组长") || isSuper)) {
-//                            tvPerson.setText("");
-//                            btn.setVisibility(View.VISIBLE);
-//                            btn.setText("领料");
-//                            etSuccessNum.setFocusable(false);
-//                            etSuccessNum.setFocusableInTouchMode(false);
-//                        } else
-//                            tvPerson.setText(materialOutOrder.getMaterialOutOrder().getCode());
-////     只有在原料出库单状态为已出库(或未全部出库)并且成品入库单为空的状态下，才显示“提交待入库”按钮
-//                        if (materialOutOrder.getProductInOrder() == null) {
-//                            tvStatus.setText("");
-//                            if (materialOutOrder.getMaterialOutOrder() != null && (materialOutOrder.getMaterialOutOrder().getStatus() == OutOrderStatusVo.NOT_ALL.getKey() || materialOutOrder.getMaterialOutOrder().getStatus() == OutOrderStatusVo.OUT_STOCK.getKey()) && (role.contains("检验员") || isSuper)) {
-//                                btn.setVisibility(View.VISIBLE);
-//                                btn.setText("提交待入库");
-//                                etSuccessNum.setFocusableInTouchMode(true);
-//                            }
-//
-//                        } else {
-//                            tvStatus.setText(materialOutOrder.getProductInOrder().getCode());
-//                            etSuccessNum.setText(String.valueOf(materialOutOrder.getSuccessNum()));
-//                            etSuccessNum.setTextColor(getResources().getColor(R.color.color_red));
-//                        }
-//
+                            tvTime.setText(sdf1.format(produceReceive.getReceiveTime()));
 
                     }
                 }, new Response.ErrorListener() {
@@ -209,12 +226,12 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    public class MyAdapter extends BaseAdapter {
+    public class MaterialAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialOutOrderMaterial> list = null;
+        private List<ProduceBom> list = null;
 
 
-        public MyAdapter(Context context, List<MaterialOutOrderMaterial> list) {
+        public MaterialAdapter(Context context, List<ProduceBom> list) {
             this.context = context;
             this.list = list;
         }
@@ -242,63 +259,7 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
                 holder = new ViewHolder();
                 holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvMaterialName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvSize = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column4);
-
-                convertView.setTag(holder);
-            } else
-                holder = (ViewHolder) convertView.getTag();
-
-            holder.tvMaterialCode.setText(list.get(position).getMaterial().getCode());
-            holder.tvMaterialName.setText(list.get(position).getMaterial().getName());
-            holder.tvSize.setText(list.get(position).getMaterial().getSpec());
-            holder.tvPreNum.setText(String.valueOf(list.get(position).getPreOutStock()) + list.get(position).getMaterial().getUnit().getName());
-
-            return convertView;
-        }
-
-        public class ViewHolder {
-            TextView tvMaterialCode;
-            TextView tvMaterialName;
-            TextView tvSize;
-            TextView tvPreNum;
-        }
-    }
-
-    public class MyAdapter1 extends BaseAdapter {
-        private Context context;
-        private List<MaterialOutOrderMaterial> list = null;
-
-
-        public MyAdapter1(Context context, List<MaterialOutOrderMaterial> list) {
-            this.context = context;
-            this.list = list;
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
-                holder = new ViewHolder();
-                holder.tvMaterialCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvMaterialName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvSize = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvSpec = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvNum = (TextView) convertView.findViewById(R.id.column4);
 
                 convertView.setTag(holder);
@@ -307,8 +268,9 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
 
             holder.tvMaterialCode.setText(list.get(position).getMaterial().getCode());
             holder.tvMaterialName.setText(list.get(position).getMaterial().getName());
-            holder.tvSize.setText(list.get(position).getMaterial().getSpec());
-            holder.tvNum.setText(String.valueOf(list.get(position).getOutStock()) + list.get(position).getMaterial().getUnit().getName());
+            holder.tvSpec.setText(list.get(position).getMaterial().getSpec());
+
+            holder.tvNum.setText(String.valueOf(list.get(position).getReceiveNum()) + list.get(position).getMaterial().getUnit().getName());
 
             return convertView;
         }
@@ -316,7 +278,64 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         public class ViewHolder {
             TextView tvMaterialCode;
             TextView tvMaterialName;
-            TextView tvSize;
+            TextView tvSpec;
+            TextView tvNum;
+        }
+    }
+
+    public class HalfAdapter extends BaseAdapter {
+        private Context context;
+        private List<ProduceBom> list = null;
+
+
+        public HalfAdapter(Context context, List<ProduceBom> list) {
+            this.context = context;
+            this.list = list;
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                holder = new ViewHolder();
+                holder.tvHalfCode = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvHalfName = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvSpec = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvNum = (TextView) convertView.findViewById(R.id.column4);
+
+                convertView.setTag(holder);
+            } else
+                holder = (ViewHolder) convertView.getTag();
+
+            holder.tvHalfCode.setText(list.get(position).getHalf().getCode());
+            holder.tvHalfName.setText(list.get(position).getHalf().getName());
+            holder.tvSpec.setText(list.get(position).getHalf().getSpec());
+
+            holder.tvNum.setText(String.valueOf(list.get(position).getReceiveNum()) + list.get(position).getHalf().getUnit().getName());
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            TextView tvHalfCode;
+            TextView tvHalfName;
+            TextView tvSpec;
             TextView tvNum;
         }
     }

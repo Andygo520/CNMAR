@@ -195,7 +195,7 @@ public class ProductQualityControlDetailActivity extends AppCompatActivity {
                         else
                             tvEndDate.setText(sdf.format(producePlan.getEndDate()));
 
-                        tvMaterialOutOrder.setText(producePlan.getMaterialOutOrder().getCode());
+                        tvMaterialOutOrder.setText(producePlan.getReceive().getCode());
                         tvActualNum.setText(producePlan.getActualNum() + "");
                         tvProductInOrder.setText(producePlan.getProductInOrder().getCode());
                         tvSuccessNum.setText(String.valueOf(producePlan.getSuccessNum()));

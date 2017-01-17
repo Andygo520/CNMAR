@@ -13,6 +13,7 @@
     <string name="rbCompanyInfo">企业信息</string>
     <string name="rbProductManage">产品管理</string>
     <string name="rbProductionPlan">加工单</string>
+    <string name="rbProductionBom">子加工单</string>
     <string name="rbReceiveMaterialOrder">领料单</string>
     <string name="rbDeliveryPlan">交付计划</string>
     <string name="rbQC">原料检验</string>
@@ -21,9 +22,6 @@
     <string name="rbMaterialReport">原料库存报表</string>
     <string name="rbHalfReport">半成品库存报表</string>
     <string name="rbProductReport">成品库存报表</string>
-
-
-
 
 
     <!--菜单名-->
@@ -40,33 +38,58 @@
 
 
     <!--二级菜单列表的url字段，该字段不会变，用来唯一标示该菜单项-->
-    <string name="system_user_url">system_user/list</string> //用户管理的url字段
-    <string name="system_log_url">system_log/list</string>  //操作日志的url字段
-    <string name="company_url">company/list</string>  //企业信息的url字段
-    <string name="company_product_url">company_product/list</string> //产品管理的url字段
-    <string name="produce_plan_url">produce_plan/list</string>  //加工单的url字段
-    <string name="material_out_order_receive_url">material_out_order_receive/list</string> //领料单的url字段
-    <string name="custom_deliver_plan_url">custom_deliver_plan/list</string>  //交付计划的url字段
-    <string name="material_stock_url">material_stock/list</string>  //原料库存的url字段
-    <string name="material_in_order_url">material_in_order/list</string>  //原料入库单的url字段
-    <string name="material_out_order_url">material_out_order/list</string>  //原料出库单的url字段
-    <string name="material_stock_check_manage_url">material_stock_check_manage/list</string> //原料盘点的url字段
-    <string name="half_stock_url">half_stock/list</string> //半成品库存的url字段
-    <string name="half_in_order_url">half_in_order/list</string> //半成品入库单的url字段
-    <string name="half_out_order_url">half_out_order/list</string> //半成品出库单的url字段
-    <string name="half_stock_check_manage_url">half_stock_check_manage/list</string> //半成品盘点的url字段
-    <string name="product_stock_url">product_stock/list</string> //成品库存的url字段
-    <string name="product_in_order_url">product_in_order/list</string> //成品入库的url字段
-    <string name="product_out_order_url">product_out_order/list</string> //成品出库的url字段
-    <string name="product_stock_check_manage_url">product_stock_check_manage/list</string> //成品盘点的url字段
-    <string name="material_in_order_test_url">material_in_order_test/list</string> //原料检验的url字段
-    <string name="produce_product_test_url">produce_product_test/list</string>  //成品检验的url字段
-    <string name="material_back_url">material_back/list</string> //追溯的url字段
-    <string name="material_report_url">material_report/list</string> //原料报表的url字段
-    <string name="half_report_url">half_report/list</string> //半成品报表的url字段
-    <string name="product_report_url">product_report/list</string> //成品报表的url字段
-
-
+    <string name="system_user_url">system_user/list</string>
+    //用户管理的url字段
+    <string name="system_log_url">system_log/list</string>
+    //操作日志的url字段
+    <string name="company_url">company/list</string>
+    //企业信息的url字段
+    <string name="company_product_url">company_product/list</string>
+    //产品管理的url字段
+    <string name="produce_plan_url">produce_plan/list</string>
+    //加工单的url字段
+    <string name="produce_bom_url">produce_bom/list</string>
+    //子加工单的url字段
+    <string name="material_out_order_receive_url">produce_receive/list</string>
+    //领料单的url字段
+    <string name="custom_deliver_plan_url">custom_deliver_plan/list</string>
+    //交付计划的url字段
+    <string name="material_stock_url">material_stock/list</string>
+    //原料库存的url字段
+    <string name="material_in_order_url">material_in_order/list</string>
+    //原料入库单的url字段
+    <string name="material_out_order_url">material_out_order/list</string>
+    //原料出库单的url字段
+    <string name="material_stock_check_manage_url">material_stock_check_manage/list</string>
+    //原料盘点的url字段
+    <string name="half_stock_url">half_stock/list</string>
+    //半成品库存的url字段
+    <string name="half_in_order_url">half_in_order/list</string>
+    //半成品入库单的url字段
+    <string name="half_out_order_url">half_out_order/list</string>
+    //半成品出库单的url字段
+    <string name="half_stock_check_manage_url">half_stock_check_manage/list</string>
+    //半成品盘点的url字段
+    <string name="product_stock_url">product_stock/list</string>
+    //成品库存的url字段
+    <string name="product_in_order_url">product_in_order/list</string>
+    //成品入库的url字段
+    <string name="product_out_order_url">product_out_order/list</string>
+    //成品出库的url字段
+    <string name="product_stock_check_manage_url">product_stock_check_manage/list</string>
+    //成品盘点的url字段
+    <string name="material_in_order_test_url">material_in_order_test/list</string>
+    //原料检验的url字段
+    <string name="produce_product_test_url">produce_product_test/list</string>
+    //成品检验的url字段
+    <string name="material_back_url">material_back/list</string>
+    //追溯的url字段
+    <string name="material_report_url">material_report/list</string>
+    //原料报表的url字段
+    <string name="half_report_url">half_report/list</string>
+    //半成品报表的url字段
+    <string name="product_report_url">product_report/list</string>
+    //成品报表的url字段
 
 
     <!--入库单状态-->

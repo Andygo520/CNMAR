@@ -49,7 +49,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name11"
-                                android:text="领料单号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -72,7 +71,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name12"
-                                android:text="出料时间"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -103,7 +101,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name21"
-                                android:text="加工单编号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -126,7 +123,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name22"
-                                android:text="加工单名称"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -156,7 +152,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name31"
-                                android:text="成品编码"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -181,7 +176,6 @@
                                 android:id="@+id/name32"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
-                                android:text="成品名称"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -209,7 +203,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name41"
-                                android:text="生产数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -233,7 +226,6 @@
                             <TextView
                                 android:id="@+id/name42"
                                 android:textColor="@android:color/black"
-                                android:text="单位"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"
@@ -262,7 +254,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name51"
-                                android:text="开始日期"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -286,7 +277,6 @@
                             <TextView
                                 android:id="@+id/name52"
                                 android:textColor="@android:color/black"
-                                android:text="结束日期"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"
@@ -316,7 +306,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name61"
-                                android:text="领料人"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -339,7 +328,6 @@
                                 />
                             <TextView
                                 android:id="@+id/name62"
-                                android:text="领料单状态"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -370,12 +358,201 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="领料信息"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
                 android:gravity="center"
-                />
-            <include layout="@layout/table_list"></include>
+                android:text="领料单（原料）"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <!--   第一行为名称的列表，显示4列-->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1,3,5,7,9">
+
+                        <TableRow >
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="原料编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="原料名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="规格"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="领料数量"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <com.example.administrator.cnmar.entity.MyListView
+                        android:id="@+id/lvTableMaterial"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:cacheColorHint="#00000000"
+                        android:divider="@color/color_dark_grey"
+                        android:dividerHeight="1dip"
+                        android:fastScrollEnabled="true"
+                        android:focusable="true"
+                        android:scrollingCache="true" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="领料单（半成品）"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <!--   第一行为名称的列表，显示4列-->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:id="@+id/tableLayout"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1,3,5,7,9">
+
+                        <TableRow android:id="@+id/table_header_row">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="半成品编码"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="半成品名称"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="规格"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="领料数量"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <com.example.administrator.cnmar.entity.MyListView
+                        android:id="@+id/lvTableHalf"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:cacheColorHint="#00000000"
+                        android:divider="@color/color_dark_grey"
+                        android:dividerHeight="1dip"
+                        android:fastScrollEnabled="true"
+                        android:focusable="true"
+                        android:scrollingCache="true" />
+                </RelativeLayout>
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

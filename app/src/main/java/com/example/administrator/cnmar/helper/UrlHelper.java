@@ -4,12 +4,12 @@ package com.example.administrator.cnmar.helper;
  * Created by Administrator on 2016/9/29.
  */
 public class UrlHelper {
-//        public static String URL_BASE = "http://192.168.1.112:8092/";
-    public static final String URL_BASE = "http://benxiao.cnmar.com:8092/";
+    public static String URL_BASE = "http://192.168.1.112:8092/";
+//    public static final String URL_BASE = "http://benxiao.cnmar.com:8092/";
 
     //显示图片的绝对路径
-    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090/";
-//    public static String URL_IMAGE = "http://192.168.1.112:8090/";
+//    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090/";
+    public static String URL_IMAGE = "http://192.168.1.112:8090/";
 
 
     //    原料出入库扫描
@@ -67,19 +67,28 @@ public class UrlHelper {
     public static final String URL_PRODUCT_STOCK = URL_BASE + "product_stock/list?query.code=&page.num={page}";
     public static final String URL_PRODUCT_SEARCH_STOCK = URL_BASE + "product_stock/list?query.code={query.code}&page.num=1";
 
-    public static final String URL_PRODUCE_PLAN = URL_BASE + "produce_plan/list?query.code=&page.num={page}";
+    public static final String URL_PRODUCE_PLAN = URL_BASE + "produce_plan/list?query.code=&page.num={page}";//加工单列表
     public static final String URL_SEARCH_PRODUCE_PLAN = URL_BASE + "produce_plan/list?query.code={query.code}&page.num=1";
+    public static final String URL_PRODUCE_BOM = URL_BASE + "produce_bom/list?query.code=&page.num={page}";//子加工单列表
+    public static final String URL_SEARCH_PRODUCE_BOM = URL_BASE + "produce_bom/list?query.code={query.code}&page.num=1";
     public static final String URL_DELIVERY_PLAN = URL_BASE + "custom_deliver_plan/list?query.code=&page.num={page}";
     public static final String URL_SEARCH_DELIVERY_PLAN = URL_BASE + "custom_deliver_plan/list?query.code={query.code}&page.num=1";
 
-    public static final String URL_RECEIVE_MATERIAL_ORDER = URL_BASE + "material_out_order_receive/list?query.code=&page.num={page}";
-    public static final String URL_SEARCH_RECEIVE_MATERIAL_ORDER = URL_BASE + "material_out_order_receive/list?query.code={query.code}&query.categoryId={query.categoryId}&page.num=1";
-    public static final String URL_RECEIVE_MATERIAL_ORDER_DETAIL = URL_BASE + "material_out_order_receive/detail/{ID}";
+    public static final String URL_RECEIVE_MATERIAL_ORDER = URL_BASE + "produce_receive/list?query.code=&page.num={page}";
+    public static final String URL_SEARCH_RECEIVE_MATERIAL_ORDER = URL_BASE + "produce_receive/list?query.code={query.code}&query.status={query.status}&page.num=1";
+    public static final String URL_RECEIVE_MATERIAL_ORDER_DETAIL = URL_BASE + "produce_receive/detail/{ID}";
 
-    public static final String URL_PRODUCE_PLAN_DETAIL = URL_BASE + "produce_plan/detail/{ID}";
+    public static final String URL_PRODUCE_PLAN_DETAIL = URL_BASE + "produce_plan/detail/{ID}";//加工单详情
+    public static final String URL_PRODUCE_BOM_DETAIL = URL_BASE + "produce_bom/detail/{ID}";//子加工单详情
     public static final String URL_DELIVERY_PLAN_DETAIL = URL_BASE + "custom_deliver_plan/detail/{ID}";
 
-    public static final String URL_RECEIVE_MATERIAL_COMMIT = URL_BASE + "produce_plan/receive_material_commit?producePlanId={ID}&receiveId={receiveId}";
+    public static final String URL_RECEIVE_MATERIAL_COMMIT = URL_BASE + "produce_plan/receive_commit?producePlanId={ID}&receiveId={receiveId}";//加工单领料
+    public static final String URL_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "produce_plan/pre_in_stock_commit?producePlanId={ID}&successNum={successNum}&testId={testId}";//成品提交待入库
+    public static final String URL_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "produce_plan/actual_num_commit?producePlanId={ID}&actualNum={actualNum}&actualId={actualId}";//成品提交待检验
+
+    public static final String URL_BOM_RECEIVE_MATERIAL_COMMIT = URL_BASE + "produce_bom/receive_commit?produceBomId={ID}&receiveId={receiveId}";//子加工单领料
+    public static final String URL_HALF_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "produce_bom/pre_in_stock_commit?produceBomId={ID}&successNum={successNum}&testId={testId}";//半成品提交待入库
+    public static final String URL_HALF_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "produce_bom/actual_num_commit?produceBomId={ID}&actualNum={actualNum}&actualId={actualId}";//半成品提交待检验
 
 
     public static final String URL_PRODUCT_IN_ORDER = URL_BASE + "product_in_order/list?query.code=&page.num={page}";
@@ -114,8 +123,6 @@ public class UrlHelper {
     public static final String URL_SEARCH_SUPPLY_LIST = URL_BASE + "supply/list?query.name={query.code}&page.num=1";
 
     public static final String URL_SUPPLY_DETAIL = URL_BASE + "supply/detail/{id}";
-    public static final String URL_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "produce_plan/product_pre_in_stock_commit?producePlanId={ID}&successNum={successNum}&testId={testId}";
-    public static final String URL_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "produce_plan/product_actual_num_commit?producePlanId={ID}&actualNum={actualNum}";
 
     //    半成品仓库
     public static final String URL_HALF_PRODUCT_STOCK = URL_BASE + "half_stock/list?query.code=&page.num={page}";
@@ -145,5 +152,14 @@ public class UrlHelper {
     public static final String URL_SYSTEM_USER = URL_BASE + "system_user/list?query.name=&page.num={page}";
     public static final String URL_SEARCH_SYSTEM_USER = URL_BASE + "system_user/list?query.name={query.code}&page.num=1";
     public static final String URL_SYSTEM_USER_DETAIL = URL_BASE + "system_user/detail/{ID}";
+
+    //Bom地址
+    public static final String URL_BOM = "http://192.168.1.112:8091/produce_plan/boms/{ID}";
+
+    // 报表地址
+    public static final String URL_MATERIAL_REPORT = "http://benxiao.cnmar.com:8091/material_report/show";
+    public static final String URL_HALF_REPORT= "http://benxiao.cnmar.com:8091/half_report/show";
+    public static final String URL_PRODUCT_REPORT = "http://benxiao.cnmar.com:8091/product_report/show";
+
 
 }

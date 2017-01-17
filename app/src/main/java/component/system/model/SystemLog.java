@@ -1,8 +1,8 @@
 package component.system.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.Date;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.system.vo.LogModuleVo;
 import component.system.vo.LogOperateVo;

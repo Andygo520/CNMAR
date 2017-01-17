@@ -242,14 +242,14 @@ public class TraceBackFragment extends Fragment {
                 }
             });
             holder.tvPlan.setText("加工单");
-            if (list.get(position).getProducePlan()!=null){
-                holder.plan.setText(list.get(position).getProducePlan().getCode());
+            if (list.get(position).getProduceReceive()!=null){
+                holder.plan.setText(list.get(position).getProduceReceive().getCode());
                 holder.plan.setTextColor(getResources().getColor(R.color.colorBase));
                 holder.plan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
-                        intent.putExtra("ID", list.get(position).getProducePlan().getId());
+                        intent.putExtra("ID", list.get(position).getProduceReceive().getId());
                         intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                         startActivity(intent);
                     }

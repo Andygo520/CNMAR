@@ -1,20 +1,32 @@
 package component.product.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
 import component.half.model.Half;
+import component.produce.model.ProduceBom;
 
 /** 成品 - 半成品BOM */
 public class ProductHalfBom {
 
+	@JSONField(ordinal = 1)
 	private int id;
+	@JSONField(serialize = false)
 	private int productId; // 成品id
+	@JSONField(serialize = false)
 	private int halfId; // 半成品id
+	@JSONField(serialize = false)
 	private BigDecimal scale; // 比例
 
+	@JSONField(ordinal = 7)
 	private Half half;
+	@JSONField(serialize = false)
 	private BigDecimal num;
+
+	@JSONField(ordinal = 5)
+	private ProduceBom produceBom;
 
 	public ProductHalfBom() {
 
@@ -58,6 +70,7 @@ public class ProductHalfBom {
 		this.scale = scale;
 	}
 
+	@JSONField(serialize = false)
 	public String getScaleStr() {
 		return NumberFormat.getInstance().format(scale).replaceAll(",", "");
 	}
@@ -78,8 +91,17 @@ public class ProductHalfBom {
 		this.num = num;
 	}
 
+	@JSONField(serialize = false)
 	public String getNumStr() {
 		return num == null ? "" : NumberFormat.getInstance().format(num).replaceAll(",", "");
+	}
+
+	public ProduceBom getProduceBom() {
+		return produceBom;
+	}
+
+	public void setProduceBom(ProduceBom produceBom) {
+		this.produceBom = produceBom;
 	}
 
 }

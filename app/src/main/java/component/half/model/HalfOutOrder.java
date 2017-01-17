@@ -1,12 +1,13 @@
 package component.half.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import component.common.model.BaseModel;
 import component.half.vo.OutOrderStatusVo;
+import component.produce.model.ProduceReceive;
 
 /** 半成品出库单 */
 public class HalfOutOrder extends BaseModel {
@@ -21,6 +22,8 @@ public class HalfOutOrder extends BaseModel {
 	private int status; // 出库单状态 - 2待出库3已出库4未全部出库
 
 	@JSONField(ordinal = 5)
+	private ProduceReceive receive;
+	@JSONField(ordinal = 6)
 	private List<HalfOutOrderHalf> outOrderHalfs;
 
 	public HalfOutOrder() {
@@ -65,6 +68,14 @@ public class HalfOutOrder extends BaseModel {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public ProduceReceive getReceive() {
+		return receive;
+	}
+
+	public void setReceive(ProduceReceive receive) {
+		this.receive = receive;
 	}
 
 	public List<HalfOutOrderHalf> getOutOrderHalfs() {

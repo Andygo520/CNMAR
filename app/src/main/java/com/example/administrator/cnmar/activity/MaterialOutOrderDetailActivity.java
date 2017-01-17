@@ -311,8 +311,8 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                         } else
                             tvOutBatchNo.setText("");
 
-                        if (materialOutOrder.getProducePlan() != null)
-                            tvPlanNo.setText(materialOutOrder.getProducePlan().getCode());
+                        if (materialOutOrder.getProduceReceive() != null)
+                            tvPlanNo.setText(materialOutOrder.getProduceReceive().getCode());
                         else
                             tvPlanNo.setText("");
 

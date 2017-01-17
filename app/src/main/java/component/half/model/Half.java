@@ -10,6 +10,7 @@ import component.basic.vo.PackTypeVo;
 import component.basic.vo.StockTypeVo;
 import component.category.model.Category;
 import component.common.model.BaseModel;
+import component.process.model.ProcessHalf;
 
 /** 半成品 */
 public class Half extends BaseModel {
@@ -47,10 +48,14 @@ public class Half extends BaseModel {
 	private HalfStock stock;
 	@JSONField(serialize = false)
 	private List<HalfSpace> spaces;
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 16)
 	private List<HalfBom> boms;
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 17)
 	private List<HalfSubBom> subBoms;
+	@JSONField(ordinal = 18)
+	private List<ProcessHalf> processList;
+	@JSONField(serialize = false)
+	private int level;
 
 	public int getCategoryId() {
 		return categoryId;
@@ -194,6 +199,22 @@ public class Half extends BaseModel {
 
 	public void setSubBoms(List<HalfSubBom> subBoms) {
 		this.subBoms = subBoms;
+	}
+
+	public List<ProcessHalf> getProcessList() {
+		return processList;
+	}
+
+	public void setProcessList(List<ProcessHalf> processList) {
+		this.processList = processList;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 	@JSONField(serialize = false)

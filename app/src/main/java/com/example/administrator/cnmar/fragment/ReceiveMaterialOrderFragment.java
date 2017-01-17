@@ -44,15 +44,15 @@ import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import component.material.model.MaterialOutOrder;
-import component.material.vo.OutOrderStatusVo;
+import component.produce.model.ProduceReceive;
+import component.produce.vo.ReceiveStatusVo;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ReceiveMaterialOrderFragment extends Fragment {
-    //    表头5个字段
-    private TextView tv1, tv2, tv3, tv4;
+    //    表头6个字段
+    private TextView tv1, tv2, tv3, tv4, tv5, tv6;
     private TableLayout tableLayout;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
     private int total; // 总页数
@@ -70,7 +70,7 @@ public class ReceiveMaterialOrderFragment extends Fragment {
     private TwinklingRefreshLayout refreshLayout;
     private Handler handler = new Handler();
     //    用来存放从后台取出的数据列表，作为adapter的数据源
-    private List<MaterialOutOrder> data = new ArrayList<>();
+    private List<ProduceReceive> data = new ArrayList<>();
     private String strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_RECEIVE_MATERIAL_ORDER.replace("{page}", String.valueOf(page)));
 
     public ReceiveMaterialOrderFragment() {
@@ -83,16 +83,27 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.refresh_frame, container, false);
+        TableLayout tableLayout = (TableLayout) view.findViewById(R.id.tableLayout);
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
 
         tv1 = (TextView) view.findViewById(R.id.tv1);
         tv2 = (TextView) view.findViewById(R.id.tv2);
         tv3 = (TextView) view.findViewById(R.id.tv3);
         tv4 = (TextView) view.findViewById(R.id.tv4);
+        tv5 = (TextView) view.findViewById(R.id.tv5);
+        tv6 = (TextView) view.findViewById(R.id.tv6);
+        tv1.setText("领料单编号");
+        tv2.setText("（子）加工单编号");
+        tv3.setText("原料出库单号");
+        tv4.setText("半成品出库单号");
+        tv5.setText("领料人");
+        tv6.setText("领料单状态");
 
-        tv1.setText("领料单号");
-        tv2.setText("加工单编号");
-        tv3.setText("领料人");
-        tv4.setText("领料单状态");
         spinner = (Spinner) view.findViewById(R.id.spinner);
         spinner.setVisibility(View.VISIBLE);
         // 建立数据源
@@ -108,19 +119,19 @@ public class ReceiveMaterialOrderFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String categoryId="";
-                switch (mItems[position]){
+                String categoryId = "";
+                switch (mItems[position]) {
                     case "状态":
-                        categoryId="";
+                        categoryId = "";
                         break;
                     case "未领料":
-                        categoryId=OutOrderStatusVo.pre_out_stock.getKey()+"";
+                        categoryId = ReceiveStatusVo.no.getKey() + "";
                         break;
                     case "已领料":
-                        categoryId="88";
+                        categoryId = ReceiveStatusVo.yes.getKey() + "";
                         break;
                 }
-                String   urlString= UrlHelper.URL_SEARCH_RECEIVE_MATERIAL_ORDER.replace("{query.code}", "").replace("{query.categoryId}",categoryId);
+                String urlString = UrlHelper.URL_SEARCH_RECEIVE_MATERIAL_ORDER.replace("{query.code}", "").replace("{query.status}", categoryId);
                 urlString = UniversalHelper.getTokenUrl(urlString);
                 Log.d("status", urlString);
                 getListFromNet(urlString);
@@ -142,8 +153,8 @@ public class ReceiveMaterialOrderFragment extends Fragment {
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
 
-        UniversalHelper.initRefresh(getActivity(),refreshLayout);
-        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+        UniversalHelper.initRefresh(getActivity(), refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -154,7 +165,7 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                         getListFromNet(strUrl);
                         refreshLayout.finishRefreshing();
                     }
-                },400);
+                }, 400);
             }
 
             @Override
@@ -181,7 +192,7 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                             // 结束上拉刷新...
                             refreshLayout.finishLoadmore();
                         }
-                    },400);
+                    }, 400);
                 }
             }
         });
@@ -270,8 +281,8 @@ public class ReceiveMaterialOrderFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 //        Fragment重新显示到最前端中
-        if (!hidden){
-            page=1;
+        if (!hidden) {
+            page = 1;
             getListFromNet(strUrl);
         }
     }
@@ -287,12 +298,12 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                         String json = VolleyHelper.getJson(s);
                         Log.d("GGGG", s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        List<MaterialOutOrder> list = JSON.parseArray(response.getData().toString(), MaterialOutOrder.class);
+                        List<ProduceReceive> list = JSON.parseArray(response.getData().toString(), ProduceReceive.class);
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
                         //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
-                        if (count <= 10 || num==total)
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);
@@ -323,9 +334,9 @@ public class ReceiveMaterialOrderFragment extends Fragment {
 
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<MaterialOutOrder> list = null;
+        private List<ProduceReceive> list = null;
 
-        public BillAdapter(List<MaterialOutOrder> list, Context context) {
+        public BillAdapter(List<ProduceReceive> list, Context context) {
             this.list = list;
             this.context = context;
         }
@@ -355,31 +366,41 @@ public class ReceiveMaterialOrderFragment extends Fragment {
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
-
+                TableLayout tableLayout = (TableLayout) convertView.findViewById(R.id.tableLayout);
+                tableLayout.setColumnCollapsed(9, false);
+                tableLayout.setColumnCollapsed(10, false);
+                tableLayout.setColumnCollapsed(11, false);
+                tableLayout.setColumnCollapsed(12, false);
+                tableLayout.setColumnStretchable(9, true);
+                tableLayout.setColumnStretchable(11, true);
                 TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
 //                偶数行背景设为灰色
                 if (position % 2 == 0)
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
                 holder.tvReceiveMaterialOrder = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvPerson = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvStatus = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvMaterialOutOrder = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvHalfOutOrder = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvPerson = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvStatus = (TextView) convertView.findViewById(R.id.column6);
+
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvReceiveMaterialOrder.setText(list.get(position).getCode());
-            holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
-            holder.tvPerson.setText(list.get(position).getReceive().getName());
 
-//            原料出库单状态为“待出库”，那么领料单状态就是“未领料”，其他状态根据showPrint字段判断
-            if (list.get(position).getStatus() == OutOrderStatusVo.pre_out_stock.getKey())
-                holder.tvStatus.setText("未领料");
-            else if (list.get(position).isShowPrint())
-                holder.tvStatus.setText("有退料");
-            else if (!list.get(position).isShowPrint())
-                holder.tvStatus.setText("已领料");
+            if (list.get(position).getPlan() != null)
+                holder.tvPlanNo.setText(list.get(position).getPlan().getCode());
+            if (list.get(position).getBom() != null)
+                holder.tvPlanNo.setText(list.get(position).getBom().getCode());
 
+//          判断list.get(position).getMaterialOutOrder()是否为空，为空就显示空字符，否则显示原料出库单号
+            holder.tvMaterialOutOrder.setText(list.get(position).getMaterialOutOrder()==null ? "" :list.get(position).getMaterialOutOrder().getCode());
+            holder.tvHalfOutOrder.setText(list.get(position).getHalfOutOrder()==null ? "" :list.get(position).getHalfOutOrder().getCode());
+            holder.tvPerson.setText(list.get(position).getReceiveUser().getName());
+
+            holder.tvStatus.setText(list.get(position).getReceiveStatusVo().getValue());
             holder.tvReceiveMaterialOrder.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tvReceiveMaterialOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -396,7 +417,9 @@ public class ReceiveMaterialOrderFragment extends Fragment {
 
         class ViewHolder {
             public TextView tvReceiveMaterialOrder;
-            public TextView tvPlanNo;
+            public TextView tvPlanNo;// （子）加工单编号
+            public TextView tvMaterialOutOrder;
+            public TextView tvHalfOutOrder;
             public TextView tvPerson;
             public TextView tvStatus;
         }

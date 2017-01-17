@@ -43,10 +43,11 @@ import java.util.List;
 
 import component.produce.model.ProducePlan;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProductionPlanFragment extends Fragment {
+public class ProducePlanFragment extends Fragment {
     //    表头6个字段
     private TextView tv1, tv2, tv3, tv4,tv5,tv6;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
@@ -65,7 +66,7 @@ public class ProductionPlanFragment extends Fragment {
     private List<ProducePlan> data = new ArrayList<>();
     private String strUrl = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCE_PLAN.replace("{page}", String.valueOf(page)));
 
-    public ProductionPlanFragment() {
+    public ProducePlanFragment() {
         // Required empty public constructor
     }
 
@@ -93,7 +94,7 @@ public class ProductionPlanFragment extends Fragment {
         tv2.setText("成品编码");
         tv3.setText("计划生产");
         tv4.setText("合格品数量");
-        tv5.setText("原料出库单号");
+        tv5.setText("领料单编号");
         tv6.setText("成品入库单号");
 
 
@@ -331,7 +332,7 @@ public class ProductionPlanFragment extends Fragment {
                 holder.tvProductCode = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvProduceNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvValidNum = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvMaterialOutOrder = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvReceiveOrder = (TextView) convertView.findViewById(R.id.column5);
                 holder.tvProductInOrder = (TextView) convertView.findViewById(R.id.column6);
 
                 convertView.setTag(holder);
@@ -342,10 +343,10 @@ public class ProductionPlanFragment extends Fragment {
             holder.tvProductCode.setText(list.get(position).getProduct().getCode());
             holder.tvProduceNum.setText(list.get(position).getProduceNum() + list.get(position).getProduct().getUnit().getName());
             holder.tvValidNum.setText(list.get(position).getSuccessNum()+"");
-            if (list.get(position).getMaterialOutOrder() != null)
-                holder.tvMaterialOutOrder.setText(list.get(position).getMaterialOutOrder().getCode());
+            if (list.get(position).getReceive() != null)
+                holder.tvReceiveOrder.setText(list.get(position).getReceive().getCode());
             else
-                holder.tvMaterialOutOrder.setText("");
+                holder.tvReceiveOrder.setText("");
             if (list.get(position).getProductInOrder() != null)
                 holder.tvProductInOrder.setText(list.get(position).getProductInOrder().getCode());
             else
@@ -369,7 +370,7 @@ public class ProductionPlanFragment extends Fragment {
             public TextView tvProductCode;
             public TextView tvProduceNum;
             public TextView tvValidNum;
-            public TextView tvMaterialOutOrder;  // 原料出库单号
+            public TextView tvReceiveOrder;  // 领料单号
             public TextView tvProductInOrder;    //成品入库单号
         }
 

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.administrator.cnmar">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -23,36 +22,34 @@
         android:theme="@style/MyTheme"
         tools:replace="Android:icon, android:theme">
         <activity
-            android:name="com.example.administrator.cnmar.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MainActivity"
-            android:screenOrientation="portrait"
-            />
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialStockActivity"
+            android:name=".activity.MaterialStockActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialStockDetailActivity"
+            android:name=".activity.MaterialStockDetailActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="zxing.activity.CaptureActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity"
+            android:name=".activity.MaterialOutOrderDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialCheckStockManageActivity"
+            android:name=".activity.MaterialCheckStockManageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialCheckStockDetailActivity"
+            android:name=".activity.MaterialCheckStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.WelcomeActivity"
+            android:name=".activity.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppWelcomeTheme">
             <intent-filter>
@@ -62,104 +59,105 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductStockActivity"
+            android:name=".activity.ProductStockActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductStockDetailActivity"
+            android:name=".activity.ProductStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductCheckStockManageActivity"
+            android:name=".activity.ProductCheckStockManageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductCheckStockDetailActivity"
+            android:name=".activity.ProductCheckStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.PlanManageActivity"
+            android:name=".activity.PlanManageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductionPlanDetailActivity"
+            android:name=".activity.ProductionPlanDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.DeliveryPlanDetailActivity"
+            android:name=".activity.DeliveryPlanDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductInOrderDetailActivity"
+            android:name=".activity.ProductInOrderDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductOutOrderDetailActivity"
+            android:name=".activity.ProductOutOrderDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.QualityControlActivity"
+            android:name=".activity.QualityControlActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialQualityControlDetailActivity"
+            android:name=".activity.MaterialQualityControlDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ReceiveMaterialOrderDetailActivity"
+            android:name=".activity.ReceiveMaterialOrderDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.SupplyManageActivity"
+            android:name=".activity.SupplyManageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.SupplyManageDetailActivity"
+            android:name=".activity.SupplyManageDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.CompanyManageActivity"
+            android:name=".activity.CompanyManageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.QRCodeActivity"
+            android:name=".activity.QRCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar.MinWidth" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.CompanyInfoDetailActivity"
+            android:name=".activity.CompanyInfoDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ProductDetailActivity"
+            android:name=".activity.ProductDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductStockActivity"
+            android:name=".activity.HalfProductStockActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductStockDetailActivity"
+            android:name=".activity.HalfProductStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductInOrderDetailActivity"
+            android:name=".activity.HalfProductInOrderDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductOutOrderDetailActivity"
+            android:name=".activity.HalfProductOutOrderDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductCheckStockDetailActivity"
+            android:name=".activity.HalfProductCheckStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.HalfProductCheckStockManageActivity"
+            android:name=".activity.HalfProductCheckStockManageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.SystemManageActivity"
+            android:name=".activity.SystemManageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.SystemUserDetailActivity"
+            android:name=".activity.SystemUserDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.ReportManageActivity"
+            android:name=".activity.ReportManageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.administrator.cnmar.activity.MaterialInOrderDetailActivity"
+            android:name=".activity.MaterialInOrderDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"></activity>
-        <activity android:name=".activity.ProductQualityControlDetailActivity"
-            android:screenOrientation="portrait"
-            ></activity>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.ProductQualityControlDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.ProduceBomDetailActivity"></activity>
     </application>
 
 </manifest>

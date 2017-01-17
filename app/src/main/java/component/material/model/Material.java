@@ -1,8 +1,8 @@
 package component.material.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.basic.model.Unit;
 import component.basic.vo.MixTypeVo;
@@ -52,6 +52,8 @@ public class Material extends BaseModel {
 	private MaterialStock stock;
 	@JSONField(serialize = false)
 	private List<MaterialSpace> spaces;
+	@JSONField(serialize = false)
+	private int level;
 
 	public int getCategoryId() {
 		return categoryId;
@@ -195,6 +197,14 @@ public class Material extends BaseModel {
 
 	public void setSpaces(List<MaterialSpace> spaces) {
 		this.spaces = spaces;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 	@JSONField(serialize = false)

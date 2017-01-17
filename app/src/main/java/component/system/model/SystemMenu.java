@@ -12,7 +12,7 @@ public class SystemMenu extends TreeModel {
 
 	@JSONField(ordinal = 1)
 	private String name; // 菜单名称
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 2)
 	private String url; // URL
 	@JSONField(serialize = false)
 	private String style; // CSS样式

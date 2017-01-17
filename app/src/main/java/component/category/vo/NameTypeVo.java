@@ -1,6 +1,6 @@
 package component.category.vo;
 
-/** 原料入库单状态 */
+/** BOM表头类型 */
 public enum NameTypeVo {
 
 	empty(null, ""),

@@ -15,7 +15,7 @@ public class CategoryName {
 	@JSONField(ordinal = 3)
 	private String name; // 表头名称
 	@JSONField(ordinal = 4)
-	private int type; // 类别 - 1单选2输入项
+	private int type; // 类型 - 1单选2输入项
 	@JSONField(ordinal = 5)
 	private int seq; // 顺序号
 

@@ -1,8 +1,8 @@
 package component.common.vo;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
 
 public class Query implements Cloneable {
 
@@ -15,10 +15,11 @@ public class Query implements Cloneable {
 
 	private Boolean isEnable;
 
+	private Integer type;
+	private Integer status;
 	private Integer stockType;
 	private Integer mixType;
 	private Integer packType;
-	private Integer status;
 	private Integer categoryId;
 	private Integer deptId;
 
@@ -90,6 +91,22 @@ public class Query implements Cloneable {
 		this.isEnable = isEnable;
 	}
 
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	public Integer getStockType() {
 		return stockType;
 	}
@@ -112,14 +129,6 @@ public class Query implements Cloneable {
 
 	public void setPackType(Integer packType) {
 		this.packType = packType;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
 	}
 
 	public Integer getCategoryId() {
