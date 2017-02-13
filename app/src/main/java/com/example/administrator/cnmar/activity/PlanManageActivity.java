@@ -130,8 +130,6 @@ public class PlanManageActivity extends AppCompatActivity {
             setTabSelection(0);
         } else if (flag == 1) {
             setTabSelection(1);
-        } else if (flag == 2) {
-            setTabSelection(2);
         }
     }
 
@@ -164,7 +162,7 @@ public class PlanManageActivity extends AppCompatActivity {
     /**
      * 根据传入的index参数来设置选中的tab页。
      *
-     * @param index 每个tab页对应的下标。0表示生产计划（加工单），1表示领料单，2表示交付计划
+     * @param index 每个tab页对应的下标。0表示生产计划（加工单），1表示子加工单，2表示领料单，3表示交付计划
      */
     private void setTabSelection(int index) {
         // 开启一个Fragment事务

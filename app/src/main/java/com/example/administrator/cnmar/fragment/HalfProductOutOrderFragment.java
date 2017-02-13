@@ -96,7 +96,7 @@ public class HalfProductOutOrderFragment extends Fragment {
 
         tv1.setText("出库单号");
         tv2.setText("出库批次号");
-        tv3.setText("备注");
+        tv3.setText("领料单编号");
         tv4.setText("出库单状态");
 
         lvOutOrder = (MyListView) view.findViewById(R.id.listView);
@@ -353,7 +353,7 @@ public class HalfProductOutOrderFragment extends Fragment {
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
                 holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvRemark = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvReceive = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
@@ -369,7 +369,7 @@ public class HalfProductOutOrderFragment extends Fragment {
                 holder.tvBatchNo.setText("");
 
             holder.tvOutOrderStatus.setText(list.get(position).getOutOrderStatusVo().getValue());
-            holder.tvRemark.setText(list.get(position).getRemark());
+            holder.tvReceive.setText(list.get(position).getReceive()==null?"":list.get(position).getReceive().getCode());
             holder.tvOutOrderNo.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tvOutOrderNo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -386,7 +386,7 @@ public class HalfProductOutOrderFragment extends Fragment {
         class ViewHolder {
             public TextView tvOutOrderNo;
             public TextView tvBatchNo;  //出库批次号
-            public TextView tvRemark;
+            public TextView tvReceive;
             public TextView tvOutOrderStatus;
         }
 

@@ -17,6 +17,7 @@
     <string name="rbReceiveMaterialOrder">领料单</string>
     <string name="rbDeliveryPlan">交付计划</string>
     <string name="rbQC">原料检验</string>
+    <string name="rbHalfQC">半成品检验</string>
     <string name="rbProductQC">成品检验</string>
     <string name="rbTraceBack">质量追溯</string>
     <string name="rbMaterialReport">原料库存报表</string>
@@ -25,7 +26,7 @@
 
 
     <!--菜单名-->
-    <string name="MENUS">原料仓库,成品仓库,计划管理,相关方管理,企业管理,系统管理,品控管理,报表管理,半成品仓库</string>
+    <string name="MENUS">原料仓库,成品仓库,计划管理,相关方管理,企业管理,系统管理,品控管理,报表管理,半成品仓库,生产管理</string>
     <string name="HOME_YLCK">原料仓库</string>
     <string name="HOME_CPCK">成品仓库</string>
     <string name="HOME_JHGL">计划管理</string>
@@ -35,6 +36,7 @@
     <string name="HOME_PKGL">品控管理</string>
     <string name="HOME_BBGL">报表管理</string>
     <string name="HOME_BCPCK">半成品仓库</string>
+    <string name="HOME_SCGL">生产管理</string>
 
 
     <!--二级菜单列表的url字段，该字段不会变，用来唯一标示该菜单项-->
@@ -80,6 +82,7 @@
     //成品盘点的url字段
     <string name="material_in_order_test_url">material_in_order_test/list</string>
     //原料检验的url字段
+    <string name="produce_half_test_url">produce_half_test/list</string>//半成品检验的url字段
     <string name="produce_product_test_url">produce_product_test/list</string>
     //成品检验的url字段
     <string name="material_back_url">material_back/list</string>

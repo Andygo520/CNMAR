@@ -18,9 +18,9 @@ import com.example.administrator.cnmar.activity.PlanManageActivity;
 import com.example.administrator.cnmar.activity.ProductStockActivity;
 import com.example.administrator.cnmar.activity.QualityControlActivity;
 import com.example.administrator.cnmar.activity.ReportManageActivity;
+import com.example.administrator.cnmar.activity.ScannStationActivity;
 import com.example.administrator.cnmar.activity.SupplyManageActivity;
 import com.example.administrator.cnmar.activity.SystemManageActivity;
-import com.example.administrator.cnmar.entity.DividerGridItemDecoration;
 import com.example.administrator.cnmar.entity.Item;
 import com.example.administrator.cnmar.entity.MyItemTouchCallback;
 import com.example.administrator.cnmar.entity.RecyclerAdapter;
@@ -65,6 +65,8 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         map.put(getResources().getString(R.string.HOME_PKGL), R.mipmap.pkgl);
         map.put(getResources().getString(R.string.HOME_BBGL), R.mipmap.bbgl);
         map.put(getResources().getString(R.string.HOME_BCPCK), R.mipmap.bcpgl);
+        map.put(getResources().getString(R.string.HOME_SCGL), R.mipmap.scgl);
+
 
 //        得到用户拥有的菜单名、姓名
         String roleMenu = SPHelper.getString(getActivity(), "Menu", "");
@@ -100,7 +102,7 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         RecyclerAdapter adapter = new RecyclerAdapter(R.layout.item_grid, results);
         recyclerView.setAdapter(adapter);
 //        给recyclerView添加网格
-        recyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
+//        recyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         itemTouchHelper = new ItemTouchHelper(new MyItemTouchCallback(adapter).setOnDragListener(this));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -150,6 +152,10 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
                     case R.mipmap.bcpgl:
                         Intent intent8 = new Intent(getActivity(), HalfProductStockActivity.class);
                         startActivity(intent8);
+                        break;
+                    case R.mipmap.scgl:
+                        Intent intent9 = new Intent(getActivity(), ScannStationActivity.class);
+                        startActivity(intent9);
                         break;
                 }
             }

@@ -19,4 +19,6 @@ public interface MsgCode {
 	public static final String stock_error = "库存不足";
 	public static final String space_error = "仓位不足";
 
+	public static final String empty_error = "该机台没有您的加工任务";
+
 }

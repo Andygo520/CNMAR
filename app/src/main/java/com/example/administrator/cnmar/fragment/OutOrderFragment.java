@@ -98,7 +98,7 @@ public class OutOrderFragment extends Fragment {
 
         tv1.setText("出库单号");
         tv2.setText("出库批次号");
-        tv3.setText("加工单编号");
+        tv3.setText("领料单编号");
         tv4.setText("出库单状态");
 
         lvOutOrder = (MyListView) view.findViewById(R.id.listView);
@@ -353,7 +353,7 @@ public class OutOrderFragment extends Fragment {
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
                 holder.tvOutOrderNo = (TextView) convertView.findViewById(R.id.column1);
                 holder.tvBatchNo = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvReceive = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvOutOrderStatus = (TextView) convertView.findViewById(R.id.column4);
                 convertView.setTag(holder);
             } else
@@ -368,10 +368,10 @@ public class OutOrderFragment extends Fragment {
             else
                 holder.tvBatchNo.setText("");
 
-            if (list.get(position).getProduceReceive() != null)
-                holder.tvPlanNo.setText(list.get(position).getProduceReceive().getCode());
+            if (list.get(position).getReceive() != null)
+                holder.tvReceive.setText(list.get(position).getReceive().getCode());
             else
-                holder.tvPlanNo.setText("");
+                holder.tvReceive.setText("");
 
             holder.tvOutOrderStatus.setText(list.get(position).getOutOrderStatusVo().getValue());
             holder.tvOutOrderNo.setTextColor(getResources().getColor(R.color.colorBase));
@@ -390,7 +390,7 @@ public class OutOrderFragment extends Fragment {
         class ViewHolder {
             public TextView tvOutOrderNo;
             public TextView tvBatchNo;  // 出库批次号
-            public TextView tvPlanNo;  // 加工单编号
+            public TextView tvReceive;  // 领料单编号
             public TextView tvOutOrderStatus;
         }
 

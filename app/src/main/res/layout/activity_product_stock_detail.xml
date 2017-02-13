@@ -279,7 +279,7 @@
                 android:text="仓位信息"
                 android:textColor="@android:color/black"
                 android:textStyle="bold" />
-            <include layout="@layout/table_list"></include>
+            <include layout="@layout/table_3_list"></include>
 
         </LinearLayout>
     </ScrollView>

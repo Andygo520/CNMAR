@@ -52,6 +52,8 @@ import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.QualityControlActivity;
+import com.example.administrator.cnmar.activity.ScannStationActivity;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.google.zxing.Result;
@@ -181,6 +183,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 setResult(1, intent);
                 CaptureActivity.this.finish();
             }
+            //            返回到机床扫描页面
+            else if (FLAG == -100) {
+                Intent intent = new Intent(CaptureActivity.this, ScannStationActivity.class);
+                setResult(1, intent);
+                CaptureActivity.this.finish();
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -276,9 +284,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         resultIntent.putExtras(bundle);
         this.setResult(RESULT_OK, resultIntent);
 //      得到扫描二维码返回的结果
-        String result= rawResult.getText();
+        String result = rawResult.getText();
 //      对返回结果进行处理后，赋值给strUrl
-        String strUrl;
+        String strUrl = "";
 
 //      只能扫描洲马二维码
         if (!result.contains(UrlHelper.URL_BASE)
@@ -290,14 +298,18 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 //      处理原料出库、成品出库以及半成品出库扫描结果,将二维码返回的结果加上单据id后发送请求
 //      处理原料入库、成品入库以及半成品入库扫描结果，直接用二维码返回的结果发送请求
 //      处理原料、成品追溯的，要将二维码返回的结果做replace("qrcode", "back")操作
+//       扫描机床的时候，要在二维码返回的结果后面加上userId字段
 
         if (FLAG == 2 || FLAG == 4 || FLAG == 6) {
             strUrl = result + "?outOrderId=" + String.valueOf(id);
             Log.d("strUrl", strUrl);
         } else if (FLAG == 1 || FLAG == 3 || FLAG == 5) {
             strUrl = result;
-        } else
+        } else if (FLAG == 100) {
             strUrl = result.replace("qrcode", "back");
+        } else if (FLAG == -100) {
+            strUrl = result + "?userId=" + SPHelper.getInt(this, "userId");
+        }
 
         //        处理原料出入库扫描
         if (strUrl.contains(UrlHelper.URL_MATERIAL_SCAN)) {
@@ -327,6 +339,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         //        处理成品追溯扫描
         else if (strUrl.contains(UrlHelper.URL_PRODUCT_TRACE_BACK_SCAN)) {
             Intent intent = new Intent(this, QualityControlActivity.class);
+            intent.putExtra("result", strUrl);
+            setResult(0, intent);
+            CaptureActivity.this.finish();
+        }
+        //        处理机床扫描
+        else if (strUrl.contains(UrlHelper.URL_SCANN_STATION)) {
+            Intent intent = new Intent(this, ScannStationActivity.class);
+            Log.d("scannn", strUrl);
             intent.putExtra("result", strUrl);
             setResult(0, intent);
             CaptureActivity.this.finish();

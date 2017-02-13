@@ -11,10 +11,14 @@ import component.system.model.SystemUser;
 @SuppressWarnings("serial")
 public class ComTeam implements Serializable {
 
+	@JSONField(ordinal = 1)
 	private int id;
+	@JSONField(ordinal = 2)
 	private String name;
+	@JSONField(serialize = false)
 	private Boolean isDel;
 
+	@JSONField(serialize = false)
 	private List<SystemUser> users;
 
 	@JSONField(serialize = false)

@@ -101,8 +101,8 @@ public class ReceiveMaterialOrderFragment extends Fragment {
         tv2.setText("（子）加工单编号");
         tv3.setText("原料出库单号");
         tv4.setText("半成品出库单号");
-        tv5.setText("领料人");
-        tv6.setText("领料单状态");
+        tv5.setText("领料单状态");
+        tv6.setText("生产状态");
 
         spinner = (Spinner) view.findViewById(R.id.spinner);
         spinner.setVisibility(View.VISIBLE);
@@ -381,8 +381,8 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                 holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvMaterialOutOrder = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvHalfOutOrder = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvPerson = (TextView) convertView.findViewById(R.id.column5);
-                holder.tvStatus = (TextView) convertView.findViewById(R.id.column6);
+                holder.tvStatus = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvProduceStatus = (TextView) convertView.findViewById(R.id.column6);
 
                 convertView.setTag(holder);
             } else
@@ -396,9 +396,9 @@ public class ReceiveMaterialOrderFragment extends Fragment {
                 holder.tvPlanNo.setText(list.get(position).getBom().getCode());
 
 //          判断list.get(position).getMaterialOutOrder()是否为空，为空就显示空字符，否则显示原料出库单号
-            holder.tvMaterialOutOrder.setText(list.get(position).getMaterialOutOrder()==null ? "" :list.get(position).getMaterialOutOrder().getCode());
-            holder.tvHalfOutOrder.setText(list.get(position).getHalfOutOrder()==null ? "" :list.get(position).getHalfOutOrder().getCode());
-            holder.tvPerson.setText(list.get(position).getReceiveUser().getName());
+            holder.tvMaterialOutOrder.setText(list.get(position).getMaterialOutOrder() == null ? "" : list.get(position).getMaterialOutOrder().getCode());
+            holder.tvHalfOutOrder.setText(list.get(position).getHalfOutOrder() == null ? "" : list.get(position).getHalfOutOrder().getCode());
+            holder.tvProduceStatus.setText(list.get(position).getProduceStatusVo().getValue());
 
             holder.tvStatus.setText(list.get(position).getReceiveStatusVo().getValue());
             holder.tvReceiveMaterialOrder.setTextColor(getResources().getColor(R.color.colorBase));
@@ -420,8 +420,8 @@ public class ReceiveMaterialOrderFragment extends Fragment {
             public TextView tvPlanNo;// （子）加工单编号
             public TextView tvMaterialOutOrder;
             public TextView tvHalfOutOrder;
-            public TextView tvPerson;
-            public TextView tvStatus;
+            public TextView tvStatus;// 领料单状态
+            public TextView tvProduceStatus;// 生产状态
         }
 
     }

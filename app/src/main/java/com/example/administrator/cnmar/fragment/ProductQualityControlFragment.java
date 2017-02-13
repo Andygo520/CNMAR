@@ -38,7 +38,6 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +102,7 @@ public class ProductQualityControlFragment extends Fragment {
         tv3.setText("实际生产数量");
         tv4.setText("合格品数量");
         tv5.setText("检验员");
-        tv6.setText("检验时间");
+        tv6.setText("成品入库单号");
 
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
@@ -339,8 +338,7 @@ public class ProductQualityControlFragment extends Fragment {
             holder.tv4.setText(list.get(position).getSuccessNum()+"");
             holder.tv5.setText(list.get(position).getTest().getName());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            holder.tv6.setText(sdf.format(list.get(position).getTestTime()));
+            holder.tv6.setText(list.get(position).getProductInOrder().getCode());
 
             holder.tv1.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tv1.setOnClickListener(new View.OnClickListener() {

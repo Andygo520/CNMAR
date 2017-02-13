@@ -41,7 +41,7 @@ import component.product.model.ProductStock;
 public class ProductCheckStockManageActivity extends AppCompatActivity {
     private Context context;
     private TextView tvCode, tvName, tvSize, tvUnit, tvStockType, tvMixType, tvRemark, tvStockNum;
-    private TextView name1, name2, name3, name4, name5;
+    private TextView name1, name2, name3, name4;
     private MyListView lvSpaceInfo;
     private static String strUrl;
     private LinearLayout llLeftArrow;
@@ -96,14 +96,12 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
         name2 = (TextView) findViewById(R.id.column2);
         name3 = (TextView) findViewById(R.id.column3);
         name4 = (TextView) findViewById(R.id.column4);
-        name5 = (TextView) findViewById(R.id.column5);
 
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         name1.setText("仓位编码");
-        name2.setText("仓位名称");
-        name3.setText("库存数量");
-        name4.setText("盘点数量");
-        name5.setText("二维码序列号");
+        name2.setText("库存数量");
+        name3.setText("盘点数量");
+        name4.setText("二维码序列号");
 
         tvCode = (TextView) findViewById(R.id.tv11);
         tvName = (TextView) findViewById(R.id.tv12);
@@ -229,7 +227,7 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
         }).start();
     }
 
-    //    该适配器用来显示四列
+    //    该适配器用来显示3列
     public class SpaceInfoAdapter extends BaseAdapter {
         private Context context;
         private List<ProductSpaceStock> list = null;
@@ -262,16 +260,14 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(context).inflate(R.layout.table_list_edit_item, parent, false);
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvCheckNum = (EditText) convertView.findViewById(R.id.column4);
+                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvCheckNum = (EditText) convertView.findViewById(R.id.column3);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
             holder.tvCheckNum.setText("");
 
@@ -309,13 +305,12 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvStockNum;
             EditText tvCheckNum;
         }
     }
 
-    //    该适配器用来显示五列数据（在有包装的扫码产品盘点的时候使用该Adapter）
+    //    该适配器用来显示4列数据（在有包装的扫码产品盘点的时候使用该Adapter）
     public class SpaceInfoAdapter1 extends BaseAdapter {
         private Context context;
         private List<ProductSpaceStock> list = null;
@@ -348,17 +343,15 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvCheckNum = (EditText) convertView.findViewById(R.id.column4);
-                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvCheckNum = (EditText) convertView.findViewById(R.id.column3);
+                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column4);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
             holder.tvCheckNum.setText("");
             holder.tvInOrderSpaceId.setText(String.valueOf(list.get(position).getInOrderSpaceId()));
@@ -397,7 +390,6 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvStockNum;
             EditText tvCheckNum;
             TextView tvInOrderSpaceId;  //二维码序列号

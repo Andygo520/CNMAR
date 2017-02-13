@@ -264,7 +264,7 @@
                 android:textStyle="bold"
                 android:gravity="center"
                 />
-            <include layout="@layout/table_list"></include>
+            <include layout="@layout/table_3_list"></include>
 
         </LinearLayout>
     </ScrollView>

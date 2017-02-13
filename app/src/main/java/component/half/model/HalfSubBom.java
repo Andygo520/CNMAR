@@ -1,12 +1,11 @@
 package component.half.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
-import component.produce.model.ProduceBom;
+import com.alibaba.fastjson.annotation.JSONField;
 
+import component.produce.model.ProduceBom;
 
 /** 半成品 - 下级半成品BOM */
 public class HalfSubBom {

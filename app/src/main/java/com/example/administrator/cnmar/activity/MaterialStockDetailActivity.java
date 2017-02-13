@@ -38,7 +38,7 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
     private ImageView ivLeftArrow, ivScann;
     private TextView tvMaterialCode, tvMaterialName, tvSize, tvUnit, tvStockType,
             tvSupplierCode, tvIsMixed, tvStockSum, tvMinStock, tvMaxStock;
-    private TextView name1,name2,name3,name4,name5; //仓位信息的五个字段
+    private TextView name1,name2,name3,name4; //仓位信息的4个字段
     private String strUrl;
     private MyListView lvSpace;
     private LinearLayout llLeftArrow;
@@ -95,14 +95,12 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
         name1= (TextView) findViewById(R.id.column1);
         name2= (TextView) findViewById(R.id.column2);
         name3= (TextView) findViewById(R.id.column3);
-        name4= (TextView) findViewById(R.id.column4);
-        name5 = (TextView) findViewById(R.id.column5);
+        name4 = (TextView) findViewById(R.id.column4);
 
         name1.setText("仓位编码");
-        name2.setText("仓位名称");
-        name3.setText("仓位容量");
-        name4.setText("库存数量");
-        name5.setText("二维码序列号");
+        name2.setText("仓位容量");
+        name3.setText("库存数量");
+        name4.setText("二维码序列号");
     }
 
     public void getStockDetailFromNet() {
@@ -118,13 +116,12 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
                         MaterialStock materialStock = JSON.parseObject(response.getData().toString(), MaterialStock.class);
 //                        得到列表的数据源
                         List<MaterialSpaceStock> list = materialStock.getSpaceStocks();
-//             扫码有包装的显示五列（多一列“二维码编号”）,否则显示四列
+//             扫码有包装的显示4列（多一列“二维码编号”）,否则显示3列
                         if (materialStock.getMaterial().getStockType()== StockTypeVo.scan.getKey()
                                 && materialStock.getMaterial().getPackType()!=PackTypeVo.empty.getKey()){
- //           表格布局显示之前隐藏的第五列，并将第五列设置为可伸展
-                            tableLayout.setColumnCollapsed(9, false);
-                            tableLayout.setColumnCollapsed(10, false);
-                            tableLayout.setColumnStretchable(9, true);
+                            tableLayout.setColumnCollapsed(7,false);
+                            tableLayout.setColumnCollapsed(8,false);
+                            tableLayout.setColumnStretchable(7,true);
                             SpaceAdapter1 adapter=new SpaceAdapter1(MaterialStockDetailActivity.this,list);
                             lvSpace.setAdapter(adapter);
                         }else {
@@ -194,17 +191,15 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_3_item, parent, false);
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvSpaceCapacity = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvSpaceCapacity = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column3);
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvSpaceCapacity.setText(String.valueOf(list.get(position).getSpace().getCapacity()));
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
             return convertView;
@@ -212,7 +207,6 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvSpaceCapacity;
             TextView tvStockNum;
         }
@@ -249,25 +243,18 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
             ViewHolder holder = null;
             if (convertView == null) {
                 convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
-               TableLayout tableLayout = (TableLayout) convertView.findViewById(R.id.tableLayout);
- //           表格布局显示之前隐藏的第五列，并将第五列设置为可伸展
-                tableLayout.setColumnCollapsed(9, false);
-                tableLayout.setColumnCollapsed(10, false);
-                tableLayout.setColumnStretchable(9, true);
+
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvSpaceCapacity = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column5);
-
+                holder.tvSpaceCapacity = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvStockNum = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column4);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvStockNum.setText(String.valueOf(list.get(position).getStock()));
             holder.tvSpaceCapacity.setText(String.valueOf(list.get(position).getSpace().getCapacity()));
             holder.tvInOrderSpaceId.setText(String.valueOf(list.get(position).getInOrderSpaceId()));
@@ -276,7 +263,6 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvSpaceCapacity;
             TextView tvStockNum;
             TextView tvInOrderSpaceId;  //二维码序列号

@@ -48,8 +48,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name11"
-                                android:text="文本"
+                                android:text="出库单号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="60dip"
@@ -71,8 +70,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name12"
-                                android:text="文本"
+                                android:text="出库批次号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="60dip"
@@ -101,8 +99,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name21"
-                                android:text="文本"
+                                android:text="领料单编号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="60dip"
@@ -124,8 +121,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name22"
-                                android:text="文本"
+                                android:text="备注"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="60dip"
@@ -147,6 +143,56 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                         </TableRow>
+                        <TableRow
+                            android:background="@drawable/table_frame"
+                            >
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:text="出库单状态"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/tv31"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:layout_width="60dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                        </TableRow>
+
                     </TableLayout>
                 </LinearLayout>
                 <View

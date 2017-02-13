@@ -1,15 +1,24 @@
 package component.com.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /** 机台工位 */
 public class ComStation {
 
+	@JSONField(ordinal = 1)
 	private int id;
+	@JSONField(serialize = false)
 	private int workshopId;
+	@JSONField(ordinal = 2)
 	private String code;
+	@JSONField(ordinal = 3)
 	private String name;
+	@JSONField(serialize = false)
 	private String qrcode;
+	@JSONField(serialize = false)
 	private Boolean isDel;
 
+	@JSONField(ordinal = 5)
 	private ComWorkshop workshop;
 
 	public int getId() {

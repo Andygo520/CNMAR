@@ -52,7 +52,7 @@ import zxing.activity.CaptureActivity;
 public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     private Context context;
     private TextView tvName11, tvName12, tvName21, tvName22, tvName31;
-    private TextView tvOutOrder, tvOutBatchNo, tvPlanNo, tvRemark, tvOutOrderStatus;
+    private TextView tvOutOrder, tvOutBatchNo, tvReceive, tvRemark, tvOutOrderStatus;
     private TextView name1, name2, name3, name4, name5, name6;
     private TextView tvTitle;
     private MyListView lvMaterialInfo;
@@ -136,7 +136,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         });
         tvName11.setText("出库单号");
         tvName12.setText("出库批次号");
-        tvName21.setText("加工单编号");
+        tvName21.setText("领料单编号");
         tvName22.setText("备注");
         tvName31.setText("出库单状态");
 
@@ -159,7 +159,7 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
 
         tvOutOrder = (TextView) findViewById(R.id.tv11);
         tvOutBatchNo = (TextView) findViewById(R.id.tv12);
-        tvPlanNo = (TextView) findViewById(R.id.tv21);
+        tvReceive = (TextView) findViewById(R.id.tv21);
         tvRemark = (TextView) findViewById(R.id.tv22);
         tvOutOrderStatus = (TextView) findViewById(R.id.tv31);
 
@@ -311,10 +311,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                         } else
                             tvOutBatchNo.setText("");
 
-                        if (materialOutOrder.getProduceReceive() != null)
-                            tvPlanNo.setText(materialOutOrder.getProduceReceive().getCode());
+                        if (materialOutOrder.getReceive() != null)
+                            tvReceive.setText(materialOutOrder.getReceive().getCode());
                         else
-                            tvPlanNo.setText("");
+                            tvReceive.setText("");
 
                         tvRemark.setText(materialOutOrder.getRemark());
                         tvOutOrderStatus.setText(materialOutOrder.getOutOrderStatusVo().getValue());

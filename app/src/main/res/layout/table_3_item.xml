@@ -1,15 +1,16 @@
+<!--显示3列的列表-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <TableLayout
-        android:id="@+id/stock_list_item_table_layout"
-        android:layout_width="fill_parent"
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1,3,5">
+        android:stretchColumns="1,3,5"
+        >
         <TableRow
-            android:id="@+id/stock_list_row"
+            android:id="@+id/table_row"
             android:minHeight="?android:attr/listPreferredItemHeight"
             >
             <View
@@ -20,28 +21,26 @@
                 android:layout_width="60dip"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
-            <TextView android:id="@+id/column2"
+            <TextView
+                android:id="@+id/column2"
                 android:layout_width="60dip"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"
                 />
-            <EditText
-                android:id="@+id/column3"
+            <TextView android:id="@+id/column3"
                 android:layout_width="60dip"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textColor="@color/color_red"
-                android:inputType="number"
-                android:background="@null"
-                android:hint="请输入"
-                android:textColorHint="@android:color/darker_gray"
+                style="@style/textview_style"
                 />
             <View
                 style="@style/list_item_cell_seperator_layout"

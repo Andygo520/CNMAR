@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import component.com.model.ComStation;
 import component.com.model.ComTeam;
 import component.com.model.ComTool;
 
@@ -21,10 +22,13 @@ public class ProcessHalf {
 	@JSONField(serialize = false)
 	private int seq;
 
-	@JSONField(serialize = false)
+	@JSONField(ordinal = 5)
 	private List<ComTool> tools;
 	@JSONField(serialize = false)
 	private List<ComTeam> teams;
+
+	@JSONField(ordinal = 7)
+	private ComStation station;
 
 	public ProcessHalf() {
 
@@ -91,6 +95,14 @@ public class ProcessHalf {
 
 	public void setTeams(List<ComTeam> teams) {
 		this.teams = teams;
+	}
+
+	public ComStation getStation() {
+		return station;
+	}
+
+	public void setStation(ComStation station) {
+		this.station = station;
 	}
 
 }

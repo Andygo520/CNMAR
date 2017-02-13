@@ -268,7 +268,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                                 etActualNum.setFocusableInTouchMode(true);
                             } else {
                                 etActualNum.setText(producePlan.getActualNum() + "");
-  //                        根据TestId字段判断成品是否入库
+                                //                        根据TestId字段判断成品是否入库
                                 if (producePlan.getTestId() == 0) {
                                     btn.setVisibility(View.VISIBLE);
                                     btn.setText("提交待入库");

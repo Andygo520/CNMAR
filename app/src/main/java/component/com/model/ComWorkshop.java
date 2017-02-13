@@ -2,15 +2,21 @@ package component.com.model;
 
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import component.system.model.SystemUser;
 
 /** 车间 */
 public class ComWorkshop {
 
+	@JSONField(ordinal = 1)
 	private int id;
+	@JSONField(ordinal = 2)
 	private String name;
+	@JSONField(serialize = false)
 	private Boolean isDel;
 
+	@JSONField(serialize = false)
 	private List<SystemUser> users;
 
 	public int getId() {

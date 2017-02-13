@@ -50,8 +50,7 @@ import zxing.activity.CaptureActivity;
 
 public class HalfProductOutOrderDetailActivity extends AppCompatActivity {
     private Context context = HalfProductOutOrderDetailActivity.this;
-    private TextView tvName11, tvName12, tvName21, tvName22;
-    private TextView tvOutOrder, tvOutBatchNo, tvRemark, tvOutOrderStatus;
+    private TextView tvOutOrder, tvOutBatchNo, tvRemark, tvOutOrderStatus,tvReceive;
     private TextView name1, name2, name3, name4, name5, name6;
     private TextView tvTitle;
     private MyListView listView;
@@ -98,10 +97,6 @@ public class HalfProductOutOrderDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
-        tvName11 = (TextView) findViewById(R.id.name11);
-        tvName12 = (TextView) findViewById(R.id.name12);
-        tvName21 = (TextView) findViewById(R.id.name21);
-        tvName22 = (TextView) findViewById(R.id.name22);
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
         ivScann = (ImageView) findViewById(R.id.scann);
         tvTitle = (TextView) findViewById(R.id.title);
@@ -112,10 +107,6 @@ public class HalfProductOutOrderDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
-        tvName11.setText("出库单号");
-        tvName12.setText("出库批次号");
-        tvName21.setText("备注");
-        tvName22.setText("出库单状态");
 
         //      在仓位信息默认显示6列
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);
@@ -144,8 +135,10 @@ public class HalfProductOutOrderDetailActivity extends AppCompatActivity {
 
         tvOutOrder = (TextView) findViewById(R.id.tv11);
         tvOutBatchNo = (TextView) findViewById(R.id.tv12);
-        tvRemark = (TextView) findViewById(R.id.tv21);
-        tvOutOrderStatus = (TextView) findViewById(R.id.tv22);
+        tvReceive = (TextView) findViewById(R.id.tv21);
+        tvRemark = (TextView) findViewById(R.id.tv22);
+        tvOutOrderStatus = (TextView) findViewById(R.id.tv31);
+
 
         listView = (MyListView) findViewById(R.id.lvTable);
 //        listView.addFooterView(new ViewStub(this));
@@ -303,6 +296,7 @@ public class HalfProductOutOrderDetailActivity extends AppCompatActivity {
                         } else
                             tvOutBatchNo.setText("");
 
+                        tvReceive.setText(halfOutOrder.getReceive()==null?"":halfOutOrder.getReceive().getCode());
                         tvRemark.setText(halfOutOrder.getRemark());
                         tvOutOrderStatus.setText(halfOutOrder.getOutOrderStatusVo().getValue());
 

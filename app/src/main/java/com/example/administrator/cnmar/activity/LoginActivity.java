@@ -142,6 +142,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                  得到用户id,原料检验的时候需要提交该id,并且在我的资料Fragment也会用到
                     int id = userInfor.getId();
                     SPHelper.putInt(LoginActivity.this, "userId", id);
+                    SPHelper.putString(LoginActivity.this, "name",userInfor.getName() );//将登录用户名存入sp
+
 
 
                     List<SystemMenu> menuList = userInfor.getMenus();

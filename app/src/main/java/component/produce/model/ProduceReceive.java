@@ -1,12 +1,16 @@
 package component.produce.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
+import component.com.model.ComTeam;
 import component.half.model.HalfOutOrder;
 import component.material.model.MaterialOutOrder;
+import component.process.model.ProcessHalf;
+import component.process.model.ProcessProduct;
+import component.produce.vo.ProduceStatusVo;
 import component.produce.vo.ReceiveStatusVo;
 import component.system.model.SystemUser;
 
@@ -37,14 +41,16 @@ public class ProduceReceive {
 	private int status; // 领料单状态 - 1未领料2已领料
 
 	@JSONField(ordinal = 12)
-	private ProducePlan plan;
+	private int produceStatus; // 生产状态 - 1未生产2已生产
 	@JSONField(ordinal = 13)
-	private ProduceBom bom;
+	private ProducePlan plan;
 	@JSONField(ordinal = 14)
-	private MaterialOutOrder materialOutOrder;
+	private ProduceBom bom;
 	@JSONField(ordinal = 15)
-	private HalfOutOrder halfOutOrder;
+	private MaterialOutOrder materialOutOrder;
 	@JSONField(ordinal = 16)
+	private HalfOutOrder halfOutOrder;
+	@JSONField(ordinal = 17)
 	private SystemUser receiveUser;
 	@JSONField(serialize = false)
 	private SystemUser backUser;
@@ -52,6 +58,13 @@ public class ProduceReceive {
 	private List<ProduceBackMaterial> backMaterials;
 	@JSONField(serialize = false)
 	private List<ProduceBackHalf> backHalfs;
+
+	@JSONField(ordinal = 18)
+	private ProcessProduct processProduct;
+	@JSONField(ordinal = 19)
+	private ProcessHalf processHalf;
+	@JSONField(ordinal = 20)
+	private ComTeam team;
 
 	public ProduceReceive() {
 
@@ -154,6 +167,14 @@ public class ProduceReceive {
 		this.status = status;
 	}
 
+	public int getProduceStatus() {
+		return produceStatus;
+	}
+
+	public void setProduceStatus(int produceStatus) {
+		this.produceStatus = produceStatus;
+	}
+
 	public ProducePlan getPlan() {
 		return plan;
 	}
@@ -218,9 +239,38 @@ public class ProduceReceive {
 		this.backHalfs = backHalfs;
 	}
 
+	public ProcessProduct getProcessProduct() {
+		return processProduct;
+	}
+
+	public void setProcessProduct(ProcessProduct processProduct) {
+		this.processProduct = processProduct;
+	}
+
+	public ProcessHalf getProcessHalf() {
+		return processHalf;
+	}
+
+	public void setProcessHalf(ProcessHalf processHalf) {
+		this.processHalf = processHalf;
+	}
+
+	public ComTeam getTeam() {
+		return team;
+	}
+
+	public void setTeam(ComTeam team) {
+		this.team = team;
+	}
+
 	@JSONField(serialize = false)
 	public ReceiveStatusVo getReceiveStatusVo() {
 		return ReceiveStatusVo.getInstance(status);
+	}
+
+	@JSONField(serialize = false)
+	public ProduceStatusVo getProduceStatusVo() {
+		return ProduceStatusVo.getInstance(produceStatus);
 	}
 
 }

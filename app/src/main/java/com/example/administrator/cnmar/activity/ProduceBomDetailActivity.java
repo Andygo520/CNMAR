@@ -39,6 +39,7 @@ import java.util.List;
 import component.basic.vo.PackTypeVo;
 import component.process.model.ProcessHalf;
 import component.produce.model.ProduceBom;
+import component.produce.vo.ReceiveStatusVo;
 
 public class ProduceBomDetailActivity extends AppCompatActivity {
 
@@ -149,7 +150,7 @@ public class ProduceBomDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         UniversalHelper.showProgressDialog(context);
-                                        String url = UrlHelper.URL_HALF_PRODUCT_ACTUAL_NUM_COMMIT.replace("{ID}", String.valueOf(id)).replace("{actualNum}", actualNum).replace("actualId",receiveId+"");
+                                        String url = UrlHelper.URL_HALF_PRODUCT_ACTUAL_NUM_COMMIT.replace("{ID}", String.valueOf(id)).replace("{actualNum}", actualNum).replace("{actualId}",receiveId+"");
                                         url = UniversalHelper.getTokenUrl(url);
                                         sendRequest(url);
                                     }
@@ -218,6 +219,7 @@ public class ProduceBomDetailActivity extends AppCompatActivity {
                             Toast.makeText(context, response.getMsg(), Toast.LENGTH_LONG).show();
                         } else {
                             Intent intent = new Intent(context, PlanManageActivity.class);
+                            intent.putExtra("flag",1);//跳转到计划管理后根据“flag”标志默认显示子加工单
                             startActivity(intent);
                         }
                     }
@@ -255,21 +257,27 @@ public class ProduceBomDetailActivity extends AppCompatActivity {
                         lvMaterial.setAdapter(new MaterialAdapter(context,materialSubs));
                         lvHalf.setAdapter(new HalfAdapter(context,halfSubs));
 
-//                      没有领料单的时候显示领料按钮
-                        if (produceBom.getReceive() == null) {
+//                      加工单、子加工单同时没有领料的时候显示领料按钮
+                        if (produceBom.getReceive() == null && produceBom.getPlan().getReceive()==null) {
                             btn.setVisibility(View.VISIBLE);
                             etActualNum.setText("");
                             etSuccessNum.setText("");
                         } else {
-//                        根据ActualId字段判断是否检验
-                            if (produceBom.getActualId() == 0) {
-                                btn.setVisibility(View.VISIBLE);
-                                btn.setText("提交待检验");
-                                etSuccessNum.setText("");
-                                etActualNum.setHint("请输入");
-                                etActualNum.setFocusable(true);
-                                etActualNum.setFocusableInTouchMode(true);
-                            } else {
+//                        ActualId==0表示还没有输入实际生产数，领料单为已领料状态才显示“检验”按钮
+                            if (produceBom.getActualId() == 0 ) {
+                                if (produceBom.getReceive().getStatus()== ReceiveStatusVo.yes.getKey()){
+                                    btn.setVisibility(View.VISIBLE);
+                                    btn.setText("提交待检验");
+                                    etSuccessNum.setText("");
+                                    etActualNum.setHint("请输入");
+                                    etActualNum.setFocusable(true);
+                                    etActualNum.setFocusableInTouchMode(true);
+                                }else{
+                                    etSuccessNum.setText("");
+                                    etActualNum.setText("");
+                                }
+
+                            } else if (produceBom.getActualId() != 0 ){
                                 etActualNum.setText(produceBom.getActualNum() + "");
                                 //                        根据TestId字段判断是否入库
                                 if (produceBom.getTestId() == 0) {
@@ -304,7 +312,7 @@ public class ProduceBomDetailActivity extends AppCompatActivity {
                         else
                             tvCheckMan.setText("");
 
-                        tvProduceNum.setText(produceBom.getPlan().getProduceNum() + produceBom.getHalf().getUnit().getName());
+                        tvProduceNum.setText(produceBom.getReceiveNum() + produceBom.getHalf().getUnit().getName());
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //                      开始日期、结束日期的非空判断

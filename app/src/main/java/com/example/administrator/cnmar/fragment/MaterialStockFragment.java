@@ -236,6 +236,7 @@ public class MaterialStockFragment extends Fragment {
                             data = list;
                             myAdapter = new StockAdapter(data, getActivity());
                             lvStock.setAdapter(myAdapter);
+
                         } else {
                             data.addAll(list);
 //                            myAdapter.notifyDataSetChanged();

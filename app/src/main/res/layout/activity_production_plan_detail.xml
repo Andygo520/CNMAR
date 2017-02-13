@@ -167,7 +167,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="单位"
+                                android:text="成品单位"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
@@ -270,12 +270,10 @@
                             <EditText
                                 android:id="@+id/tv42"
                                 android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@null"
+                                android:layout_height="match_parent"
                                 android:gravity="center"
+                                android:background="@null"
                                 android:inputType="number"
-                                android:padding="2dip"
                                 android:textColor="@color/color_red"
                                 android:textColorHint="@color/color_red" />
 
@@ -322,12 +320,10 @@
                             <EditText
                                 android:id="@+id/tv52"
                                 android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@null"
+                                android:layout_height="match_parent"
                                 android:gravity="center"
+                                android:background="@null"
                                 android:inputType="number"
-                                android:padding="2dip"
                                 android:textColor="@color/color_red"
                                 android:textColorHint="@color/color_red" />
 

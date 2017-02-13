@@ -252,7 +252,8 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                         }
 
 //                        获取用户“品控管理”菜单与其二级子菜单的对应关系，后面按钮的显示与此有关
-                        String subList=SPHelper.getString(context,getResources().getString(R.string.HOME_PKGL));
+                        String subList=SPHelper.getString(context,getResources().getString(R.string.HOME_PKGL),"");
+
 //                        显示“提交检验”按钮两条件：
 //                        1.单据状态为待检验 2.用户是超级用户或者用户拥有“原料检验”的子菜单才能
                         if (materialInOrder.getStatus() == InOrderStatusVo.pre_test.getKey()

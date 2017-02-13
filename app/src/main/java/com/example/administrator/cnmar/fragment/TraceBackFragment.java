@@ -24,6 +24,7 @@ import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.DeliveryPlanDetailActivity;
 import com.example.administrator.cnmar.activity.MaterialInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
+import com.example.administrator.cnmar.activity.ProduceBomDetailActivity;
 import com.example.administrator.cnmar.activity.ProductInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProductionPlanDetailActivity;
@@ -44,8 +45,8 @@ import zxing.activity.CaptureActivity;
 public class TraceBackFragment extends Fragment {
     private Button btnScann;
     private LinearLayout  llMaterial, llProduct;
-    private TextView tvMaterialCode, tvMaterialName, tvSpaceCode, tvSpaceName, tvMaterialInOrder,
-            tvProductCode, tvProductName, tvSpaceCode1, tvSpaceName1, tvProductInOrder, tvPlan;
+    private TextView tvMaterialCode, tvMaterialName, tvSpaceCode, tvMaterialInOrder,
+            tvProductCode, tvProductName, tvSpaceCode1, tvProductInOrder, tvPlan;
     private MyListView lvProduct, lvMaterial;
     private TextView tvTitle;
 
@@ -66,12 +67,10 @@ public class TraceBackFragment extends Fragment {
         tvMaterialCode = (TextView) view.findViewById(R.id.tvMaterialCode);
         tvMaterialName = (TextView) view.findViewById(R.id.tvMaterialName);
         tvSpaceCode = (TextView) view.findViewById(R.id.tvSpaceCode);
-        tvSpaceName = (TextView) view.findViewById(R.id.tvSpaceName);
         tvMaterialInOrder = (TextView) view.findViewById(R.id.tvMaterialInOrder);
         tvProductCode = (TextView) view.findViewById(R.id.tvProductCode);
         tvProductName = (TextView) view.findViewById(R.id.tvProductName);
         tvSpaceCode1 = (TextView) view.findViewById(R.id.tvSpaceCode1);
-        tvSpaceName1 = (TextView) view.findViewById(R.id.tvSpaceName1);
         tvProductInOrder = (TextView) view.findViewById(R.id.tvProductInOrder);
         tvPlan = (TextView) view.findViewById(R.id.tvPlan);
 
@@ -115,7 +114,6 @@ public class TraceBackFragment extends Fragment {
                             tvMaterialCode.setText(inOrderSpace.getMaterial().getCode());
                             tvMaterialName.setText(inOrderSpace.getMaterial().getName());
                             tvSpaceCode.setText(inOrderSpace.getSpace().getCode());
-                            tvSpaceName.setText(inOrderSpace.getSpace().getName());
                             tvMaterialInOrder.setText(inOrderSpace.getInOrder().getCode());
                             tvMaterialInOrder.setTextColor(getResources().getColor(R.color.colorBase));
 
@@ -138,7 +136,6 @@ public class TraceBackFragment extends Fragment {
                             tvProductCode.setText(inOrderSpace.getProduct().getCode());
                             tvProductName.setText(inOrderSpace.getProduct().getName());
                             tvSpaceCode1.setText(inOrderSpace.getSpace().getCode());
-                            tvSpaceName1.setText(inOrderSpace.getSpace().getName());
                             tvProductInOrder.setText(inOrderSpace.getInOrder().getCode());
                             tvProductInOrder.setTextColor(getResources().getColor(R.color.colorBase));
                             tvProductInOrder.setOnClickListener(new View.OnClickListener() {
@@ -241,21 +238,35 @@ public class TraceBackFragment extends Fragment {
                     startActivity(intent);
                 }
             });
-            holder.tvPlan.setText("加工单");
-            if (list.get(position).getProduceReceive()!=null){
-                holder.plan.setText(list.get(position).getProduceReceive().getCode());
+
+            if (list.get(position).getReceive().getPlanId()>0){
+                holder.tvPlan.setText("加工单");
+
+                holder.plan.setText(list.get(position).getReceive().getPlan().getCode());
                 holder.plan.setTextColor(getResources().getColor(R.color.colorBase));
                 holder.plan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
-                        intent.putExtra("ID", list.get(position).getProduceReceive().getId());
+                        intent.putExtra("ID", list.get(position).getReceive().getPlanId());
                         intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                         startActivity(intent);
                     }
                 });
-            }else
-                holder.plan.setText("");
+            }else if (list.get(position).getReceive().getBomId()>0){
+                holder.tvPlan.setText("子加工单");
+                holder.plan.setText(list.get(position).getReceive().getBom().getCode());
+                holder.plan.setTextColor(getResources().getColor(R.color.colorBase));
+                holder.plan.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(), ProduceBomDetailActivity.class);
+                        intent.putExtra("ID", list.get(position).getReceive().getBomId());
+                        intent.putExtra("FLAG",999);// 作为跳转到子加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
+                        startActivity(intent);
+                    }
+                });
+            }
 
             return convertView;
         }

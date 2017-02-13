@@ -157,7 +157,18 @@
         <activity
             android:name=".activity.ProductQualityControlDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ProduceBomDetailActivity"></activity>
+        <activity
+            android:name=".activity.ProduceBomDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.HalfQualityControlDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ScannStationActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.ScannStationDetailActivity"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

@@ -105,6 +105,11 @@ public class UrlHelper {
 
     public static final String URL_QC_DETAIL = URL_BASE + "material_in_order_test/detail/{id}";
 
+    public static final String URL_HALF_QC_LIST = URL_BASE + "produce_half_test/list?query.code=&page.num={page}";
+    public static final String URL_SEARCH_HALF_QC_LIST = URL_BASE + "produce_half_test/list?query.code={query.code}&page.num=1";
+    public static final String URL_HALF_QC_DETAIL = URL_BASE + "produce_half_test/detail/{ID}";
+
+
     public static final String URL_PRODUCT_QC_LIST = URL_BASE + "produce_product_test/list?query.code=&page.num={page}";
     public static final String URL_SEARCH_PRODUCT_QC_LIST = URL_BASE + "produce_product_test/list?query.code={query.code}&page.num=1";
     public static final String URL_PRODUCT_QC_DETAIL = URL_BASE + "produce_product_test/detail/{ID}";
@@ -153,13 +158,13 @@ public class UrlHelper {
     public static final String URL_SEARCH_SYSTEM_USER = URL_BASE + "system_user/list?query.name={query.code}&page.num=1";
     public static final String URL_SYSTEM_USER_DETAIL = URL_BASE + "system_user/detail/{ID}";
 
-    //Bom地址
-    public static final String URL_BOM = "http://192.168.1.112:8091/produce_plan/boms/{ID}";
-
     // 报表地址
     public static final String URL_MATERIAL_REPORT = "http://benxiao.cnmar.com:8091/material_report/show";
-    public static final String URL_HALF_REPORT= "http://benxiao.cnmar.com:8091/half_report/show";
+    public static final String URL_HALF_REPORT = "http://benxiao.cnmar.com:8091/half_report/show";
     public static final String URL_PRODUCT_REPORT = "http://benxiao.cnmar.com:8091/product_report/show";
 
+    //    生产管理
+    public static final String URL_SCANN_STATION = URL_BASE + "com_station/qrcode/";//机床扫描
+    public static final String URL_SCANN_STATION_DETAIL = URL_BASE + "com_station/detail/{ID}?stationId={stationId}&userId={userId}";//机床扫描
 
 }

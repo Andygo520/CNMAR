@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.fragment.HalfQualityControlFragment;
 import com.example.administrator.cnmar.fragment.MaterialQualityControlFragment;
 import com.example.administrator.cnmar.fragment.ProductQualityControlFragment;
 import com.example.administrator.cnmar.fragment.TraceBackFragment;
@@ -23,8 +24,9 @@ import com.example.administrator.cnmar.helper.SPHelper;
 public class QualityControlActivity extends AppCompatActivity {
     private TextView tvTitle;
     private RadioGroup radioGroup;
-    private RadioButton rbQC, rbProductQC,rbTraceBack;
+    private RadioButton rbQC,rbHalfQC,rbProductQC,rbTraceBack;
     private MaterialQualityControlFragment qcFragment;
+    private HalfQualityControlFragment halfQCFragment;
     private ProductQualityControlFragment productQCFragment;
     private TraceBackFragment traceFragment;
     private LinearLayout llLeftArrow;
@@ -44,10 +46,12 @@ public class QualityControlActivity extends AppCompatActivity {
 
         radioGroup = (RadioGroup) findViewById(R.id.rg);
         rbQC = (RadioButton) findViewById(R.id.rb1);
-        rbProductQC = (RadioButton) findViewById(R.id.rb2);
-        rbTraceBack = (RadioButton) findViewById(R.id.rb3);
+        rbHalfQC = (RadioButton) findViewById(R.id.rb2);
+        rbProductQC = (RadioButton) findViewById(R.id.rb3);
+        rbTraceBack = (RadioButton) findViewById(R.id.rb4);
 
         rbQC.setText(R.string.rbQC);
+        rbHalfQC.setText(R.string.rbHalfQC);
         rbProductQC.setText(R.string.rbProductQC);
         rbTraceBack.setText(R.string.rbTraceBack);
 
@@ -67,16 +71,23 @@ public class QualityControlActivity extends AppCompatActivity {
             rbQC.setVisibility(View.VISIBLE);
             setTabSelection(0);
         }
-        if (sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
-            rbProductQC.setVisibility(View.VISIBLE);
+        if (sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+",")) {
+            rbHalfQC.setVisibility(View.VISIBLE);
             if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+","))
             setTabSelection(1);
+        }
+        if (sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
+            rbProductQC.setVisibility(View.VISIBLE);
+            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+","))
+            setTabSelection(2);
         }
         if (sublist.contains(","+getResources().getString(R.string.material_back_url)+",")) {
             rbTraceBack.setVisibility(View.VISIBLE);
             if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")
+                    && !sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+",")
                     && !sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+","))
-                setTabSelection(2);
+                setTabSelection(3);
         }
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -91,6 +102,9 @@ public class QualityControlActivity extends AppCompatActivity {
                         break;
                     case R.id.rb3:
                         setTabSelection(2);
+                        break;
+                    case R.id.rb4:
+                        setTabSelection(3);
                         break;
                     default:
                         break;
@@ -139,6 +153,8 @@ public class QualityControlActivity extends AppCompatActivity {
             traceFragment = (TraceBackFragment) fragment;
         }else if (productQCFragment == null && fragment instanceof ProductQualityControlFragment) {
             productQCFragment = (ProductQualityControlFragment) fragment;
+        }else if (halfQCFragment == null && fragment instanceof HalfQualityControlFragment) {
+            halfQCFragment = (HalfQualityControlFragment) fragment;
         }
     }
 
@@ -157,18 +173,22 @@ public class QualityControlActivity extends AppCompatActivity {
             case 0:{
                 rbQC.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbProductQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbTraceBack.setBackgroundColor(getResources().getColor(R.color.color_white));
                 //                动态设置单选按钮文本上下左右的图片
                 Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc_selected);
                 Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc);
                 Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.half_qc);
                 drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
                 rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
                 rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbHalfQC.setCompoundDrawables(null,drawable4,null,null);//只放上边
                 if (qcFragment == null) {
                     qcFragment = new MaterialQualityControlFragment();
                     transaction.add(R.id.content, qcFragment);
@@ -178,20 +198,51 @@ public class QualityControlActivity extends AppCompatActivity {
                 break;
             }
             case 1:{
+                rbHalfQC.setChecked(true);
+                rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbHalfQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
+                rbProductQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbTraceBack.setBackgroundColor(getResources().getColor(R.color.color_white));
+                //                动态设置单选按钮文本上下左右的图片
+                Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.half_qc_selected);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.product_qc);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.trace_back);
+                drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
+                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                if (halfQCFragment == null) {
+                    halfQCFragment = new HalfQualityControlFragment();
+                    transaction.add(R.id.content, halfQCFragment);
+                } else {
+                    transaction.show(halfQCFragment);
+                }
+                break;
+            }
+            case 2:{
                 rbProductQC.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbProductQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbTraceBack.setBackgroundColor(getResources().getColor(R.color.color_white));
                 //                动态设置单选按钮文本上下左右的图片
                 Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc);
-                Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc_selected);
-                Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.half_qc);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.product_qc_selected);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.trace_back);
                 drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
                 if (productQCFragment == null) {
                     productQCFragment = new ProductQualityControlFragment();
                     transaction.add(R.id.content, productQCFragment);
@@ -200,21 +251,25 @@ public class QualityControlActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 2:{
+            case 3:{
                 rbTraceBack.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
+                rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbProductQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbTraceBack.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 //                动态设置单选按钮文本上下左右的图片
                 Drawable drawable1 = getResources().getDrawable(R.drawable.material_qc);
-                Drawable drawable2 = getResources().getDrawable(R.drawable.product_qc);
-                Drawable drawable3 = getResources().getDrawable(R.drawable.trace_back_selected);
+                Drawable drawable2 = getResources().getDrawable(R.drawable.half_qc);
+                Drawable drawable3 = getResources().getDrawable(R.drawable.product_qc);
+                Drawable drawable4 = getResources().getDrawable(R.drawable.trace_back_selected);
                 drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+                drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
+                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
                 if (traceFragment == null) {
                     traceFragment = new TraceBackFragment();
                     transaction.add(R.id.content, traceFragment);
@@ -242,6 +297,9 @@ public class QualityControlActivity extends AppCompatActivity {
         }
         if (traceFragment != null) {
             transaction.hide(traceFragment);
+        }
+        if (halfQCFragment != null) {
+            transaction.hide(halfQCFragment);
         }
     }
 }

@@ -34,7 +34,7 @@ import component.material.model.MaterialStockCheck;
 
 public class MaterialCheckStockDetailActivity extends AppCompatActivity {
     private TextView tvMaterialCode, tvMaterialName, tvSize, tvUnit, tvStockType, tvProviderCode, tvMixType, tvCheckTime, tvPreCheckNum, tvAfterCheckNum;
-    private TextView name1, name2, name3, name4, name5;
+    private TextView name1, name2, name3, name4;
     private MyListView lvSpaceInfo;
     private static String strUrl;
     private LinearLayout llLeftArrow;
@@ -53,10 +53,10 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         type = getIntent().getIntExtra("type", 999);
 //        扫描类型
         if (type == 0) {
-//           表格布局显示之前隐藏的第五列，并将第五列设置为可伸展
-            tableLayout.setColumnCollapsed(9, false);
-            tableLayout.setColumnCollapsed(10, false);
-            tableLayout.setColumnStretchable(9, true);
+//           表格布局显示之前隐藏的第4列，并将第4列设置为可伸展
+            tableLayout.setColumnCollapsed(7, false);
+            tableLayout.setColumnCollapsed(8, false);
+            tableLayout.setColumnStretchable(7, true);
         }
 
         strUrl = UrlHelper.URL_CHECK_STOCK.replace("{ID}", String.valueOf(id));
@@ -81,14 +81,11 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         name2 = (TextView) findViewById(R.id.column2);
         name3 = (TextView) findViewById(R.id.column3);
         name4 = (TextView) findViewById(R.id.column4);
-        name5 = (TextView) findViewById(R.id.column5);
 
         name1.setText("仓位编码");
-        name2.setText("仓位名称");
-        name3.setText("盘点前数量");
-        name4.setText("盘点后数量");
-        name5.setText("二维码序列号");
-
+        name2.setText("盘点前数量");
+        name3.setText("盘点后数量");
+        name4.setText("二维码序列号");
 
         tvMaterialCode = (TextView) findViewById(R.id.tv11);
         tvMaterialName = (TextView) findViewById(R.id.tv12);
@@ -131,12 +128,12 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 //                        得到列表的数据源
                         List<MaterialSpaceStockCheck> list = materialStockCheck.getSpaceChecks();
 
-//     输入数量的显示4列
+//     输入数量的显示3列
                         if (type == 1) {
                             SpaceInfoAdapter myAdapter = new SpaceInfoAdapter(MaterialCheckStockDetailActivity.this, list);
                             lvSpaceInfo.setAdapter(myAdapter);
                         }
-//     扫码的显示5列
+//     扫码的显示4列
                         else if (type == 0) {
 
                             SpaceInfoAdapter1 myAdapter = new SpaceInfoAdapter1(MaterialCheckStockDetailActivity.this, list);
@@ -179,7 +176,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    //    该适配器用来显示四列（输数量类型）
+    //    该适配器用来显示3列（输数量类型）
     public class SpaceInfoAdapter extends BaseAdapter {
         private Context context;
         private List<MaterialSpaceStockCheck> list = null;
@@ -209,19 +206,17 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_3_item, parent, false);
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column3);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvPreNum.setText(String.valueOf(list.get(position).getBeforeStock()));
             holder.tvAfterNum.setText(String.valueOf(list.get(position).getAfterStock()));
 
@@ -230,13 +225,12 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvPreNum;
             TextView tvAfterNum;
         }
     }
 
-    //    该适配器用来显示五列数据（在显示有包装的扫码产品盘点详情的时候使用该Adapter）
+    //    该适配器用来显示4列数据（在显示有包装的扫码产品盘点详情的时候使用该Adapter）
     public class SpaceInfoAdapter1 extends BaseAdapter {
         private Context context;
         private List<MaterialSpaceStockCheck> list = null;
@@ -266,20 +260,18 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_5, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
                 holder = new ViewHolder();
                 holder.tvSpaceCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvSpaceName = (TextView) convertView.findViewById(R.id.column2);
-                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvPreNum = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvAfterNum = (TextView) convertView.findViewById(R.id.column3);
+                holder.tvInOrderSpaceId = (TextView) convertView.findViewById(R.id.column4);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvSpaceCode.setText(list.get(position).getSpace().getCode());
-            holder.tvSpaceName.setText(list.get(position).getSpace().getName());
             holder.tvPreNum.setText(String.valueOf(list.get(position).getBeforeStock()));
             holder.tvAfterNum.setText(String.valueOf(list.get(position).getAfterStock()));
             holder.tvInOrderSpaceId.setText(String.valueOf(list.get(position).getInOrderSpaceId()));
@@ -289,7 +281,6 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 
         public class ViewHolder {
             TextView tvSpaceCode;
-            TextView tvSpaceName;
             TextView tvPreNum;
             TextView tvAfterNum;
             TextView tvInOrderSpaceId;  //二维码序列号

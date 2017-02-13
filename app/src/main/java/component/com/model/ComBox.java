@@ -7,7 +7,6 @@ public class ComBox {
 
 	private int id;
 	private String code;
-	private String name;
 	private int type;
 	private String qrcode;
 	private Boolean isDel;
@@ -26,14 +25,6 @@ public class ComBox {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public int getType() {

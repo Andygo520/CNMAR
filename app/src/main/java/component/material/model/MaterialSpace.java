@@ -9,8 +9,6 @@ public class MaterialSpace extends BaseModel implements Cloneable {
 
 	@JSONField(ordinal = 1)
 	private String code; // 仓位编码
-	@JSONField(ordinal = 2)
-	private String name; // 仓位名称
 	@JSONField(ordinal = 3)
 	private int materialId; // 原料id
 	@JSONField(ordinal = 4)
@@ -25,9 +23,8 @@ public class MaterialSpace extends BaseModel implements Cloneable {
 
 	}
 
-	public MaterialSpace(String code, String name) {
+	public MaterialSpace(String code) {
 		this.code = code;
-		this.name = name;
 	}
 
 	public MaterialSpace(int id, int materialId, int capacity) {
@@ -42,14 +39,6 @@ public class MaterialSpace extends BaseModel implements Cloneable {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public int getMaterialId() {

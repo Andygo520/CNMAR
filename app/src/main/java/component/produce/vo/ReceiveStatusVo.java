@@ -1,5 +1,7 @@
 package component.produce.vo;
 
+import component.produce.vo.ReceiveStatusVo;
+
 /** 领料单状态 */
 public enum ReceiveStatusVo {
 

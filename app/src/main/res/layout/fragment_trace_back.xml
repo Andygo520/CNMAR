@@ -128,10 +128,7 @@
                                 android:layout_width="65dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:padding="2dip"
-                                android:text="仓位名称"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold" />
+                               />
 
                             <View style="@style/list_item_cell_seperator_layout" />
 
@@ -298,10 +295,7 @@
                                 android:layout_width="65dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:padding="2dip"
-                                android:text="仓位名称"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold" />
+                                 />
 
                             <View style="@style/list_item_cell_seperator_layout" />
 

@@ -1,9 +1,9 @@
 package component.product.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.Date;
 import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.produce.model.ProducePlan;
@@ -32,9 +32,8 @@ public class ProductInOrder extends BaseModel {
 
 	}
 
-	public ProductInOrder(String code, String remark, int status, int cid, Date ctime) {
+	public ProductInOrder(String code, int status, int cid, Date ctime) {
 		this.code = code;
-		this.remark = remark;
 		this.status = status;
 		this.cid = cid;
 		this.ctime = ctime;

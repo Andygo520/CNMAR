@@ -9,8 +9,8 @@ public enum PackTypeVo {
 	box(2, "装箱"),
 	/** 捆包 */
 	wrap(3, "捆包"),
-	/** 捆扎 */
-	bind(4, "捆扎"),
+	/** 扎捆 */
+	bind(4, "扎捆"),
 	/** 料框 */
 	frame(5, "料框");
 

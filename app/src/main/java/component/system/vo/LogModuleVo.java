@@ -42,7 +42,7 @@ public enum LogModuleVo {
 	/** 加工单 */
 	produce_plan("produce_plan", "加工单"),
 	/** 领料单退料 */
-	material_out_order_return("material_out_order_return", "领料单退料"),
+	produce_back("produce_back", "领料单退料"),
 	/** 交付计划 */
 	custom_deliver_plan("custom_deliver_plan", "交付计划"),
 

@@ -49,7 +49,7 @@ import component.produce.model.ProduceBom;
 public class ProduceBomFragment extends Fragment {
 
     //    表头6个字段
-    private TextView tv1, tv2, tv3, tv4,tv5,tv6;
+    private TextView tv1, tv2, tv3, tv4, tv5, tv6;
     int page = 1;    //    page代表显示的是第几页内容，从1开始
     private int total; // 总页数
     private int num = 1; // 第几页
@@ -97,14 +97,13 @@ public class ProduceBomFragment extends Fragment {
         tv6.setText("半成品入库单号");
 
 
-
         listView = (MyListView) view.findViewById(R.id.listView);
 //        listView.addFooterView(new ViewStub(getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
-        UniversalHelper.initRefresh(getActivity(),refreshLayout);
-        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+        UniversalHelper.initRefresh(getActivity(), refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -115,7 +114,7 @@ public class ProduceBomFragment extends Fragment {
                         getPlanListFromNet(strUrl);
                         refreshLayout.finishRefreshing();
                     }
-                },400);
+                }, 400);
             }
 
             @Override
@@ -140,7 +139,7 @@ public class ProduceBomFragment extends Fragment {
                         // 结束上拉刷新...
                         refreshLayout.finishLoadmore();
                     }
-                },400);
+                }, 400);
 
             }
         });
@@ -230,8 +229,8 @@ public class ProduceBomFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 //        Fragment重新显示到最前端的时候，刷新列表
-        if (!hidden){
-            page=1;
+        if (!hidden) {
+            page = 1;
             getPlanListFromNet(strUrl);
         }
     }
@@ -253,7 +252,7 @@ public class ProduceBomFragment extends Fragment {
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
                         //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
-                        if (count <= 10 || num==total)
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);
@@ -341,7 +340,12 @@ public class ProduceBomFragment extends Fragment {
             holder.tvPlanNo.setText(list.get(position).getCode());
             holder.tvHalfProductCode.setText(list.get(position).getHalf().getCode());
             holder.tvProduceNum.setText(list.get(position).getReceiveNum() + list.get(position).getHalf().getUnit().getName());
-            holder.tvValidNum.setText(list.get(position).getSuccessNum()+"");
+//          只有已检验的时候才显示合格品数
+            if (list.get(position).getTestId() > 0)
+                holder.tvValidNum.setText(list.get(position).getSuccessNum() + "");
+            else
+                holder.tvValidNum.setText("");
+
             if (list.get(position).getReceive() != null)
                 holder.tvReceiveOrder.setText(list.get(position).getReceive().getCode());
             else

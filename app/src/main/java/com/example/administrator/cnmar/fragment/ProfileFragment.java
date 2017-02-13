@@ -75,6 +75,17 @@ public class ProfileFragment extends Fragment {
 //               注销账号的时候，只保留账号内容
                 SPHelper.putString(getActivity(), "password", "");
                 SPHelper.putBoolean(getActivity(), "isChecked", true);
+//                注销账号的时候，清除用户数据
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_XTGL),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_QYGL),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_XGFGL),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_YLCK),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_BCPCK),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_CPCK),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_JHGL),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_PKGL),"");
+                SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_BBGL),"");
+
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
             }

@@ -1,9 +1,9 @@
 package component.product.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 import component.half.model.Half;
 import component.produce.model.ProduceBom;
