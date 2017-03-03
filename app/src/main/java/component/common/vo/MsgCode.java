@@ -20,5 +20,7 @@ public interface MsgCode {
 	public static final String space_error = "仓位不足";
 
 	public static final String empty_error = "该机台没有您的加工任务";
+	public static final String user_error = "非空料框只能被同一操作工使用";
+	public static final String different_error = "料框只能放入同一种工序在制品";
 
 }

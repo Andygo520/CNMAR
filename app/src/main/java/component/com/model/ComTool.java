@@ -10,9 +10,13 @@ import component.com.vo.ToolTypeVo;
 @SuppressWarnings("serial")
 public class ComTool implements Serializable {
 
+	@JSONField(ordinal = 1)
 	private int id;
-	private String name;
-	private int type;
+	@JSONField(ordinal = 2)
+	private String name; // 名称
+	@JSONField(ordinal = 3)
+	private int type; // 类型
+	@JSONField(serialize = false)
 	private Boolean isDel;
 
 	@JSONField(serialize = false)

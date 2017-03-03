@@ -142,8 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                  得到用户id,原料检验的时候需要提交该id,并且在我的资料Fragment也会用到
                     int id = userInfor.getId();
                     SPHelper.putInt(LoginActivity.this, "userId", id);
-                    SPHelper.putString(LoginActivity.this, "name",userInfor.getName() );//将登录用户名存入sp
-
+                    SPHelper.putString(LoginActivity.this, "name", userInfor.getName());//将登录用户名存入sp
 
 
                     List<SystemMenu> menuList = userInfor.getMenus();
@@ -196,7 +195,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                     roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
-//                        将用户拥有的app模块菜单名存入sp中
+
+//                   让所有用户可以显示生产管理模块
+                    if (!roleMenu.contains(getResources().getString(R.string.HOME_SCGL)))
+                        roleMenu = roleMenu + "," + getResources().getString(R.string.HOME_SCGL);
+//                   将用户拥有的app模块菜单名存入sp中
                     SPHelper.putString(LoginActivity.this, "Menu", roleMenu);
 
 //                   登陆成功后，设置按钮不能再点击

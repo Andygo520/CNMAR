@@ -128,7 +128,6 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
                             SpaceAdapter adapter=new SpaceAdapter(MaterialStockDetailActivity.this,list);
                             lvSpace.setAdapter(adapter);
                         }
-
                         tvMaterialCode.setText(materialStock.getMaterial().getCode());
                         tvMaterialName.setText(materialStock.getMaterial().getName());
                         tvSize.setText(materialStock.getMaterial().getSpec());

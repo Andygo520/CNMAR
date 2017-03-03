@@ -30,7 +30,7 @@
         <activity
             android:name=".activity.MaterialStockActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.MaterialStockDetailActivity"
             android:screenOrientation="portrait" />
@@ -40,11 +40,11 @@
         <activity
             android:name=".activity.MaterialOutOrderDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.MaterialCheckStockManageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.MaterialCheckStockDetailActivity"
             android:screenOrientation="portrait" />
@@ -61,40 +61,40 @@
         <activity
             android:name=".activity.ProductStockActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.ProductStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ProductCheckStockManageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.ProductCheckStockDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PlanManageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.ProductionPlanDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.DeliveryPlanDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ProductInOrderDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.ProductOutOrderDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.QualityControlActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.MaterialQualityControlDetailActivity"
             android:screenOrientation="portrait" />
@@ -104,14 +104,14 @@
         <activity
             android:name=".activity.SupplyManageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.SupplyManageDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.CompanyManageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.QRCodeActivity"
             android:screenOrientation="portrait"
@@ -125,7 +125,7 @@
         <activity
             android:name=".activity.HalfProductStockActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.HalfProductStockDetailActivity"
             android:screenOrientation="portrait" />
@@ -153,7 +153,7 @@
         <activity
             android:name=".activity.MaterialInOrderDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".activity.ProductQualityControlDetailActivity"
             android:screenOrientation="portrait" />
@@ -164,11 +164,19 @@
             android:name=".activity.HalfQualityControlDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ScannStationActivity"
+            android:name=".activity.ScannStationDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.ScannStationDetailActivity"
+        <activity
+            android:name=".activity.InBoxActivity"
             android:screenOrientation="portrait"
-            ></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activity.ProduceManageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FailInBoxActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
     </application>
 
 </manifest>

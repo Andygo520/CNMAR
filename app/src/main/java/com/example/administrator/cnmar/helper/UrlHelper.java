@@ -166,5 +166,11 @@ public class UrlHelper {
     //    生产管理
     public static final String URL_SCANN_STATION = URL_BASE + "com_station/qrcode/";//机床扫描
     public static final String URL_SCANN_STATION_DETAIL = URL_BASE + "com_station/detail/{ID}?stationId={stationId}&userId={userId}";//机床扫描
-
+    public static final String URL_SCANN_BOX = URL_BASE + "com_box/qrcode/";//料框扫描
+    public static final String URL_IN_BOX = URL_BASE + "com_box/in_commit?boxId={boxId}&receiveId={receiveId}&stationId={stationId}&num={num}&userId={userId}";//入料框
+    public static final String URL_FAIL_IN_BOX_COMMIT = URL_BASE + "com_box/fail_in_commit?boxId={boxId}&testBoxId={testBoxId}&receiveId={receiveId}&stationId={stationId}&failNum={failNum}&reason={reason}&testId={testId}";//不合格品入料框
+    public static final String URL_BIN = URL_BASE + "com_box/list?query.type={type}&query.code=&page.num={page}";//线边仓
+    public static final String URL_SEARCH_BIN = URL_BASE + "com_box/list?query.type={type}&query.code={code}&page.num=1";//查找线边仓
+    public static final String URL_CHECK_FLOW = URL_BASE + "produce_test/list?query.type={type}&query.code=&page.num={page}";//检验流水
+    public static final String URL_SEARCH_CHECK_FLOW = URL_BASE + "produce_test/list?query.type={type}&query.code={code}&page.num=1";//查找检验流水
 }

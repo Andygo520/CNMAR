@@ -142,5 +142,6 @@
     <string name="not_received">未领料</string>
     <string name="received">已领料</string>
     <string name="returned">有退料</string>
+    <string name="title_activity_produce_manage">ProduceManageActivity</string>
 
 </resources>

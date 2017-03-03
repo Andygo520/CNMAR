@@ -14,7 +14,7 @@ public class ComTeam implements Serializable {
 	@JSONField(ordinal = 1)
 	private int id;
 	@JSONField(ordinal = 2)
-	private String name;
+	private String name; // 名称
 	@JSONField(serialize = false)
 	private Boolean isDel;
 

@@ -15,10 +15,10 @@ import com.example.administrator.cnmar.activity.CompanyManageActivity;
 import com.example.administrator.cnmar.activity.HalfProductStockActivity;
 import com.example.administrator.cnmar.activity.MaterialStockActivity;
 import com.example.administrator.cnmar.activity.PlanManageActivity;
+import com.example.administrator.cnmar.activity.ProduceManageActivity;
 import com.example.administrator.cnmar.activity.ProductStockActivity;
 import com.example.administrator.cnmar.activity.QualityControlActivity;
 import com.example.administrator.cnmar.activity.ReportManageActivity;
-import com.example.administrator.cnmar.activity.ScannStationActivity;
 import com.example.administrator.cnmar.activity.SupplyManageActivity;
 import com.example.administrator.cnmar.activity.SystemManageActivity;
 import com.example.administrator.cnmar.entity.Item;
@@ -154,7 +154,7 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
                         startActivity(intent8);
                         break;
                     case R.mipmap.scgl:
-                        Intent intent9 = new Intent(getActivity(), ScannStationActivity.class);
+                        Intent intent9 = new Intent(getActivity(), ProduceManageActivity.class);
                         startActivity(intent9);
                         break;
                 }

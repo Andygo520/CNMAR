@@ -1,11 +1,16 @@
 package component.com.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /** 车间检验员关系 */
 public class ComWorkshopUser {
 
+	@JSONField(ordinal = 1)
 	private int id;
-	private int workshopId;
-	private int userId;
+	@JSONField(ordinal = 2)
+	private int workshopId; // 车间id
+	@JSONField(ordinal = 3)
+	private int userId; // 用户id
 
 	public ComWorkshopUser() {
 
