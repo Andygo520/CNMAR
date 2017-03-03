@@ -1,0 +1,327 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/top"></include>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/tvTableTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="vertical">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="3,7">
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name11"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv11"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name12"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv12"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name21"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv21"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name22"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv22"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name31"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv31"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name32"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv32"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTableTitle1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="vertical">
+
+                <View style="@style/list_item_seperator_layout" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="3,7">
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name41"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv41"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name42"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv42"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name51"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv51"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name52"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <EditText
+                                android:id="@+id/et52"
+                                android:layout_width="35dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:background="@null"
+                                android:inputType="number"
+                                android:hint="请输入"
+                                android:textColor="@color/color_red"
+                                android:textColorHint="@color/color_red" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+                    </TableLayout>
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_bg"
+                android:text="入料框"
+                android:textColor="@color/color_white"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
