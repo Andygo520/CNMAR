@@ -20,10 +20,12 @@ public class ComBox {
 	@JSONField(ordinal = 4)
 	private int receiveId; // 领料单id
 	@JSONField(ordinal = 5)
-	private int stationId; // 机台工位id
+	private int processId; // 工序id
 	@JSONField(ordinal = 6)
-	private int num; // 现存数量
+	private int stationId; // 机台工位id
 	@JSONField(ordinal = 7)
+	private int num; // 现存数量
+	@JSONField(ordinal = 8)
 	private int userId; // 操作工id
 	@JSONField(serialize = false)
 	private Boolean isDel;
@@ -75,6 +77,14 @@ public class ComBox {
 
 	public void setReceiveId(int receiveId) {
 		this.receiveId = receiveId;
+	}
+
+	public int getProcessId() {
+		return processId;
+	}
+
+	public void setProcessId(int processId) {
+		this.processId = processId;
 	}
 
 	public int getStationId() {

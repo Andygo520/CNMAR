@@ -4,6 +4,7 @@ package com.example.administrator.cnmar.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.administrator.cnmar.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +59,15 @@ public class MaterialCheckStockFragment extends Fragment {
         return view;
     }
 
-//    i等于1表示选择了库存管理，i等于2表示选择了库存查询
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            EventBus.getDefault().postSticky("HiddenChanged");
+        }
+    }
+
+    //    i等于1表示选择了库存管理，i等于2表示选择了库存查询
     public void setSelection(int i) {
 //      fragment嵌套里面不能再用getFragmentManager(),要用getChildFragmentManager()
         transaction = getChildFragmentManager().beginTransaction();

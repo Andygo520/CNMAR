@@ -334,6 +334,7 @@ public class CompanyInfoFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
 //         得到二维码图片的相对路径
             final String path1 = list.get(position).getQrcode();
+            Log.d("path1234",path1);
 //           得到企业名称
             final String companyName = list.get(position).getName();
             holder.column1.setText(list.get(position).getName());

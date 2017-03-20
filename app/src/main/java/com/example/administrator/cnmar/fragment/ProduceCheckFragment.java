@@ -22,14 +22,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.activity.ProduceManageActivity;
-import com.example.administrator.cnmar.entity.MessageEvent;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -45,7 +41,8 @@ import zxing.activity.CaptureActivity;
  */
 public class ProduceCheckFragment extends Fragment {
     private int flag;//区分加工单、子加工单的标志位
-    private int testBoxId, stationId, receiveId;
+    private int testBoxId, stationId, processId, receiveId;
+    private String codeUrl="";
     @BindView(R.id.btnScann)
     Button btnScann;
     @BindView(R.id.tvTableTitle)
@@ -114,6 +111,14 @@ public class ProduceCheckFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (codeUrl != null && !codeUrl.equals("")){
+            getData(codeUrl);
+        }
+    }
+
     public void init() {
         name21.setText("工序");
         name22.setText("车间");
@@ -131,90 +136,95 @@ public class ProduceCheckFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         //        扫码返回从后台取数据
         if (resultCode == 0) {
-            final String codeUrl = data.getStringExtra("result");
+            codeUrl = data.getStringExtra("result");
             Log.d("codeUrlcodeUrl", codeUrl);
-            RequestQueue queue = Volley.newRequestQueue(getActivity());
-            StringRequest stringRequest = new StringRequest(codeUrl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    String json = VolleyHelper.getJson(s);
-                    component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                    if (!response.isStatus()) {
-                        Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        btnScann.setVisibility(View.GONE);//有返回数据的时候，不显示扫描按钮
-                        scrollView.setVisibility(View.VISIBLE);
-                        ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
-                        testBoxId = comBox.getId();
-                        receiveId = comBox.getReceiveId();
-                        stationId = comBox.getStationId();
-//                        加工单详情
-                        if (comBox.getReceive().getPlan() != null) {
-                            flag = 0;
-                            name11.setText("加工单编号");
-                            name12.setText("成品编码");
-                            tvTableTitle.setText("加工单");
-
-                            tv11.setText(comBox.getReceive().getPlan().getCode());
-                            tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
-                            tv21.setText(comBox.getReceive().getProcessProduct().getName());
-                            tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessProduct().getStation().getName());
-//                               得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
-                            if (tools.size() == 0) {
-                                tv32.setText("");
-                            } else {
-                                String toolNames = "";
-                                for (ComTool tool : tools) {
-                                    toolNames += tool.getName() + "，";
-                                }
-                                tv32.setText(toolNames.substring(0, toolNames.length() - 1));
-                            }
-                            tv41.setText(comBox.getReceive().getProcessProduct().getStation().getSuccessNum() + "");//合格品数量
-                            tv42.setText(comBox.getReceive().getProcessProduct().getStation().getFailureNum() + "");//不合格品数量
-
-                        }
-//                       子加工单详情
-                        else {
-                            flag = 1;
-                            name11.setText("子加工单编号");
-                            name12.setText("半成品编码");
-                            tvTableTitle.setText("子加工单");
-
-                            tv11.setText(comBox.getReceive().getBom().getCode());
-                            tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
-                            tv21.setText(comBox.getReceive().getProcessHalf().getName());
-                            tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessHalf().getStation().getName());
-//                           得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
-                            if (tools.size() == 0) {
-                                tv32.setText("");
-                            } else {
-                                String toolNames = "";
-                                for (ComTool tool : tools) {
-                                    toolNames += tool.getName() + "，";
-                                }
-                                tv32.setText(toolNames.substring(0, toolNames.length() - 1));
-                            }
-                            tv41.setText(comBox.getReceive().getProcessHalf().getStation().getSuccessNum() + "");//合格品数量
-                            tv42.setText(comBox.getReceive().getProcessHalf().getStation().getFailureNum() + "");//不合格品数量
-                        }
-                        tv51.setText(comBox.getCode());
-                        tv52.setText(comBox.getNum() + "");//现存数量
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-
-                }
-            });
-            queue.add(stringRequest);
+            getData(codeUrl);
         } else {
 
         }
+    }
+
+    private void getData(String codeUrl) {
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(codeUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                String json = VolleyHelper.getJson(s);
+                component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                if (!response.isStatus()) {
+                    Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
+                } else {
+//                        btnScann.setVisibility(View.GONE);//有返回数据的时候，不显示扫描按钮
+                    scrollView.setVisibility(View.VISIBLE);
+                    ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
+                    testBoxId = comBox.getId();
+                    receiveId = comBox.getReceiveId();
+                    stationId = comBox.getStationId();
+                    processId = comBox.getProcessId();
+//                        加工单详情
+                    if (comBox.getReceive().getPlan() != null) {
+                        flag = 0;
+                        name11.setText("加工单编号");
+                        name12.setText("成品编码");
+                        tvTableTitle.setText("加工单");
+
+                        tv11.setText(comBox.getReceive().getPlan().getCode());
+                        tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
+                        tv21.setText(comBox.getReceive().getProcessProduct().getName());
+                        tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
+                        tv31.setText(comBox.getReceive().getProcessProduct().getStation().getName());
+//                               得到工装列表
+                        List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
+                        if (tools.size() == 0) {
+                            tv32.setText("");
+                        } else {
+                            String toolNames = "";
+                            for (ComTool tool : tools) {
+                                toolNames += tool.getName() + "，";
+                            }
+                            tv32.setText(toolNames.substring(0, toolNames.length() - 1));
+                        }
+                        tv41.setText(comBox.getReceive().getProcessProduct().getSuccessNum() + "");//合格品数量
+                        tv42.setText(comBox.getReceive().getProcessProduct().getFailureNum() + "");//不合格品数量
+
+                    }
+//                       子加工单详情
+                    else {
+                        flag = 1;
+                        name11.setText("子加工单编号");
+                        name12.setText("半成品编码");
+                        tvTableTitle.setText("子加工单");
+
+                        tv11.setText(comBox.getReceive().getBom().getCode());
+                        tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
+                        tv21.setText(comBox.getReceive().getProcessHalf().getName());
+                        tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
+                        tv31.setText(comBox.getReceive().getProcessHalf().getStation().getName());
+//                           得到工装列表
+                        List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
+                        if (tools.size() == 0) {
+                            tv32.setText("");
+                        } else {
+                            String toolNames = "";
+                            for (ComTool tool : tools) {
+                                toolNames += tool.getName() + "，";
+                            }
+                            tv32.setText(toolNames.substring(0, toolNames.length() - 1));
+                        }
+                        tv41.setText(comBox.getReceive().getProcessHalf().getSuccessNum() + "");//合格品数量
+                        tv42.setText(comBox.getReceive().getProcessHalf().getFailureNum() + "");//不合格品数量
+                    }
+                    tv51.setText(comBox.getCode());
+                    tv52.setText(comBox.getNum() + "");//现存数量
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        queue.add(stringRequest);
     }
 
     public void sendRequest() {
@@ -224,6 +234,7 @@ public class ProduceCheckFragment extends Fragment {
                 String url = UrlHelper.URL_FAIL_IN_BOX_COMMIT.replace("{boxId}", "0")
                         .replace("{testBoxId}", "" + testBoxId)
                         .replace("{receiveId}", "" + receiveId)
+                        .replace("{processId}", "" + processId)
                         .replace("{stationId}", "" + stationId)
                         .replace("{testId}", "" + SPHelper.getInt(getActivity(), "userId"))
                         .replace("{failNum}", "0")
@@ -237,19 +248,9 @@ public class ProduceCheckFragment extends Fragment {
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         if (!response.isStatus()) {
                             Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (flag == 0){
-                                EventBus.getDefault().post(new MessageEvent(0));
-                                Log.d("Event_MessageEvent","0");
-                            }
-                            else if (flag == 1){
-                                EventBus.getDefault().post(new MessageEvent(1));
-                                Log.d("Event_MessageEvent","1");
-                            }
-                            Intent intent = new Intent(getActivity(), ProduceManageActivity.class);
-                            intent.putExtra("flag", 0);
-                            startActivity(intent);
-                        }
+                        }else
+                            Toast.makeText(getActivity(), "操作成功", Toast.LENGTH_SHORT).show();
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -266,7 +267,6 @@ public class ProduceCheckFragment extends Fragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnScann:
-                scrollView.setVisibility(View.GONE);
                 Intent intent = new Intent(getActivity(), CaptureActivity.class);
                 intent.putExtra("FLAG", -50);//作为跳转到扫描页面的标志位
                 startActivityForResult(intent, 1);

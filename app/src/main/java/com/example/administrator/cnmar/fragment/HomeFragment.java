@@ -72,12 +72,17 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         String roleMenu = SPHelper.getString(getActivity(), "Menu", "");
         username = SPHelper.getString(getActivity(), "username");
 
-        String[] menuText = roleMenu.split(",");
-//        存放菜单名的列表
+        //        存放菜单名的列表
         List<String> titleList = new ArrayList<>();
-        for (String title : menuText) {
-            titleList.add(title);
+        if (roleMenu.contains(",")){
+            String[] menuText = roleMenu.split(",");
+            for (String title : menuText) {
+                titleList.add(title);
+            }
+        }else {
+            titleList.add(roleMenu);
         }
+
 //        存放菜单图片的列表
         List<Integer> imageList = new ArrayList<>();
 
@@ -90,7 +95,7 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         String name = ACache.get(getActivity()).getAsString("name");
 //      如果有缓存数据，并且没有切换账号，就直接用缓存数据
         if (items != null && name != null && name.equalsIgnoreCase(username)) {
-                results.addAll(items);
+            results.addAll(items);
         } else {
             for (int i = 0; i < titleList.size(); i++) {
                 results.add(new Item(titleList.get(i), imageList.get(i)));

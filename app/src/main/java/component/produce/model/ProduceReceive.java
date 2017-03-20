@@ -15,7 +15,7 @@ import component.produce.vo.ReceiveStatusVo;
 import component.system.model.SystemUser;
 
 /** 领料单 */
-public class ProduceReceive {
+public class ProduceReceive implements Cloneable {
 
 	@JSONField(ordinal = 1)
 	private int id;
@@ -271,6 +271,17 @@ public class ProduceReceive {
 	@JSONField(serialize = false)
 	public ProduceStatusVo getProduceStatusVo() {
 		return ProduceStatusVo.getInstance(produceStatus);
+	}
+
+	public ProduceReceive clone() throws CloneNotSupportedException {
+		ProduceReceive clone = (ProduceReceive) super.clone();
+		if (clone.processHalf != null) {
+			clone.processHalf = processHalf.clone();
+		}
+		if (clone.processProduct != null) {
+			clone.processProduct = processProduct.clone();
+		}
+		return clone;
 	}
 
 }

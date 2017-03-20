@@ -1,5 +1,6 @@
 package component.com.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -7,7 +8,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 import component.system.model.SystemUser;
 
 /** 车间 */
-public class ComWorkshop {
+@SuppressWarnings("serial")
+public class ComWorkshop implements Serializable {
 
 	@JSONField(ordinal = 1)
 	private int id;

@@ -37,6 +37,10 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +93,8 @@ public class ProductCheckStockFragmentManage extends Fragment {
 //        lvCheckManage.addFooterView(new ViewStub(getParentFragment().getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
+//        注册EventBus
+        EventBus.getDefault().register(this);
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
         UniversalHelper.initRefresh(getActivity(),refreshLayout);
         refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
@@ -206,6 +212,19 @@ public class ProductCheckStockFragmentManage extends Fragment {
         return view;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void handleMessage(String message) {
+        if (message.equals("HiddenChanged")) {
+            page = 1;
+            getCheckStockManageListFromNet(url);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
     /*
 * Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
 * */

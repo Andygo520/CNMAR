@@ -1,8 +1,9 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,6 +27,8 @@ import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,8 +40,9 @@ import component.com.model.ComTool;
 public class FailInBoxActivity extends AppCompatActivity {
 
     private Context context;
-    private int boxId, testBoxId, receiveId, stationId, testId;
+    private int boxId, testBoxId, receiveId, processId, stationId, testId;
     private int num;//记录待检验料框现存数量
+    private int flag;//区分加工单、子加工单的标志
     @BindView(R.id.left_arrow)
     LinearLayout leftArrow;
     @BindView(R.id.title)
@@ -120,7 +124,7 @@ public class FailInBoxActivity extends AppCompatActivity {
 
     public void init() {
         context = FailInBoxActivity.this;
-        title.setText("生产管理");
+        title.setText("不合格品入料框");
         name21.setText("工序");
         name22.setText("车间");
         name31.setText("机台工位");
@@ -157,13 +161,15 @@ public class FailInBoxActivity extends AppCompatActivity {
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
 
-                        boxId = comBox.getId();
-                        testBoxId = comBox.getTestBox().getId();
-                        receiveId = comBox.getReceiveId();
-                        stationId = comBox.getStationId();
+                        boxId = comBox.getId();//不合格料框id
+                        testBoxId = comBox.getTestBox().getId();//待检验料框id
+                        receiveId = comBox.getTestBox().getReceiveId();
+                        processId = comBox.getTestBox().getProcessId();
+                        stationId = comBox.getTestBox().getStationId();
 
 //                        加工单详情
                         if (comBox.getReceive().getPlan() != null) {
+                            flag = 0;
                             name11.setText("加工单编号");
                             name12.setText("成品编码");
                             tvTableTitle.setText("加工单");
@@ -188,6 +194,7 @@ public class FailInBoxActivity extends AppCompatActivity {
                         }
 //                       子加工单详情
                         else {
+                            flag = 1;
                             name11.setText("子加工单编号");
                             name12.setText("半成品编码");
                             tvTableTitle.setText("子加工单");
@@ -210,8 +217,8 @@ public class FailInBoxActivity extends AppCompatActivity {
                             }
                         }
                         tv41.setText(comBox.getTestBox().getCode());
-                        num=comBox.getTestBox().getNum();//现存数量
-                        tv42.setText(num+ "");
+                        num = comBox.getTestBox().getNum();//现存数量
+                        tv42.setText(num + "");
                         tv51.setText(comBox.getCode());
                         tv52.setText(comBox.getBoxTypeVo().getValue());
                         tv61.setText(comBox.getNum() + "");
@@ -239,9 +246,7 @@ public class FailInBoxActivity extends AppCompatActivity {
                         String json = VolleyHelper.getJson(s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         if (response.isStatus()) {
-                            Intent intent = new Intent(context, ProduceManageActivity.class);
-                            intent.putExtra("flag", 0);
-                            startActivity(intent);
+                            FailInBoxActivity.this.finish();//关闭当前页面，回到检验Fragment
                         } else
                             Toast.makeText(context, response.getMsg(), Toast.LENGTH_SHORT).show();
 
@@ -265,23 +270,49 @@ public class FailInBoxActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn:
-                String failNum = et62.getText().toString().trim();
+                new AlertDialog.Builder(context)
+                        .setTitle("系统提示")
+                        .setMessage("确定入框吗？")
+                        .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String failNum = et62.getText().toString().trim();
+                                if (failNum == null || failNum.equals("")) {
+                                    Toast.makeText(context, "请输入入框数量", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 //                输入数量的判断
-                if (Integer.parseInt(failNum)>num){
-                    Toast.makeText(context,"入框数量不能大于待检验数量",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String failReason = et71.getText().toString().trim();
-                String url = UrlHelper.URL_FAIL_IN_BOX_COMMIT.replace("{boxId}", "" + boxId)
-                        .replace("{testBoxId}", "" + testBoxId)
-                        .replace("{receiveId}", "" + receiveId)
-                        .replace("{stationId}", "" + stationId)
-                        .replace("{testId}", "" + SPHelper.getInt(context, "userId"))
-                        .replace("{failNum}", failNum)
-                        .replace("{reason}", failReason);
-                Log.d("URL_FAIL_IN_BOX_COMMIT", url);
-                url = UniversalHelper.getTokenUrl(url);
-                sendRequest(url);
+                                if (Integer.parseInt(failNum) > num) {
+                                    Toast.makeText(context, "入框数量不能大于待检验数量", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                String failReason = et71.getText().toString().trim();
+                                try {
+//                    中文转码
+                                    failReason = URLEncoder.encode(failReason, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                String url = UrlHelper.URL_FAIL_IN_BOX_COMMIT.replace("{boxId}", "" + boxId)
+                                        .replace("{testBoxId}", "" + testBoxId)
+                                        .replace("{receiveId}", "" + receiveId)
+                                        .replace("{processId}", "" + processId)
+                                        .replace("{stationId}", "" + stationId)
+                                        .replace("{testId}", "" + SPHelper.getInt(context, "userId"))
+                                        .replace("{failNum}", failNum)
+                                        .replace("{reason}", failReason);
+                                Log.d("URL_FAIL_IN_BOX_COMMIT", url);
+                                url = UniversalHelper.getTokenUrl(url);
+                                sendRequest(url);
+                            }
+                        })
+                        .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).create().show();
+
                 break;
         }
     }

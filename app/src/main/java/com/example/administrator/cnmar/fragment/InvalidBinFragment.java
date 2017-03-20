@@ -352,7 +352,7 @@ public class InvalidBinFragment extends Fragment {
 
             holder.tvStation.setText(list.get(position).getStation().getName());
             holder.tvNum.setText(list.get(position).getNum()+"");
-            holder.tvPerson.setText(list.get(position).getUser().getName());
+            holder.tvPerson.setText(list.get(position).getUser()==null?"":list.get(position).getUser().getName());
 
             return convertView;
         }

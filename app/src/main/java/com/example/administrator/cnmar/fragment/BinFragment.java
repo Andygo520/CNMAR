@@ -12,6 +12,8 @@ import android.widget.RadioGroup;
 
 import com.example.administrator.cnmar.R;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -58,8 +60,16 @@ public class BinFragment extends Fragment {
         });
         return view;
     }
-    
-//    i等于1表示选择了合格品，i等于2表示选择了不合格品
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            EventBus.getDefault().postSticky("HiddenChanged");
+        }
+    }
+
+    //    i等于1表示选择了合格品，i等于2表示选择了不合格品
     public void setSelection(int i) {
 //      fragment嵌套里面不能再用getFragmentManager(),要用getChildFragmentManager()
         transaction = getChildFragmentManager().beginTransaction();

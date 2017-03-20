@@ -148,6 +148,7 @@ public class ProfileFragment extends Fragment {
                 if (userInfor.getImgId() > 0) {
 //                    获取图片的路径，路径=绝对路径+相对路径
                     String path = UrlHelper.URL_IMAGE + userInfor.getImg().getPath();
+                    Log.d("juedui",path);
                     VolleyHelper.showImageByUrl(getActivity(), path, ivImage);
                 } else
                     ivImage.setDefaultImageResId(R.mipmap.user_icon);

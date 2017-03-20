@@ -26,7 +26,7 @@
 
 
     <!--菜单名-->
-    <string name="MENUS">原料仓库,成品仓库,计划管理,相关方管理,企业管理,系统管理,品控管理,报表管理,半成品仓库,生产管理</string>
+    <string name="MENUS">原料仓库,成品仓库,计划管理,相关方管理,企业管理,系统管理,品控管理,报表管理,半成品仓库</string>
     <string name="HOME_YLCK">原料仓库</string>
     <string name="HOME_CPCK">成品仓库</string>
     <string name="HOME_JHGL">计划管理</string>

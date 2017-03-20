@@ -138,6 +138,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                  判断是否是超级管理员，如果是就显示所有按钮
                     Boolean isSuper = userInfor.getIsSuper();
                     SPHelper.putBoolean(LoginActivity.this, "isSuper", isSuper);
+//                 操作工跟测试员的判断，这与“生产管理”显示的模块有关
+                    Boolean isOperator = userInfor.getIsOperator();
+                    Boolean isTest = userInfor.getIsTest();
+                    SPHelper.putBoolean(LoginActivity.this, "isOperator", isOperator);
+                    SPHelper.putBoolean(LoginActivity.this, "isTest", isTest);
+
 
 //                  得到用户id,原料检验的时候需要提交该id,并且在我的资料Fragment也会用到
                     int id = userInfor.getId();
@@ -153,54 +159,60 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String strRoles = "";
 
 //                  通过一层循环取出角色名
-                    for (int i = 0; i < roles.size(); i++) {
-                        strRoles += roles.get(i).getName() + "，";
-                    }
-                    SPHelper.putString(LoginActivity.this, "Role", strRoles.substring(0, strRoles.length() - 1));
-
-//                  通过二层循环取出菜单与其子列表
-                    for (SystemMenu firstMenu : menuList) {
-                        strMenus += firstMenu.getName() + ",";// 取出一级菜单名
-                        List<SystemMenu> subList = firstMenu.getSubList();
-                        String strSublist = ","; //存放二级菜单的所有url字段
-                        String thirdSublist = ",";  //存放三级菜单的所有url字段
-                        for (SystemMenu secondMenu : subList) {
-                            //  如果存在三级菜单，就取出二级菜单名赋值给strMenus，将三级菜单的url赋值给thirdSublist
-                            //   否则，将二级菜单的url赋值给strSublist
-                            if (secondMenu.getSubList() != null) {
-                                List<SystemMenu> threeList = secondMenu.getSubList();
-                                strMenus += secondMenu.getName() + ",";
-                                for (SystemMenu thirdMenu : threeList) {
-                                    thirdSublist += thirdMenu.getUrl() + ",";
-                                }
-//                       将二级菜单与它对应的三级子列表存入sp中（二级菜单的name作为key，其包含的三级列表的url作为data）
-                                SPHelper.putString(LoginActivity.this, secondMenu.getName(), thirdSublist);
-                            } else {
-                                strSublist += secondMenu.getUrl() + ",";
-                            }
+                    if (roles != null && roles.size() > 0) {
+                        for (SystemRole role : roles) {
+                            strRoles += role.getName() + "，";
                         }
+                        SPHelper.putString(LoginActivity.this, "Role", strRoles.substring(0, strRoles.length() - 1));
+                    }
+
+                    String roleMenu = "";
+//                  通过二层循环取出菜单与其子列表
+                    if (menuList != null && menuList.size() > 0) {
+                        for (SystemMenu firstMenu : menuList) {
+                            strMenus += firstMenu.getName() + ",";// 取出一级菜单名
+                            List<SystemMenu> subList = firstMenu.getSubList();
+                            String strSublist = ","; //存放二级菜单的所有url字段
+                            String thirdSublist = ",";  //存放三级菜单的所有url字段
+                            for (SystemMenu secondMenu : subList) {
+                                //  如果存在三级菜单，就取出二级菜单名赋值给strMenus，将三级菜单的url赋值给thirdSublist
+                                //   否则，将二级菜单的url赋值给strSublist
+                                if (secondMenu.getSubList() != null) {
+                                    List<SystemMenu> threeList = secondMenu.getSubList();
+                                    strMenus += secondMenu.getName() + ",";
+                                    for (SystemMenu thirdMenu : threeList) {
+                                        thirdSublist += thirdMenu.getUrl() + ",";
+                                    }
+//                       将二级菜单与它对应的三级子列表存入sp中（二级菜单的name作为key，其包含的三级列表的url作为data）
+                                    SPHelper.putString(LoginActivity.this, secondMenu.getName(), thirdSublist);
+                                } else {
+                                    strSublist += secondMenu.getUrl() + ",";
+                                }
+                            }
 //                       将一级菜单与它对应的二级子列表存入sp中（一级菜单的name作为key，其包含的二级列表的url作为data）
 //                       在二级列表strSublist前后加上“，”，防止之后使用contain方法出现类似"a,ab".contain("b")的错误
 //                       这样在出现类似问题的时候可以用",a,ab,".contain(",b,")方法规避该问题
-                        SPHelper.putString(LoginActivity.this, firstMenu.getName(), strSublist);
-                    }
-                    String[] menus = strMenus.split(",");
-                    String roleMenu = "";
-//                    得到app所有菜单对应的名称字段
-                    String allMenus = LoginActivity.this.getResources().getString(R.string.MENUS);
-
-                    for (int j = 0; j < menus.length; j++) {
-                        if (allMenus.contains(menus[j])) {
-                            roleMenu += menus[j] + ",";
+                            SPHelper.putString(LoginActivity.this, firstMenu.getName(), strSublist);
                         }
-                    }
-                    roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
+                        String[] menus = strMenus.split(",");
+//                    得到app所有菜单对应的名称字段
+                        String allMenus = LoginActivity.this.getResources().getString(R.string.MENUS);
 
-//                   让所有用户可以显示生产管理模块
-                    if (!roleMenu.contains(getResources().getString(R.string.HOME_SCGL)))
+                        for (int j = 0; j < menus.length; j++) {
+                            if (allMenus.contains(menus[j])) {
+                                roleMenu += menus[j] + ",";
+                            }
+                        }
+                        roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
+                    }
+                    //  让操作工跟测试员、超级用户可以显示生产管理模块
+                    if (isOperator || isTest || isSuper)
                         roleMenu = roleMenu + "," + getResources().getString(R.string.HOME_SCGL);
+                    if (roleMenu.startsWith(","))
+                        roleMenu=roleMenu.substring(1);
 //                   将用户拥有的app模块菜单名存入sp中
                     SPHelper.putString(LoginActivity.this, "Menu", roleMenu);
+
 
 //                   登陆成功后，设置按钮不能再点击
                     mLoginButton.setEnabled(false);

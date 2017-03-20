@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -36,10 +37,21 @@ import zxing.activity.CaptureActivity;
 * 机台的(子)加工单列表的详情页
 * */
 public class ScannStationDetailActivity extends AppCompatActivity {
-
     private Context context;
     private String url;
-    private int stationId, id;//机台id、条目id(领料单id)
+    private int processId, stationId, id;//工序id、机台id、条目id(领料单id)
+    @BindView(R.id.name91)
+    TextView name91;
+    @BindView(R.id.tv91)
+    TextView tv91;
+    @BindView(R.id.name92)
+    TextView name92;
+    @BindView(R.id.tv92)
+    TextView tv92;
+    @BindView(R.id.tableRow)
+    TableRow tableRow;
+    @BindView(R.id.btnScannLast)
+    Button btnScannLast;
     @BindView(R.id.left_arrow)
     LinearLayout leftArrow;
     @BindView(R.id.title)
@@ -111,7 +123,7 @@ public class ScannStationDetailActivity extends AppCompatActivity {
     @BindView(R.id.tv82)
     TextView tv82;
     @BindView(R.id.btn)
-    Button btn;
+    Button btn;//扫描料框
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,10 +134,12 @@ public class ScannStationDetailActivity extends AppCompatActivity {
 
         context = ScannStationDetailActivity.this;
         init();
+        processId = getIntent().getIntExtra("processId", -1);
         stationId = getIntent().getIntExtra("stationId", -1);
         id = getIntent().getIntExtra("ID", -99);
 
         url = UrlHelper.URL_SCANN_STATION_DETAIL.replace("{ID}", id + "")
+                .replace("{processId}", processId + "")
                 .replace("{stationId}", stationId + "")
                 .replace("{userId}", SPHelper.getInt(context, "userId") + "");
         url = UniversalHelper.getTokenUrl(url);
@@ -151,6 +165,8 @@ public class ScannStationDetailActivity extends AppCompatActivity {
         name72.setText("操作工");
         name81.setText("合格品数量");
         name82.setText("不合格品数量");
+        name91.setText("上一道工序");
+        name92.setText("上工序合格品数量");
     }
 
     @Override
@@ -175,7 +191,7 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                         ProduceReceive produceReceive = JSON.parseObject(response.getData().toString(), ProduceReceive.class);
 
 //                        加工单详情
-                        if (produceReceive.getPlan()!=null) {
+                        if (produceReceive.getPlan() != null) {
                             tvTableTitle.setText("加工单详情");
                             name11.setText("加工单编号");
                             name12.setText("加工单名称");
@@ -186,7 +202,7 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                             tv21.setText(produceReceive.getPlan().getProduct().getCode());
                             tv22.setText(produceReceive.getPlan().getProduct().getName());
                             tv31.setText(produceReceive.getPlan().getProduceNum() + produceReceive.getPlan().getProduct().getUnit().getName());
-                            tv32.setText("");// 末工序合格品数量
+                            tv32.setText(produceReceive.getProcessProduct().getLast().getSuccessNum()+"");// 末工序合格品数量
                             tv41.setText(produceReceive.getCode());
                             tv42.setText(produceReceive.getReceiveUser().getName());
                             tv51.setText(produceReceive.getProcessProduct().getName());
@@ -205,8 +221,15 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                             }
                             tv71.setText(produceReceive.getTeam().getName());
                             tv72.setText(SPHelper.getString(context, "name"));
-                            tv81.setText(produceReceive.getProcessProduct().getStation().getSuccessNum()+"");
-                            tv82.setText(produceReceive.getProcessProduct().getStation().getFailureNum()+"");
+                            tv81.setText(produceReceive.getProcessProduct().getSuccessNum() + "");
+                            tv82.setText(produceReceive.getProcessProduct().getFailureNum() + "");
+//                            上工序不为空显示最后一行以及扫描上工序料框按钮
+                            if (produceReceive.getProcessProduct().getPrev() != null) {
+                                tableRow.setVisibility(View.VISIBLE);
+                                btnScannLast.setVisibility(View.VISIBLE);
+                                tv91.setText(produceReceive.getProcessProduct().getPrev().getName());
+                                tv92.setText(produceReceive.getProcessProduct().getPrev().getSuccessNum()+"");
+                            }
                         }
 //                       子加工单详情
                         else {
@@ -220,7 +243,7 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                             tv21.setText(produceReceive.getBom().getHalf().getCode());
                             tv22.setText(produceReceive.getBom().getHalf().getName());
                             tv31.setText(produceReceive.getBom().getReceiveNum() + produceReceive.getBom().getHalf().getUnit().getName());
-                            tv32.setText("");// 末工序合格品数量
+                            tv32.setText(produceReceive.getProcessHalf().getLast().getSuccessNum()+"");// 末工序合格品数量
                             tv41.setText(produceReceive.getCode());
                             tv42.setText(produceReceive.getReceiveUser().getName());
                             tv51.setText(produceReceive.getProcessHalf().getName());
@@ -239,8 +262,15 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                             }
                             tv71.setText(produceReceive.getTeam().getName());
                             tv72.setText(SPHelper.getString(context, "name"));
-                            tv81.setText(produceReceive.getProcessHalf().getStation().getSuccessNum()+"");
-                            tv82.setText(produceReceive.getProcessHalf().getStation().getFailureNum()+"");
+                            tv81.setText(produceReceive.getProcessHalf().getSuccessNum() + "");
+                            tv82.setText(produceReceive.getProcessHalf().getFailureNum() + "");
+ //                            上工序不为空显示最后一行以及扫描上工序料框按钮
+                            if (produceReceive.getProcessHalf().getPrev() != null) {
+                                tableRow.setVisibility(View.VISIBLE);
+                                btnScannLast.setVisibility(View.VISIBLE);
+                                tv91.setText(produceReceive.getProcessHalf().getPrev().getName());
+                                tv92.setText(produceReceive.getProcessHalf().getPrev().getSuccessNum()+"");
+                            }
                         }
 
                     }
@@ -255,17 +285,26 @@ public class ScannStationDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    @OnClick({R.id.left_arrow, R.id.btn})
+    @OnClick({R.id.left_arrow, R.id.btn,R.id.btnScannLast})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_arrow:
                 finish();
                 break;
+            case R.id.btnScannLast:
+                Intent intent1 = new Intent(context, CaptureActivity.class);
+                intent1.putExtra("FLAG", 666);//跳转标志位
+                intent1.putExtra("receiveId", id);
+                intent1.putExtra("processId", processId);
+                intent1.putExtra("stationId", stationId);
+                startActivity(intent1);
+                break;
             case R.id.btn:
-                Intent intent=new Intent(context,CaptureActivity.class);
-                intent.putExtra("FLAG",50);//跳转标志位
-                intent.putExtra("receiveId",id);
-                intent.putExtra("stationId",stationId);
+                Intent intent = new Intent(context, CaptureActivity.class);
+                intent.putExtra("FLAG", 50);//跳转标志位
+                intent.putExtra("receiveId", id);
+                intent.putExtra("processId", processId);
+                intent.putExtra("stationId", stationId);
                 startActivity(intent);
                 break;
         }

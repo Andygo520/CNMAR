@@ -2,8 +2,11 @@ package component.com.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
+
 /** 机台工位 */
-public class ComStation {
+@SuppressWarnings("serial")
+public class ComStation implements Serializable {
 
 	@JSONField(ordinal = 1)
 	private int id;
@@ -20,10 +23,9 @@ public class ComStation {
 
 	@JSONField(ordinal = 5)
 	private ComWorkshop workshop;
-	@JSONField(ordinal = 6)
-	private int successNum; // 合格品数量
-	@JSONField(ordinal = 7)
-	private int failureNum; // 不合格品数量
+
+	@JSONField(serialize = false)
+	private boolean checked;
 
 	public int getId() {
 		return id;
@@ -81,20 +83,12 @@ public class ComStation {
 		this.workshop = workshop;
 	}
 
-	public int getSuccessNum() {
-		return successNum;
+	public boolean isChecked() {
+		return checked;
 	}
 
-	public void setSuccessNum(int successNum) {
-		this.successNum = successNum;
-	}
-
-	public int getFailureNum() {
-		return failureNum;
-	}
-
-	public void setFailureNum(int failureNum) {
-		this.failureNum = failureNum;
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 
 }

@@ -12,10 +12,13 @@ import android.widget.RadioGroup;
 
 import com.example.administrator.cnmar.R;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HalfProductCheckStockFragment extends Fragment {
+public class
+HalfProductCheckStockFragment extends Fragment {
     private RadioButton rbManage,rbQuery;
     private RadioGroup radioGroup;
     private HalfProductCheckStockFragmentManage fragmentManage;
@@ -53,6 +56,15 @@ public class HalfProductCheckStockFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            EventBus.getDefault().postSticky("HiddenChanged");
+        }
+    }
+
 //    i等于1表示选择了库存管理，i等于2表示选择了库存查询
 
     public void setSelection(int i) {

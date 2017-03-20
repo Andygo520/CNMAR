@@ -131,7 +131,7 @@ public class StationFragment extends Fragment {
                     if (!response.isStatus()) {
                         Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
                     } else {
-                        btnScann.setVisibility(View.GONE);//有返回数据的时候，不显示扫描按钮
+//                        btnScann.setVisibility(View.GONE);//有返回数据的时候，不显示扫描按钮
 //                      response.getData()对应着一个数组，数组包括两个列表，分别为加工单跟子加工单列表，判断各自的长度，如果长度为0就不显示
                         List list = JSON.parseArray(response.getData().toString(), List.class);
                         List<ProduceReceive> producePlan = JSON.parseArray(list.get(0).toString(), ProduceReceive.class);//数组第0个元素代表加工单
@@ -243,6 +243,7 @@ public class StationFragment extends Fragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ScannStationDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());// 列表项id
+                    intent.putExtra("processId", list.get(position).getProcessProduct().getId());//工序id
                     intent.putExtra("stationId", stationId);
                     startActivity(intent);
                 }
@@ -318,6 +319,7 @@ public class StationFragment extends Fragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ScannStationDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());// 列表项id
+                    intent.putExtra("processId", list.get(position).getProcessHalf().getId());//工序id
                     intent.putExtra("stationId", stationId);
                     startActivity(intent);
                 }

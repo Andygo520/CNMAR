@@ -36,6 +36,10 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +102,8 @@ public class ValidBinFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         init();
-
+//        注册EventBus
+        EventBus.getDefault().register(this);
         UniversalHelper.initRefresh(getActivity(), refreshLayout);
         refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -148,7 +153,7 @@ public class ValidBinFragment extends Fragment {
                     if (input.equals("")) {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
-                        String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.success.getKey()+"").replace("{code}", input);
+                        String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.success.getKey() + "").replace("{code}", input);
                         urlString = UniversalHelper.getTokenUrl(urlString);
                         getDataFromNet(urlString);
                     }
@@ -188,19 +193,33 @@ public class ValidBinFragment extends Fragment {
         return view;
     }
 
-    public void init(){
-        tableLayout.setColumnCollapsed(9,false);
-        tableLayout.setColumnCollapsed(10,false);
-        tableLayout.setColumnCollapsed(11,false);
-        tableLayout.setColumnCollapsed(12,false);
-        tableLayout.setColumnStretchable(9,true);
-        tableLayout.setColumnStretchable(11,true);
+    public void init() {
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
         tv1.setText("料框编码");
         tv2.setText("（子）加工单编号");
         tv3.setText("工序");
         tv4.setText("机台工位");
         tv5.setText("现存数量");
         tv6.setText("操作工");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void handleMessage(String message) {
+        if (message.equals("HiddenChanged")) {
+            page = 1;
+            getDataFromNet(url);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     /*
@@ -279,7 +298,7 @@ public class ValidBinFragment extends Fragment {
                     Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.success.getKey()+"").replace("{code}", input);
+                String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.success.getKey() + "").replace("{code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
                 getDataFromNet(urlString);
                 break;
@@ -347,11 +366,11 @@ public class ValidBinFragment extends Fragment {
 //            工序的判断
             if (list.get(position).getReceive().getProcessProduct() != null) {
                 holder.tvProcess.setText(list.get(position).getReceive().getProcessProduct().getName());
-            }else
+            } else
                 holder.tvProcess.setText(list.get(position).getReceive().getProcessHalf().getName());
 
             holder.tvStation.setText(list.get(position).getStation().getName());
-            holder.tvNum.setText(list.get(position).getNum()+"");
+            holder.tvNum.setText(list.get(position).getNum() + "");
             holder.tvPerson.setText(list.get(position).getUser().getName());
 
             return convertView;

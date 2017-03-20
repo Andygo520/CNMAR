@@ -176,7 +176,15 @@
         <activity
             android:name=".activity.FailInBoxActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".activity.CheckFlowDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PrevProcessOutBoxActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            ></activity>
     </application>
 
 </manifest>

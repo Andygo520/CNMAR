@@ -1,9 +1,9 @@
 package component.system.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.ImgModel;
 import component.common.vo.IsEnableVo;
@@ -51,6 +51,10 @@ public class SystemUser extends ImgModel {
 	private SystemJob job;
 	@JSONField(ordinal = 19)
 	private SystemDuty duty;
+	@JSONField(ordinal = 20)
+	private Boolean isOperator; // 是否操作工
+	@JSONField(ordinal = 21)
+	private Boolean isTest; // 是否检验员
 
 	@JSONField(serialize = false)
 	private boolean checked;
@@ -221,6 +225,22 @@ public class SystemUser extends ImgModel {
 
 	public void setDuty(SystemDuty duty) {
 		this.duty = duty;
+	}
+
+	public Boolean getIsOperator() {
+		return isOperator;
+	}
+
+	public void setIsOperator(Boolean isOperator) {
+		this.isOperator = isOperator;
+	}
+
+	public Boolean getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(Boolean isTest) {
+		this.isTest = isTest;
 	}
 
 	public boolean isChecked() {

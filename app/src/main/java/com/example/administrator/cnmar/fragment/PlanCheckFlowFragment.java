@@ -1,6 +1,7 @@
 package com.example.administrator.cnmar.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
+import com.example.administrator.cnmar.activity.CheckFlowDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -339,12 +341,24 @@ public class PlanCheckFlowFragment extends Fragment {
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvCode.setText(list.get(position).getReceive().getPlan().getCode());
-            holder.tvProcess.setText(list.get(position).getReceive().getProcessProduct().getName());
+            holder.tvProcess.setText(list.get(position).getReceive().getProcessProduct()==null?"":list.get(position).getReceive().getProcessProduct().getName());
             holder.tvTestNum.setText(list.get(position).getTestNum()+"");
             holder.tvInvalidNum.setText(list.get(position).getFailNum()+"");
             holder.tvPerson.setText(list.get(position).getTest().getName());
             SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             holder.tvTime.setText(sdf.format(list.get(position).getTestTime()));
+
+//            点击加工单编码进入详情
+            holder.tvCode.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(getActivity(), CheckFlowDetailActivity.class);
+                    intent.putExtra("Id",list.get(position).getId());
+                    intent.putExtra("Flag",1);//加工单标志位
+                    startActivity(intent);
+                }
+            });
 
             return convertView;
         }

@@ -265,18 +265,17 @@ public class ProduceBomDetailActivity extends AppCompatActivity {
                         } else {
 //                        ActualId==0表示还没有输入实际生产数，领料单为已领料状态才显示“检验”按钮
                             if (produceBom.getActualId() == 0 ) {
-                                if (produceBom.getReceive().getStatus()== ReceiveStatusVo.yes.getKey()){
-                                    btn.setVisibility(View.VISIBLE);
-                                    btn.setText("提交待检验");
-                                    etSuccessNum.setText("");
-                                    etActualNum.setHint("请输入");
-                                    etActualNum.setFocusable(true);
-                                    etActualNum.setFocusableInTouchMode(true);
+                                if(produceBom.getReceive()!=null && produceBom.getReceive().getStatus()== ReceiveStatusVo.yes.getKey()){
+                                        btn.setVisibility(View.VISIBLE);
+                                        btn.setText("提交待检验");
+                                        etSuccessNum.setText("");
+                                        etActualNum.setHint("请输入");
+                                        etActualNum.setFocusable(true);
+                                        etActualNum.setFocusableInTouchMode(true);
                                 }else{
                                     etSuccessNum.setText("");
                                     etActualNum.setText("");
                                 }
-
                             } else if (produceBom.getActualId() != 0 ){
                                 etActualNum.setText(produceBom.getActualNum() + "");
                                 //                        根据TestId字段判断是否入库

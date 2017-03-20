@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
-import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
@@ -35,20 +33,18 @@ import butterknife.OnClick;
 import component.com.model.ComBox;
 import component.com.model.ComTool;
 
-import static com.example.administrator.cnmar.R.id.num;
 
-public class InBoxActivity extends AppCompatActivity {
+public class PrevProcessOutBoxActivity extends AppCompatActivity {
 
+    @BindView(R.id.tv)
+    TextView tv;
     private Context context;
-    private int receiveId, processId,stationId, boxId;
+    private int boxId;
+    private int currentNum;//现存数量
     @BindView(R.id.left_arrow)
     LinearLayout leftArrow;
     @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.tvTableTitle)
-    TextView tvTableTitle;
-    @BindView(R.id.tvTableTitle1)
-    TextView tvTableTitle1;
     @BindView(R.id.name11)
     TextView name11;
     @BindView(R.id.tv11)
@@ -87,79 +83,47 @@ public class InBoxActivity extends AppCompatActivity {
     TextView tv51;
     @BindView(R.id.name52)
     TextView name52;
-    @BindView(R.id.et52)
-    EditText et52;
+    @BindView(R.id.tv52)
+    TextView tv52;
+    @BindView(R.id.name61)
+    TextView name61;
+    @BindView(R.id.tv61)
+    TextView tv61;
+    @BindView(R.id.name62)
+    TextView name62;
+    @BindView(R.id.et62)
+    EditText et62;
     @BindView(R.id.btn)
     Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scann_box);
+        setContentView(R.layout.activity_last_process_out_box);
         ButterKnife.bind(this);
         AppExit.getInstance().addActivity(this);
 
         init();
         String url = getIntent().getStringExtra("result");
-        receiveId = getIntent().getIntExtra("receiveId",0);
-        processId= getIntent().getIntExtra("processId",0);
-        stationId = getIntent().getIntExtra("stationId",0);
         url = UniversalHelper.getTokenUrl(url);
         getTableInfoFromNet(url);
     }
 
-    public void init() {
-        context = InBoxActivity.this;
-        tvTableTitle1.setText("料框");
-        title.setText("工序在制品入料框");
-
-        name21.setText("机台工位");
+    private void init() {
+        context = PrevProcessOutBoxActivity.this;
+        title.setText("上工序合格品出料框");
+        name21.setText("工序");
         name22.setText("车间");
-        name31.setText("工序");
+        name31.setText("机台工位");
         name32.setText("工装");
-        name41.setText("料框编码");
-        name42.setText("类型");
-        name51.setText("现存数量");
-        name52.setText("入框数量");
-        et52.setFocusable(false);
-        et52.setFocusableInTouchMode(true);
+        name41.setText("上一道工序");
+        name42.setText("机台工位");
+        name51.setText("料框编码");
+        name52.setText("类型");
+        name61.setText("现存数量");
+        name62.setText("出框数量");
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            finish();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public void sendRequest(final String url){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RequestQueue queue = Volley.newRequestQueue(context);
-                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        String json = VolleyHelper.getJson(s);
-                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        if (response.isStatus()){
-                            finish();
-                        }else
-                            Toast.makeText(context,response.getMsg(),Toast.LENGTH_SHORT).show();
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-
-                    }
-                });
-                queue.add(stringRequest);
-            }
-        }).start();
-    }
     public void getTableInfoFromNet(final String strUrl) {
         new Thread(new Runnable() {
             @Override
@@ -170,22 +134,20 @@ public class InBoxActivity extends AppCompatActivity {
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
-
-                        boxId=comBox.getId();
+                        ComBox box = JSON.parseObject(response.getData().toString(), ComBox.class);
+                        boxId = box.getId();
 //                        加工单详情
-                        if (comBox.getReceive().getPlan() != null) {
+                        if (box.getReceive().getPlan() != null) {
+                            tv.setText("加工单");
                             name11.setText("加工单编号");
                             name12.setText("成品编码");
-                            tvTableTitle.setText("加工单");
-
-                            tv11.setText(comBox.getReceive().getPlan().getCode());
-                            tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
-                            tv21.setText(comBox.getReceive().getProcessProduct().getStation().getName());
-                            tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessProduct().getName());
-//                          得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
+                            tv11.setText(box.getReceive().getPlan().getCode());
+                            tv12.setText(box.getReceive().getPlan().getProduct().getCode());
+                            tv21.setText(box.getReceive().getProcessProduct().getName());
+                            tv22.setText(box.getReceive().getProcessProduct().getStation().getWorkshop().getName());
+                            tv31.setText(box.getReceive().getProcessProduct().getStation().getName());
+//                            得到工装列表
+                            List<ComTool> tools = box.getReceive().getProcessProduct().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -195,23 +157,21 @@ public class InBoxActivity extends AppCompatActivity {
                                 }
                                 tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv41.setText(comBox.getCode());
-                            tv42.setText(comBox.getBoxTypeVo().getValue());
-                            tv51.setText(comBox.getNum() + "");//现存数量
+                            tv41.setText(box.getReceive().getProcessProduct().getPrev().getName());
+                            tv42.setText(box.getReceive().getProcessProduct().getPrev().getStation().getName());
                         }
 //                       子加工单详情
                         else {
+                            tv.setText("子加工单");
                             name11.setText("子加工单编号");
                             name12.setText("半成品编码");
-                            tvTableTitle.setText("子加工单");
-
-                            tv11.setText(comBox.getReceive().getBom().getCode());
-                            tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
-                            tv21.setText(comBox.getReceive().getProcessHalf().getStation().getName());
-                            tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessHalf().getName());
-//                           得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
+                            tv11.setText(box.getReceive().getBom().getCode());
+                            tv12.setText(box.getReceive().getBom().getHalf().getCode());
+                            tv21.setText(box.getReceive().getProcessHalf().getName());
+                            tv22.setText(box.getReceive().getProcessHalf().getStation().getWorkshop().getName());
+                            tv31.setText(box.getReceive().getProcessHalf().getStation().getName());
+                            //                       得到工装列表
+                            List<ComTool> tools = box.getReceive().getProcessHalf().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -221,11 +181,16 @@ public class InBoxActivity extends AppCompatActivity {
                                 }
                                 tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv41.setText(comBox.getCode());
-                            tv42.setText(comBox.getBoxTypeVo().getValue());
-                            tv51.setText(comBox.getNum() + "");//现存数量
+                            tv41.setText(box.getReceive().getProcessHalf().getPrev().getName());
+                            tv42.setText(box.getReceive().getProcessHalf().getPrev().getStation().getName());
                         }
-
+                        tv51.setText(box.getCode());
+                        tv52.setText(box.getBoxTypeVo().getValue());
+                        currentNum = box.getNum();
+                        tv61.setText(currentNum + "");
+//                        默认让取出数量等于现存数
+                        et62.setText(currentNum + "");
+                        et62.setSelection(String.valueOf(currentNum).length());//将光标移到文本末尾
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -238,6 +203,7 @@ public class InBoxActivity extends AppCompatActivity {
         }).start();
     }
 
+
     @OnClick({R.id.left_arrow, R.id.btn})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -247,21 +213,22 @@ public class InBoxActivity extends AppCompatActivity {
             case R.id.btn:
                 new AlertDialog.Builder(context)
                         .setTitle("系统提示")
-                        .setMessage("确认入料框吗？")
+                        .setMessage("确认出料框吗？")
                         .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String inCommit=et52.getText().toString().trim();
-                                if (inCommit==null || inCommit.equals("")){
-                                    Toast.makeText(context, "请输入入框数量", Toast.LENGTH_SHORT).show();
+                                String num = et62.getText().toString().trim();
+                                if (num==null || num.equals("")){
+                                    Toast.makeText(context, "请输入出框数量", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                String commit_url= UrlHelper.URL_IN_BOX.replace("{boxId}",boxId+"").replace("{receiveId}",receiveId+"")
-                                        .replace("{processId}",processId+"")
-                                        .replace("{stationId}",stationId+"").replace("{num}",inCommit)
-                                        .replace("{userId}", SPHelper.getInt(context,"userId")+"");
-                                Log.d("commit_url",commit_url);
-                                commit_url=UniversalHelper.getTokenUrl(commit_url);
+                                if (Integer.parseInt(num) > currentNum) {
+                                    Toast.makeText(context, "出框数量应小于现存数量", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                String commit_url = UrlHelper.URL_PREV_OUT_COMMIT.replace("{boxId}", boxId + "").replace("{num}", num);
+                                Log.d("commit_url", commit_url);
+                                commit_url = UniversalHelper.getTokenUrl(commit_url);
                                 sendRequest(commit_url);
                             }
                         })
@@ -275,4 +242,30 @@ public class InBoxActivity extends AppCompatActivity {
         }
     }
 
+    private void sendRequest(final String url) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RequestQueue queue = Volley.newRequestQueue(context);
+                StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        String json = VolleyHelper.getJson(s);
+                        component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+                        if (response.isStatus()) {
+                            finish();
+                        } else
+                            Toast.makeText(context, response.getMsg(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+                queue.add(stringRequest);
+            }
+        }).start();
+    }
 }

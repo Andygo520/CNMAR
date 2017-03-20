@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import com.example.administrator.cnmar.fragment.BinFragment;
 import com.example.administrator.cnmar.fragment.CheckFlowFragment;
 import com.example.administrator.cnmar.fragment.ProduceCheckFragment;
 import com.example.administrator.cnmar.fragment.StationFragment;
+import com.example.administrator.cnmar.helper.SPHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,45 +61,44 @@ public class ProduceManageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_produce_manage);
         ButterKnife.bind(this);
         AppExit.getInstance().addActivity(this);
-//       取出登录界面获得的一级菜单与其二级菜单url的对应关系
-//        String sublist = SPHelper.getString(this, getResources().getString(R.string.HOME_JHGL), "");
 
         context = ProduceManageActivity.this;
         title.setText("生产管理");
-        rb1.setVisibility(View.VISIBLE);
-        rb2.setVisibility(View.VISIBLE);
-        rb3.setVisibility(View.VISIBLE);
-        rb4.setVisibility(View.VISIBLE);
+
+        Boolean isSuper = SPHelper.getBoolean(context, "isSuper");
+        Boolean isOperator = SPHelper.getBoolean(context, "isOperator");
+        Boolean isTest = SPHelper.getBoolean(context, "isTest");
+//操作工显示机台工位和线边仓，检验员显示线边仓，检验，检验流水
+//isSuper为true都能看到
+        if (isSuper || (isOperator && isTest)) {
+            rb1.setVisibility(View.VISIBLE);
+            rb2.setVisibility(View.VISIBLE);
+            rb3.setVisibility(View.VISIBLE);
+            rb4.setVisibility(View.VISIBLE);
+            setTabSelection(0);
+        } else{
+            if (isOperator) {
+                rb1.setVisibility(View.VISIBLE);
+                rb2.setVisibility(View.VISIBLE);
+                setTabSelection(0);
+            } else if (isTest) {
+                rb2.setVisibility(View.VISIBLE);
+                rb3.setVisibility(View.VISIBLE);
+                rb4.setVisibility(View.VISIBLE);
+                setTabSelection(2);
+            }
+        }
+
         rb1.setText("机台工位");
         rb2.setText("线边仓");
         rb3.setText("检验");
         rb4.setText("检验流水");
+//    得到从ProduceCheckFragment跳转来的Intent对象
+        flag = getIntent().getIntExtra("SIGN", 999);
+        Log.d("flagAcResult", flag + "");
+        if (flag == 0)
+            setTabSelection(3);//显示检验流水界面
 
-        setTabSelection(0);//默认选中机台工位
-
-//       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-//        if (sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")) {
-//            rb1.setVisibility(View.VISIBLE);
-//            setTabSelection(0);
-//        }
-//        if (sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ",")) {
-//            rb2.setVisibility(View.VISIBLE);
-//            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ","))
-//                setTabSelection(1);
-//        }
-//        if (sublist.contains("," + getResources().getString(R.string.material_out_order_receive_url) + ",")) {
-//            rb3.setVisibility(View.VISIBLE);
-//            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")
-//                    && !sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ","))
-//                setTabSelection(2);
-//        }
-//        if (sublist.contains("," + getResources().getString(R.string.custom_deliver_plan_url) + ",")) {
-//            rb4.setVisibility(View.VISIBLE);
-//            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")
-//                    && !sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ",")
-//                    && !sublist.contains("," + getResources().getString(R.string.material_out_order_receive_url) + ","))
-//                setTabSelection(3);
-//        }
 
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -118,8 +119,6 @@ public class ProduceManageActivity extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     @Override
@@ -127,17 +126,11 @@ public class ProduceManageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        flag = getIntent().getIntExtra("flag", 999);
-        if (flag == 0) {
-            setTabSelection(3);
-        } else if (flag == 1) {
-            setTabSelection(1);
-        }
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -308,7 +301,7 @@ public class ProduceManageActivity extends AppCompatActivity {
 
     @OnClick(R.id.left_arrow)
     public void onClick() {
-        startActivity(new Intent(context,MainActivity.class));
+        startActivity(new Intent(context, MainActivity.class));
     }
 
 }

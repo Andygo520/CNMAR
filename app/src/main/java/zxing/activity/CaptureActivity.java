@@ -49,6 +49,7 @@ import com.example.administrator.cnmar.activity.FailInBoxActivity;
 import com.example.administrator.cnmar.activity.HalfProductInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.HalfProductOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.InBoxActivity;
+import com.example.administrator.cnmar.activity.PrevProcessOutBoxActivity;
 import com.example.administrator.cnmar.activity.MaterialInOrderDetailActivity;
 import com.example.administrator.cnmar.activity.MaterialOutOrderDetailActivity;
 import com.example.administrator.cnmar.activity.ProduceManageActivity;
@@ -101,7 +102,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     //  判断是哪个页面启动的扫描页面
     private int FLAG = 0;
     private int id;  //三种出库单id
-    private int receiveId, stationId;//机台扫描传递过来的参数
+    private int receiveId, processId, stationId;//料框扫描传递过来的参数
     private int testBoxId;//待检验料框id
 
     private Rect mCropRect = null;
@@ -194,7 +195,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 CaptureActivity.this.finish();
             }
             //            返回机床对应的（子）加工单详情页面
-            else if (FLAG == 50) {
+            else if (FLAG == 50 || FLAG == 666) {
                 CaptureActivity.this.finish();
             }
             //            返回到待检验料框扫描页面
@@ -308,12 +309,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 //      对返回结果进行处理后，赋值给strUrl
         String strUrl = "";
 
-//      只能扫描洲马二维码
-        if (!result.contains(UrlHelper.URL_BASE)
-                ) {
-            Toast.makeText(this, R.string.only_scan_cnmar, Toast.LENGTH_SHORT).show();
-            finish();
-        }
+//      扫描结果前加上URL_BASE
+        result = UrlHelper.URL_BASE + result;
 
 //      处理原料出库、成品出库以及半成品出库扫描结果,将二维码返回的结果加上单据id后发送请求
 //      处理原料入库、成品入库以及半成品入库扫描结果，直接用二维码返回的结果发送请求
@@ -334,8 +331,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             strUrl = result + "?userId=" + SPHelper.getInt(this, "userId");
         } else if (FLAG == 50) {
             receiveId = getIntent().getIntExtra("receiveId", 0);
+            processId = getIntent().getIntExtra("processId", 0);
             stationId = getIntent().getIntExtra("stationId", 0);
             strUrl = result + "?stationId=" + stationId
+                    + "&processId=" + processId
                     + "&receiveId=" + receiveId;
             Log.d("strUrl", strUrl);
 //            如果扫描料框的时候，扫到了机台，此处进行判断
@@ -350,6 +349,19 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             testBoxId = getIntent().getIntExtra("testBoxId", 0);
             strUrl = result + "?op=fail&testBoxId=" + testBoxId;
             Log.d("strUrl", strUrl);
+        } else if (FLAG == 666) {
+            receiveId = getIntent().getIntExtra("receiveId", 0);
+            processId = getIntent().getIntExtra("processId", 0);
+            stationId = getIntent().getIntExtra("stationId", 0);
+            strUrl = result + "?op=prev&receiveId=" + receiveId
+                    + "&processId=" + processId
+                    + "&stationId=" + stationId;
+            Log.d("strUrl", strUrl);
+//            如果扫描料框的时候，扫到了机台，此处进行判断
+            if (!strUrl.contains(UrlHelper.URL_SCANN_BOX)) {
+                Toast.makeText(this, "参数错误", Toast.LENGTH_SHORT).show();
+                CaptureActivity.this.finish();
+            }
         }
 
         //        处理原料出入库扫描
@@ -393,12 +405,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
         //        处理料框扫描
         else if (strUrl.contains(UrlHelper.URL_SCANN_BOX)
-                && !strUrl.contains("op=test") && !strUrl.contains("op=fail")) {
+                && !strUrl.contains("op=test") && !strUrl.contains("op=fail") && !strUrl.contains("op=prev")) {
             canInBox(strUrl);//判断是否可以跳转到入料框界面
         }
         //        处理待检验料框扫描
         else if (strUrl.contains(UrlHelper.URL_SCANN_BOX) && strUrl.contains("op=test")) {
-            Intent intent = new Intent();
+            Intent intent = new Intent(this, ProduceManageActivity.class);
+            intent.putExtra("test", 2);
             intent.putExtra("result", strUrl);
             setResult(0, intent);
             CaptureActivity.this.finish();
@@ -406,6 +419,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         //        处理不合格品料框扫描
         else if (strUrl.contains(UrlHelper.URL_SCANN_BOX) && strUrl.contains("op=fail")) {
             canFailInBox(strUrl);//判断是否可以跳转到不合格品入料框界面
+        }
+        //        处理上工序合格品料框扫描
+        else if (strUrl.contains(UrlHelper.URL_SCANN_BOX) && strUrl.contains("op=prev")) {
+            canOutBox(strUrl);//判断是否可以跳转到上工序合格品出料框界面
         }
 
         btnGoOnScan.setOnClickListener(new View.OnClickListener() {
@@ -452,6 +469,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 
     }
+
 
     public void getMaterialInfoFromNet(String url) {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -680,6 +698,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     Intent intent = new Intent(CaptureActivity.this, InBoxActivity.class);
                     intent.putExtra("result", url);
                     intent.putExtra("receiveId", receiveId);
+                    intent.putExtra("processId", processId);
                     intent.putExtra("stationId", stationId);
                     startActivity(intent);
                     CaptureActivity.this.finish();
@@ -724,6 +743,32 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         queue.add(request);
     }
 
+    public void canOutBox(final String url) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                String json = VolleyHelper.getJson(s);
+                component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
+//                状态成功的时候跳转页面
+                if (response.isStatus()) {
+                    Intent intent = new Intent(CaptureActivity.this, PrevProcessOutBoxActivity.class);
+                    intent.putExtra("result", url);
+                    startActivity(intent);
+                    CaptureActivity.this.finish();
+                } else {
+                    Toast.makeText(CaptureActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                    CaptureActivity.this.finish();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        queue.add(request);
+    }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
         if (surfaceHolder == null) {

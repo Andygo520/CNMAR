@@ -1,15 +1,15 @@
 package component.process.model;
 
-import java.util.List;
-
 import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.List;
 
 import component.com.model.ComStation;
 import component.com.model.ComTeam;
 import component.com.model.ComTool;
 
 /** 成品工序 */
-public class ProcessProduct {
+public class ProcessProduct implements Cloneable {
 
 	@JSONField(ordinal = 1)
 	private int id;
@@ -18,10 +18,10 @@ public class ProcessProduct {
 	@JSONField(ordinal = 3)
 	private String name;
 	@JSONField(serialize = false)
-	private int stationId;
-	@JSONField(serialize = false)
 	private int seq;
 
+	@JSONField(serialize = false)
+	private List<ComStation> stations;
 	@JSONField(ordinal = 5)
 	private List<ComTool> tools;
 	@JSONField(serialize = false)
@@ -29,15 +29,22 @@ public class ProcessProduct {
 
 	@JSONField(ordinal = 7)
 	private ComStation station;
+	@JSONField(ordinal = 8)
+	private int successNum; // 合格品数量
+	@JSONField(ordinal = 9)
+	private int failureNum; // 不合格品数量
+	@JSONField(ordinal = 10)
+	private ProcessProduct prev; // 上工序
+	@JSONField(ordinal = 11)
+	private ProcessProduct last; // 末工序
 
 	public ProcessProduct() {
 
 	}
 
-	public ProcessProduct(int productId, String name, int stationId, int seq) {
+	public ProcessProduct(int productId, String name, int seq) {
 		this.productId = productId;
 		this.name = name;
-		this.stationId = stationId;
 		this.seq = seq;
 	}
 
@@ -65,20 +72,20 @@ public class ProcessProduct {
 		this.name = name;
 	}
 
-	public int getStationId() {
-		return stationId;
-	}
-
-	public void setStationId(int stationId) {
-		this.stationId = stationId;
-	}
-
 	public int getSeq() {
 		return seq;
 	}
 
 	public void setSeq(int seq) {
 		this.seq = seq;
+	}
+
+	public List<ComStation> getStations() {
+		return stations;
+	}
+
+	public void setStations(List<ComStation> stations) {
+		this.stations = stations;
 	}
 
 	public List<ComTool> getTools() {
@@ -103,6 +110,42 @@ public class ProcessProduct {
 
 	public void setStation(ComStation station) {
 		this.station = station;
+	}
+
+	public int getSuccessNum() {
+		return successNum;
+	}
+
+	public void setSuccessNum(int successNum) {
+		this.successNum = successNum;
+	}
+
+	public int getFailureNum() {
+		return failureNum;
+	}
+
+	public void setFailureNum(int failureNum) {
+		this.failureNum = failureNum;
+	}
+
+	public ProcessProduct getPrev() {
+		return prev;
+	}
+
+	public void setPrev(ProcessProduct prev) {
+		this.prev = prev;
+	}
+
+	public ProcessProduct getLast() {
+		return last;
+	}
+
+	public void setLast(ProcessProduct last) {
+		this.last = last;
+	}
+
+	public ProcessProduct clone() throws CloneNotSupportedException {
+		return (ProcessProduct) super.clone();
 	}
 
 }

@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
         UpdateFunGO.init(this);
 
-
         radioGroup= (RadioGroup) findViewById(R.id.rg);
         rbHome= (RadioButton) findViewById(R.id.rb1);
         rbMyProfile= (RadioButton) findViewById(R.id.rb2);

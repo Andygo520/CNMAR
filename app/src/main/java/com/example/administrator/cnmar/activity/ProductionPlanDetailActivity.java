@@ -54,6 +54,9 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
     private int id, receiveId, flag;
     private String successNum; //记录合格品数量
     private String actualNum; //记录实际生产数量
+    private String subList;
+    private String subList1;
+    private Boolean isSuper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +65,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
         AppExit.getInstance().addActivity(this);
 
         id = getIntent().getIntExtra("ID", 0);
-
         flag = getIntent().getIntExtra("FLAG", 0); //页面跳转的标志
-
 //        得到用户Id
         receiveId = SPHelper.getInt(this, "userId", 0);
         init();
@@ -78,6 +79,10 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("加工单管理");
         btn = (Button) findViewById(R.id.btn);
+        //   获取用户“品控管理”以及“计划管理”菜单及其子菜单的对应关系，后面按钮的显示、输入框的输入与此有关
+        subList = SPHelper.getString(context, getResources().getString(R.string.HOME_PKGL));
+        subList1 = SPHelper.getString(context, getResources().getString(R.string.HOME_JHGL));
+        isSuper = SPHelper.getBoolean(context, "isSuper");
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +155,7 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         UniversalHelper.showProgressDialog(context);
-                                        String url = UrlHelper.URL_PRODUCT_ACTUAL_NUM_COMMIT.replace("{ID}", String.valueOf(id)).replace("{actualNum}", actualNum).replace("{actualId}","" +receiveId);
+                                        String url = UrlHelper.URL_PRODUCT_ACTUAL_NUM_COMMIT.replace("{ID}", String.valueOf(id)).replace("{actualNum}", actualNum).replace("{actualId}", "" + receiveId);
                                         url = UniversalHelper.getTokenUrl(url);
                                         sendRequest(url);
                                     }
@@ -272,9 +277,15 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                                 if (producePlan.getTestId() == 0) {
                                     btn.setVisibility(View.VISIBLE);
                                     btn.setText("提交待入库");
-                                    etSuccessNum.setHint("请输入");
-                                    etSuccessNum.setFocusable(true);
-                                    etSuccessNum.setFocusableInTouchMode(true);
+//                                    只有拥有“原料检验”子菜单或者超级用户才能输入
+                                    if (subList.contains("," + getResources().getString(R.string.material_in_order_test_url) + ",")
+                                            || isSuper
+                                            ) {
+                                        etSuccessNum.setHint("请输入");
+                                        etSuccessNum.setFocusable(true);
+                                        etSuccessNum.setFocusableInTouchMode(true);
+                                    } else
+                                        etSuccessNum.setText("");
                                 } else {
                                     tvProductInOrder.setText(producePlan.getProductInOrder().getCode());
                                     etSuccessNum.setText(String.valueOf(producePlan.getSuccessNum()));
@@ -313,9 +324,6 @@ public class ProductionPlanDetailActivity extends AppCompatActivity {
                         else
                             tvEndDate.setText(sdf.format(producePlan.getEndDate()));
 
-//                        获取用户“品控管理”以及“计划管理”菜单及其子菜单的对应关系，后面按钮的显示与此有关
-                        String subList = SPHelper.getString(context, getResources().getString(R.string.HOME_PKGL));
-                        String subList1 = SPHelper.getString(context, getResources().getString(R.string.HOME_JHGL));
 
 //                        领料单状态设置
                         if (producePlan.getReceive() != null) {

@@ -37,6 +37,10 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,10 +93,12 @@ public class MaterialCheckStockFragmentManage extends Fragment {
         lvCheckManage = (MyListView) view.findViewById(R.id.listView);
 //        lvCheckManage.addFooterView(new ViewStub(getParentFragment().getActivity()));
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
+//        注册EventBus
+        EventBus.getDefault().register(this);
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
-        UniversalHelper.initRefresh(getActivity(),refreshLayout);
-        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+        UniversalHelper.initRefresh(getActivity(), refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -104,33 +110,33 @@ public class MaterialCheckStockFragmentManage extends Fragment {
                         refreshLayout.setEnableLoadmore(true);
                         refreshLayout.finishRefreshing();
                     }
-                },400);
+                }, 400);
             }
 
             @Override
             public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            page++;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
-                            if (page == total) {
-                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_MANAGE.replace("{page}", String.valueOf(page)));
-                                Log.d("urlfinish", url);
-                                getCheckStockManageListFromNet(url);
-                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
-                                // 结束上拉刷新...
-                                refreshLayout.finishLoadmore();
-                                return;
-                            }
+                        if (page == total) {
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_MANAGE.replace("{page}", String.valueOf(page)));
-                            Log.d("urlmore", url);
+                            Log.d("urlfinish", url);
                             getCheckStockManageListFromNet(url);
-                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
                             refreshLayout.finishLoadmore();
+                            return;
                         }
-                    },400);
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_MANAGE.replace("{page}", String.valueOf(page)));
+                        Log.d("urlmore", url);
+                        getCheckStockManageListFromNet(url);
+                        Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                        // 结束上拉刷新...
+                        refreshLayout.finishLoadmore();
+                    }
+                }, 400);
 
             }
         });
@@ -209,15 +215,29 @@ public class MaterialCheckStockFragmentManage extends Fragment {
         return view;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void handleMessage(String message) {
+        if (message.equals("HiddenChanged")) {
+            page = 1;
+            getCheckStockManageListFromNet(url);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
     /*
-    * Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
-    * */
+        * Fragment 从隐藏切换至显示，会调用onHiddenChanged(boolean hidden)方法
+        * */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 //        Fragment重新显示到最前端中
-        if (!hidden){
-            page=1;
+        if (!hidden) {
+            page = 1;
             getCheckStockManageListFromNet(url);
         }
     }
@@ -241,7 +261,7 @@ public class MaterialCheckStockFragmentManage extends Fragment {
                         num = response.getPage().getNum();
 
                         //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
-                        if (count <= 10 || num==total)
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);
