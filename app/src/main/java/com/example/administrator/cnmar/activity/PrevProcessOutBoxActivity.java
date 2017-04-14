@@ -137,17 +137,17 @@ public class PrevProcessOutBoxActivity extends AppCompatActivity {
                         ComBox box = JSON.parseObject(response.getData().toString(), ComBox.class);
                         boxId = box.getId();
 //                        加工单详情
-                        if (box.getReceive().getPlan() != null) {
+                        if (box.getPlan() != null) {
                             tv.setText("加工单");
                             name11.setText("加工单编号");
                             name12.setText("成品编码");
-                            tv11.setText(box.getReceive().getPlan().getCode());
-                            tv12.setText(box.getReceive().getPlan().getProduct().getCode());
-                            tv21.setText(box.getReceive().getProcessProduct().getName());
-                            tv22.setText(box.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                            tv31.setText(box.getReceive().getProcessProduct().getStation().getName());
+                            tv11.setText(box.getPlan().getCode());
+                            tv12.setText(box.getPlan().getProduct().getCode());
+                            tv21.setText(box.getPlan().getProcessProduct().getName());
+                            tv22.setText(box.getPlan().getProcessProduct().getStation().getWorkshop().getName());
+                            tv31.setText(box.getPlan().getProcessProduct().getStation().getName());
 //                            得到工装列表
-                            List<ComTool> tools = box.getReceive().getProcessProduct().getTools();
+                            List<ComTool> tools = box.getPlan().getProcessProduct().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -157,21 +157,21 @@ public class PrevProcessOutBoxActivity extends AppCompatActivity {
                                 }
                                 tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv41.setText(box.getReceive().getProcessProduct().getPrev().getName());
-                            tv42.setText(box.getReceive().getProcessProduct().getPrev().getStation().getName());
+                            tv41.setText(box.getPlan().getProcessProduct().getPrev().getName());
+                            tv42.setText(box.getPlan().getProcessProduct().getPrev().getStation().getName());
                         }
 //                       子加工单详情
                         else {
                             tv.setText("子加工单");
                             name11.setText("子加工单编号");
                             name12.setText("半成品编码");
-                            tv11.setText(box.getReceive().getBom().getCode());
-                            tv12.setText(box.getReceive().getBom().getHalf().getCode());
-                            tv21.setText(box.getReceive().getProcessHalf().getName());
-                            tv22.setText(box.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                            tv31.setText(box.getReceive().getProcessHalf().getStation().getName());
+                            tv11.setText(box.getBom().getCode());
+                            tv12.setText(box.getBom().getHalf().getCode());
+                            tv21.setText(box.getBom().getProcessHalf().getName());
+                            tv22.setText(box.getBom().getProcessHalf().getStation().getWorkshop().getName());
+                            tv31.setText(box.getBom().getProcessHalf().getStation().getName());
                             //                       得到工装列表
-                            List<ComTool> tools = box.getReceive().getProcessHalf().getTools();
+                            List<ComTool> tools = box.getBom().getProcessHalf().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -181,8 +181,8 @@ public class PrevProcessOutBoxActivity extends AppCompatActivity {
                                 }
                                 tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv41.setText(box.getReceive().getProcessHalf().getPrev().getName());
-                            tv42.setText(box.getReceive().getProcessHalf().getPrev().getStation().getName());
+                            tv41.setText(box.getBom().getProcessHalf().getPrev().getName());
+                            tv42.setText(box.getBom().getProcessHalf().getPrev().getStation().getName());
                         }
                         tv51.setText(box.getCode());
                         tv52.setText(box.getBoxTypeVo().getValue());

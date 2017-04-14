@@ -85,8 +85,8 @@
     <string name="produce_half_test_url">produce_half_test/list</string>//半成品检验的url字段
     <string name="produce_product_test_url">produce_product_test/list</string>
     //成品检验的url字段
-    <string name="material_back_url">material_back/list</string>
-    //追溯的url字段
+    <string name="material_back_url">material_back/list</string> //原料追溯的url字段
+    <string name="product_back_url">product_back/list</string>   //成品追溯的url字段
     <string name="material_report_url">material_report/list</string>
     //原料报表的url字段
     <string name="half_report_url">half_report/list</string>

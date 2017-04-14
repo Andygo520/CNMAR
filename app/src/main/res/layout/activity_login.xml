@@ -54,12 +54,11 @@
                 android:layout_marginBottom="50dp"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="IWMS智能仓储系统"
+                android:text="IMS智能制造系统"
                 android:textColor="#FFD700"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
 
         <RelativeLayout
             android:id="@+id/relative1"

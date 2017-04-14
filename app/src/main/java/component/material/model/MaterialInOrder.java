@@ -1,9 +1,9 @@
 package component.material.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.material.vo.InOrderStatusVo;
@@ -31,14 +31,16 @@ public class MaterialInOrder extends BaseModel {
 	private int testId;
 	@JSONField(ordinal = 9, format = "yyyy-MM-dd HH:mm:ss")
 	private Date testTime;
-
 	@JSONField(ordinal = 10)
-	private Supply supply;
+	private String testRemark; // 检验备注
+
 	@JSONField(ordinal = 11)
-	private SystemUser test;
+	private Supply supply;
 	@JSONField(ordinal = 12)
-	private String testStatus;
+	private SystemUser test;
 	@JSONField(ordinal = 13)
+	private String testStatus;
+	@JSONField(ordinal = 14)
 	private List<MaterialInOrderMaterial> inOrderMaterials;
 	@JSONField(serialize = false)
 	private boolean showPrint;
@@ -113,6 +115,14 @@ public class MaterialInOrder extends BaseModel {
 
 	public void setTestTime(Date testTime) {
 		this.testTime = testTime;
+	}
+
+	public String getTestRemark() {
+		return testRemark;
+	}
+
+	public void setTestRemark(String testRemark) {
+		this.testRemark = testRemark;
 	}
 
 	public Supply getSupply() {

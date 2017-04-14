@@ -12,6 +12,15 @@ public class Unit extends BaseModel {
 	@JSONField(ordinal = 2)
 	private int seq; // 顺序号
 
+	public Unit() {
+
+	}
+
+	public Unit(String name, int seq) {
+		this.name = name;
+		this.seq = seq;
+	}
+
 	public String getName() {
 		return name;
 	}

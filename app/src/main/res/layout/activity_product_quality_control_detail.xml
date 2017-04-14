@@ -316,7 +316,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:text="检验员"
+                                android:text="合格品数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -338,7 +338,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:text="检验时间"
+                                android:text="成品入库单号"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -367,7 +367,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:text="合格品数量"
+                                android:text="检验备注"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -380,16 +380,26 @@
                                 />
                             <TextView
                                 android:id="@+id/tv71"
-                                android:layout_width="35dp"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
+                                android:gravity="center"
                                 android:padding="2dip"
                                 />
+
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                        </TableRow>
+
+                        <TableRow
+                            android:background="@drawable/table_frame"
+                            >
                             <View
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:text="成品入库单号"
+                                android:text="检验员"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -401,7 +411,29 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv72"
+                                android:id="@+id/tv81"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:text="检验时间"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/tv82"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"

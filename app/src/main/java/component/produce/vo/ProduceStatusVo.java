@@ -6,10 +6,10 @@ import component.produce.vo.ProduceStatusVo;
 public enum ProduceStatusVo {
 
 	empty(null, ""),
-	/** 未生产 */
-	no(1, "未生产"),
-	/** 已生产 */
-	yes(2, "已生产");
+	/** 未完工 */
+	no(1, "未完工"),
+	/** 已完工 */
+	yes(2, "已完工");
 
 	private Integer key;
 	private String value;

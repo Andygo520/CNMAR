@@ -53,7 +53,6 @@ public class HalfProductCheckStockManageActivity extends AppCompatActivity {
     private String spaceStockIds = "";
     private String spaceIds = "";
     private String beforeStocks = "";
-    private String afterStocks = "";
     private String inOrderSpaceIds = "";
     private HashMap<Integer, String> map = new HashMap<>();
     private SpaceInfoAdapter myAdapter;
@@ -87,7 +86,9 @@ public class HalfProductCheckStockManageActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, HalfProductStockActivity.class);
+                intent.putExtra("flag", 3);
+                startActivity(intent);
             }
         });
 
@@ -125,6 +126,7 @@ public class HalfProductCheckStockManageActivity extends AppCompatActivity {
                 String spaceIds1 = spaceIds.substring(0, spaceIds.length() - 1);
                 String inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
                 String beforeStocks1 = beforeStocks.substring(0, beforeStocks.length() - 1);
+                String afterStocks = "";//记录盘点后数量
                 for (int i = 0; i < map.size(); i++) {
                     afterStocks += map.get(i) + ",";
                 }
@@ -141,7 +143,9 @@ public class HalfProductCheckStockManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, HalfProductStockActivity.class);
+            intent.putExtra("flag", 3);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);

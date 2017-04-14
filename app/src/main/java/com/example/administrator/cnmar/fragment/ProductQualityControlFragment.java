@@ -38,10 +38,11 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import component.produce.model.ProducePlan;
+import component.produce.model.ProducePlanBatch;
 
 
 /**
@@ -65,7 +66,7 @@ public class ProductQualityControlFragment extends Fragment {
     private int num = 1; // 第几页
     private int count; // 数据总条数
     //    用来存放从后台取出的数据列表，作为adapter的数据源
-    private List<ProducePlan> data = new ArrayList<>();
+    private List<ProducePlanBatch> data = new ArrayList<>();
     private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_PRODUCT_QC_LIST.replace("{page}", String.valueOf(page)));
 
     public ProductQualityControlFragment() {
@@ -98,11 +99,11 @@ public class ProductQualityControlFragment extends Fragment {
         tv6 = (TextView) view.findViewById(R.id.tv6);
 
         tv1.setText("加工单编号");
-        tv2.setText("成品编码");
-        tv3.setText("实际生产数量");
+        tv2.setText("成品名称");
+        tv3.setText("实际生产");
         tv4.setText("合格品数量");
         tv5.setText("检验员");
-        tv6.setText("成品入库单号");
+        tv6.setText("检验时间");
 
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
 
@@ -246,7 +247,7 @@ public class ProductQualityControlFragment extends Fragment {
                         String json = VolleyHelper.getJson(s);
 //                        Log.d("GGGG",json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        List<ProducePlan> list = JSON.parseArray(response.getData().toString(), ProducePlan.class);
+                        List<ProducePlanBatch> list = JSON.parseArray(response.getData().toString(), ProducePlanBatch.class);
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
@@ -282,9 +283,9 @@ public class ProductQualityControlFragment extends Fragment {
 
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<ProducePlan> list = null;
+        private List<ProducePlanBatch> list = null;
 
-        public BillAdapter(List<ProducePlan> list, Context context) {
+        public BillAdapter(List<ProducePlanBatch> list, Context context) {
             this.list = list;
             this.context = context;
         }
@@ -332,14 +333,13 @@ public class ProductQualityControlFragment extends Fragment {
             } else
                 holder = (ViewHolder) convertView.getTag();
 
-            holder.tv1.setText(list.get(position).getCode());
-            holder.tv2.setText(list.get(position).getProduct().getCode());
-            holder.tv3.setText(list.get(position).getActualNum()+ list.get(position).getProduct().getUnit().getName());
+            holder.tv1.setText(list.get(position).getPlan().getCode());
+            holder.tv2.setText(list.get(position).getPlan().getProduct().getName());
+            holder.tv3.setText(list.get(position).getActualNum()+ list.get(position).getPlan().getProduct().getUnit().getName());
             holder.tv4.setText(list.get(position).getSuccessNum()+"");
             holder.tv5.setText(list.get(position).getTest().getName());
-
-            holder.tv6.setText(list.get(position).getProductInOrder().getCode());
-
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            holder.tv6.setText(sdf.format(list.get(position).getTestTime()));
             holder.tv1.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tv1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -351,18 +351,14 @@ public class ProductQualityControlFragment extends Fragment {
             });
             return convertView;
         }
-
         class ViewHolder {
+//          成品检验流水显示：加工单编号，成品名称，实际生产，合格品数量，检验员，检验时间。
             public TextView tv1;
             public TextView tv2;
             public TextView tv3;
             public TextView tv4;
             public TextView tv5;
             public TextView tv6;
-
         }
-
     }
-
-
 }

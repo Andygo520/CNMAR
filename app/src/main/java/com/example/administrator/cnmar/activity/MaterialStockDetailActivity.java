@@ -1,6 +1,7 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -60,7 +61,9 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent=new Intent(MaterialStockDetailActivity.this,MaterialStockActivity.class);
+            intent.putExtra("flag",0);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -73,7 +76,9 @@ public class MaterialStockDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               finish();
+                Intent intent=new Intent(MaterialStockDetailActivity.this,MaterialStockActivity.class);
+                intent.putExtra("flag",0);
+                startActivity(intent);
             }
         });
 

@@ -372,9 +372,9 @@ public class ProductInOrderFragment extends Fragment {
                 holder.tvBatchNo.setText(sdf.format(list.get(position).getInTime()));
             else
                 holder.tvBatchNo.setText("");
-            //       设置加工单内容
-            if (list.get(position).getProducePlan() != null)
-                holder.tvPlanNo.setText(list.get(position).getProducePlan().getCode());
+//                   设置加工单编号
+            if (list.get(position).getBatch() != null)
+                holder.tvPlanNo.setText(list.get(position).getBatch().getPlan().getCode());
             else
                 holder.tvPlanNo.setText("");
 

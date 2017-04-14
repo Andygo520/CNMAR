@@ -24,12 +24,12 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import java.text.SimpleDateFormat;
 
 import component.basic.vo.PackTypeVo;
-import component.produce.model.ProducePlan;
+import component.produce.model.ProducePlanBatch;
 
 public class ProductQualityControlDetailActivity extends AppCompatActivity {
     private Context context;
     private TextView tvPlanCode, tvPlanName, tvProductCode, tvProductName, tvSize, tvCheckTime,
-            tvUnit, tvProduceNum, tvCheckMan, tvBeginDate, tvEndDate, tvProductInOrder;
+            tvUnit, tvProduceNum, tvCheckMan, tvRemark, tvBeginDate, tvEndDate, tvProductInOrder;
     private TextView tvSuccessNum, tvActualNum;
     private String strUrl;
     private LinearLayout llLeftArrow;
@@ -71,11 +71,11 @@ public class ProductQualityControlDetailActivity extends AppCompatActivity {
         tvEndDate = (TextView) findViewById(R.id.tv42);
         tvProduceNum = (TextView) findViewById(R.id.tv51);
         tvActualNum = (TextView) findViewById(R.id.tv52);
-        tvCheckMan = (TextView) findViewById(R.id.tv61);
-        tvCheckTime = (TextView) findViewById(R.id.tv62);
-        tvSuccessNum = (TextView) findViewById(R.id.tv71);
-        tvProductInOrder = (TextView) findViewById(R.id.tv72);
-
+        tvSuccessNum = (TextView) findViewById(R.id.tv61);
+        tvProductInOrder = (TextView) findViewById(R.id.tv62);
+        tvRemark = (TextView) findViewById(R.id.tv71);
+        tvCheckMan = (TextView) findViewById(R.id.tv81);
+        tvCheckTime = (TextView) findViewById(R.id.tv82);
     }
 
     @Override
@@ -99,45 +99,42 @@ public class ProductQualityControlDetailActivity extends AppCompatActivity {
                         String json = VolleyHelper.getJson(s);
                         Log.d("production", json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        ProducePlan producePlan = JSON.parseObject(response.getData().toString(), ProducePlan.class);
+                        ProducePlanBatch ProducePlanBatch = JSON.parseObject(response.getData().toString(), ProducePlanBatch.class);
 
-                        tvPlanCode.setText(producePlan.getCode());
-                        tvPlanName.setText(producePlan.getName());
-                        tvProductCode.setText(producePlan.getProduct().getCode());
-                        tvProductName.setText(producePlan.getProduct().getName());
-                        tvSize.setText(producePlan.getProduct().getSpec());
+                        tvPlanCode.setText(ProducePlanBatch.getPlan().getCode());
+                        tvPlanName.setText(ProducePlanBatch.getPlan().getName());
+                        tvProductCode.setText(ProducePlanBatch.getPlan().getProduct().getCode());
+                        tvProductName.setText(ProducePlanBatch.getPlan().getProduct().getName());
+                        tvSize.setText(ProducePlanBatch.getPlan().getProduct().getSpec());
 //                        有包装的，单位格式为“9个/袋”
-                        if (producePlan.getProduct().getPackType() != PackTypeVo.empty.getKey())
-                            tvUnit.setText(producePlan.getProduct().getPackNum()
-                                    + producePlan.getProduct().getUnit().getName()
-                                    + " / " + producePlan.getProduct().getPackTypeVo().getValue().substring(1, 2));
+                        if (ProducePlanBatch.getPlan().getProduct().getPackType() != PackTypeVo.empty.getKey())
+                            tvUnit.setText(ProducePlanBatch.getPlan().getProduct().getPackNum()
+                                    + ProducePlanBatch.getPlan().getProduct().getUnit().getName()
+                                    + " / " + ProducePlanBatch.getPlan().getProduct().getPackTypeVo().getValue().substring(1, 2));
                         else
-                            tvUnit.setText(producePlan.getProduct().getUnit().getName());
+                            tvUnit.setText(ProducePlanBatch.getPlan().getProduct().getUnit().getName());
 
-
-                        tvCheckMan.setText(producePlan.getTest().getName());
-
-                        tvProduceNum.setText(producePlan.getProduceNum() + producePlan.getProduct().getUnit().getName());
+                        tvRemark.setText(ProducePlanBatch.getTestRemark());//检验备注
+                        tvCheckMan.setText(ProducePlanBatch.getTest().getName());
+                        tvProduceNum.setText(ProducePlanBatch.getPlan().getProduceNum() + ProducePlanBatch.getPlan().getProduct().getUnit().getName());
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 //                      开始日期、结束日期的非空判断
-                        if (producePlan.getStartDate() == null)
+                        if (ProducePlanBatch.getPlan().getStartDate() == null)
                             tvBeginDate.setText("");
                         else
-                            tvBeginDate.setText(sdf.format(producePlan.getStartDate()));
-                        if (producePlan.getEndDate() == null)
+                            tvBeginDate.setText(sdf.format(ProducePlanBatch.getPlan().getStartDate()));
+                        if (ProducePlanBatch.getPlan().getEndDate() == null)
                             tvEndDate.setText("");
                         else
-                            tvEndDate.setText(sdf.format(producePlan.getEndDate()));
+                            tvEndDate.setText(sdf.format(ProducePlanBatch.getPlan().getEndDate()));
 
-                        tvActualNum.setText(producePlan.getActualNum() + "");
-                        tvProductInOrder.setText(producePlan.getProductInOrder().getCode());
-                        tvSuccessNum.setText(String.valueOf(producePlan.getSuccessNum()));
-
+                        tvActualNum.setText(ProducePlanBatch.getActualNum() + "");
+                        tvProductInOrder.setText(ProducePlanBatch.getProductInOrder().getCode());
+                        tvSuccessNum.setText(String.valueOf(ProducePlanBatch.getSuccessNum()));
                         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        tvCheckTime.setText(sdf1.format(producePlan.getTestTime()));
-
+                        tvCheckTime.setText(sdf1.format(ProducePlanBatch.getTestTime()));
                     }
                 }, new Response.ErrorListener() {
                     @Override

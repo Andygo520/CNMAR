@@ -76,7 +76,7 @@ public class ProduceManageActivity extends AppCompatActivity {
             rb3.setVisibility(View.VISIBLE);
             rb4.setVisibility(View.VISIBLE);
             setTabSelection(0);
-        } else{
+        } else {
             if (isOperator) {
                 rb1.setVisibility(View.VISIBLE);
                 rb2.setVisibility(View.VISIBLE);
@@ -135,8 +135,7 @@ public class ProduceManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(ProduceManageActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -301,7 +300,7 @@ public class ProduceManageActivity extends AppCompatActivity {
 
     @OnClick(R.id.left_arrow)
     public void onClick() {
-        startActivity(new Intent(context, MainActivity.class));
+        startActivity(new Intent(ProduceManageActivity.this, MainActivity.class));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -127,7 +128,9 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
         leftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent=new Intent(context,PlanManageActivity.class);
+                intent.putExtra("flag",2);
+                startActivity(intent);
             }
         });
     }
@@ -135,7 +138,9 @@ public class ReceiveMaterialOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent=new Intent(context,PlanManageActivity.class);
+            intent.putExtra("flag",2);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);

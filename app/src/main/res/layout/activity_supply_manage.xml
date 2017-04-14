@@ -5,6 +5,21 @@
 
     <include layout="@layout/top"></include>
 
-    <include layout="@layout/refresh_frame"></include>
+    <include layout="@layout/refresh_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        ></include>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="供应商"
+        android:textColor="@color/color_white"
+        android:gravity="center"
+        android:background="@color/colorBase"
+        />
 
 </LinearLayout>

@@ -5,7 +5,10 @@ import java.io.Serializable;
 /**
  * Created by Administrator on 2016/4/12.
  */
-public class Item implements Serializable{
+/*
+* 菜单条目对应的实体类
+* */
+public class Item implements Serializable {
     private int id;
     private String name;
     private int img;

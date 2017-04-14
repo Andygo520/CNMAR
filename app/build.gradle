@@ -9,8 +9,8 @@ android {
         applicationId "com.example.administrator.cnmar"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 112
-        versionName '1.1.2'
+        versionCode 116
+        versionName '1.1.6'
     }
     buildTypes {
         release {
@@ -27,15 +27,16 @@ dependencies {
     compile files('libs/volley.jar')
     compile files('libs/fastjson-1.2.12.jar')
     compile files('libs/zxing.jar')
-    /* 添加butterknife依赖*/
     compile project(':TwinklingRefreshLayout')
     /*版本更新库*/
+    /* 添加butterknife依赖*/
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'cn.hugeterry.updatefun:updatefun:1.8.8'
+    compile 'cn.hugeterry.updatefun:updatefun:1.9.0'
     compile 'com.android.support:design:23.4.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'cn.lankton:flowlayout:3.1.0'
 }

@@ -208,8 +208,61 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name51"
+                                android:id="@+id/name41"
                                 android:text="计划生产数量"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/tv41"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/name42"
+                                android:textColor="@android:color/black"
+                                android:text="实际生产数量"
+                                android:textStyle="bold"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/tv42"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                        </TableRow>
+
+                        <TableRow
+                            android:background="@drawable/table_frame"
+                            >
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:text="合格品数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
@@ -231,9 +284,8 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/name52"
+                                android:text="半成品入库单号"
                                 android:textColor="@android:color/black"
-                                android:text="实际生产数量"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"
@@ -250,6 +302,37 @@
                                 android:layout_gravity="center"
                                 android:padding="2dip"
                                 />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                        </TableRow>
+                        <TableRow
+                            android:background="@drawable/table_frame"
+                            >
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:text="检验备注"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                />
+                            <View
+                                style="@style/list_item_cell_seperator_layout"
+                                />
+                            <TextView
+                                android:id="@+id/tv61"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="2dip"
+                                />
+
                             <View
                                 style="@style/list_item_cell_seperator_layout"
                                 />
@@ -274,57 +357,6 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:id="@+id/tv61"
-                                android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                />
-                            <View
-                                style="@style/list_item_cell_seperator_layout"
-                                />
-                            <TextView
-                                android:text="检验时间"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold"
-                                android:layout_width="65dip"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                />
-                            <View
-                                style="@style/list_item_cell_seperator_layout"
-                                />
-                            <TextView
-                                android:id="@+id/tv62"
-                                android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                />
-                            <View
-                                style="@style/list_item_cell_seperator_layout"
-                                />
-                        </TableRow>
-                        <TableRow
-                            android:background="@drawable/table_frame"
-                            >
-                            <View
-                                style="@style/list_item_cell_seperator_layout"
-                                />
-                            <TextView
-                                android:text="合格品数量"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold"
-                                android:layout_width="65dip"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                />
-                            <View
-                                style="@style/list_item_cell_seperator_layout"
-                                />
-                            <TextView
                                 android:id="@+id/tv71"
                                 android:layout_width="35dp"
                                 android:layout_height="wrap_content"
@@ -335,7 +367,7 @@
                                 style="@style/list_item_cell_seperator_layout"
                                 />
                             <TextView
-                                android:text="半成品入库单号"
+                                android:text="检验时间"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold"
                                 android:layout_width="65dip"

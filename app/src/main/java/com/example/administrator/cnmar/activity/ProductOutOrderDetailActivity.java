@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.RoleHelper;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -97,7 +98,7 @@ public class ProductOutOrderDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
-        context=ProductOutOrderDetailActivity.this;
+        context = ProductOutOrderDetailActivity.this;
         tvName11 = (TextView) findViewById(R.id.name11);
         tvName12 = (TextView) findViewById(R.id.name12);
         tvName21 = (TextView) findViewById(R.id.name21);
@@ -110,7 +111,9 @@ public class ProductOutOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProductOutOrderDetailActivity.this.finish();
+                Intent intent = new Intent(context, ProductStockActivity.class);
+                intent.putExtra("flag", 2);
+                startActivity(intent);
             }
         });
         tvName11.setText("出库单号");
@@ -210,7 +213,9 @@ public class ProductOutOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, ProductStockActivity.class);
+            intent.putExtra("flag", 2);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -236,7 +241,7 @@ public class ProductOutOrderDetailActivity extends AppCompatActivity {
                 if (!response.isStatus()) {
                     Toast.makeText(ProductOutOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(ProductOutOrderDetailActivity.this, ProductStockActivity.class);
+                    Intent intent = new Intent(context, ProductStockActivity.class);
                     intent.putExtra("flag", 2);
                     startActivity(intent);
                 }
@@ -277,8 +282,10 @@ public class ProductOutOrderDetailActivity extends AppCompatActivity {
                             list1.addAll(list2);
                         }
 
-
-                        if (productOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()) {
+//       出库单状态为待出库的时候
+//       只有超级用户、系统管理员、成品库管员才能在成品出库单输入“已出库数量”，点“确认出库”按钮
+                        if (productOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isProductStockman(context))) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             myAdapter = new MyAdapter(ProductOutOrderDetailActivity.this, list1);
                             listView.setAdapter(myAdapter);

@@ -403,8 +403,7 @@
                         </TableRow>
 
                         <TableRow android:background="@drawable/table_frame"
-                            android:id="@+id/tableRow"
-                            android:visibility="gone"
+
                             >
 
                             <View style="@style/list_item_cell_seperator_layout" />
@@ -450,38 +449,87 @@
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
 
+                        <TableRow
+                            android:id="@+id/tableRow"
+                            android:background="@drawable/table_frame"
+                            android:visibility="gone">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name101"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv101"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name102"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv102"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
                     </TableLayout>
                 </LinearLayout>
 
                 <View style="@style/list_item_seperator_layout" />
             </LinearLayout>
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_margin="20dp"
-               >
-               <Button
-                   android:id="@+id/btnScannLast"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:background="@drawable/button_bg"
-                   android:text="扫描上工序合格品料框"
-                   android:textColor="@color/color_white"
-                   android:textSize="15sp"
-                   android:visibility="gone"
-                   />
-               <Button
-                   android:id="@+id/btn"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:layout_marginLeft="10dp"
-                   android:background="@drawable/button_bg"
-                   android:text="扫描料框二维码"
-                   android:textColor="@color/color_white"
-                   android:textSize="15sp" />
-           </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp">
+
+                <Button
+                    android:id="@+id/btnScannLast"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_bg"
+                    android:text="扫描上工序合格品料框"
+                    android:textColor="@color/color_white"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_bg"
+                    android:text="扫描料框二维码"
+                    android:textColor="@color/color_white"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
 
         </LinearLayout>

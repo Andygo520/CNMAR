@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.RoleHelper;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -102,7 +103,9 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent=new Intent(context,MaterialStockActivity.class);
+            intent.putExtra("flag",2);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -131,7 +134,9 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MaterialOutOrderDetailActivity.this.finish();
+                Intent intent=new Intent(context,MaterialStockActivity.class);
+                intent.putExtra("flag",2);
+                startActivity(intent);
             }
         });
         tvName11.setText("出库单号");
@@ -284,7 +289,10 @@ public class MaterialOutOrderDetailActivity extends AppCompatActivity {
                             list1.addAll(list2);
                         }
 
-                        if (materialOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()) {
+//       出库单状态为待出库的时候
+//       只有超级用户、系统管理员、原料库管员才能输入“已出库数量”，点“确认出库”按钮
+                        if (materialOutOrder.getStatus() == OutOrderStatusVo.pre_out_stock.getKey()
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isMaterialStockman(context))) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             ivScann.setVisibility(View.VISIBLE);
                             myAdapter = new MaterialInfoAdapter(MaterialOutOrderDetailActivity.this, list1);

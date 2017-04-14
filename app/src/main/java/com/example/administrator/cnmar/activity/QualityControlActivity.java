@@ -24,7 +24,7 @@ import com.example.administrator.cnmar.helper.SPHelper;
 public class QualityControlActivity extends AppCompatActivity {
     private TextView tvTitle;
     private RadioGroup radioGroup;
-    private RadioButton rbQC,rbHalfQC,rbProductQC,rbTraceBack;
+    private RadioButton rbQC, rbHalfQC, rbProductQC, rbTraceBack;
     private MaterialQualityControlFragment qcFragment;
     private HalfQualityControlFragment halfQCFragment;
     private ProductQualityControlFragment productQCFragment;
@@ -39,7 +39,7 @@ public class QualityControlActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quality_control);
         AppExit.getInstance().addActivity(this);
 //       取出登录界面获得的一级菜单与其二级菜单的对应关系
-        String sublist = SPHelper.getString(this,getResources().getString(R.string.HOME_PKGL), "");
+        String sublist = SPHelper.getString(this, getResources().getString(R.string.HOME_PKGL), "");
 
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("品控管理");
@@ -61,32 +61,32 @@ public class QualityControlActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(QualityControlActivity.this, MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(QualityControlActivity.this, MainActivity.class));
             }
         });
 
 //       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-        if (sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_in_order_test_url) + ",")) {
             rbQC.setVisibility(View.VISIBLE);
             setTabSelection(0);
         }
-        if (sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.produce_half_test_url) + ",")) {
             rbHalfQC.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+","))
-            setTabSelection(1);
+            if (!sublist.contains("," + getResources().getString(R.string.material_in_order_test_url) + ","))
+                setTabSelection(1);
         }
-        if (sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.produce_product_test_url) + ",")) {
             rbProductQC.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+","))
-            setTabSelection(2);
+            if (!sublist.contains("," + getResources().getString(R.string.material_in_order_test_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.produce_half_test_url) + ","))
+                setTabSelection(2);
         }
-        if (sublist.contains(","+getResources().getString(R.string.material_back_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_back_url) + ",")
+                || sublist.contains("," + getResources().getString(R.string.product_back_url) + ",")) {
             rbTraceBack.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.produce_half_test_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.produce_product_test_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.material_in_order_test_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.produce_half_test_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.produce_product_test_url) + ","))
                 setTabSelection(3);
         }
 
@@ -123,7 +123,7 @@ public class QualityControlActivity extends AppCompatActivity {
             setTabSelection(0);
         } else if (flag == 1) {
             setTabSelection(1);
-        }else if (flag == 2) {
+        } else if (flag == 2) {
             setTabSelection(2);
         }
 
@@ -137,8 +137,7 @@ public class QualityControlActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(QualityControlActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -151,9 +150,9 @@ public class QualityControlActivity extends AppCompatActivity {
             qcFragment = (MaterialQualityControlFragment) fragment;
         } else if (traceFragment == null && fragment instanceof TraceBackFragment) {
             traceFragment = (TraceBackFragment) fragment;
-        }else if (productQCFragment == null && fragment instanceof ProductQualityControlFragment) {
+        } else if (productQCFragment == null && fragment instanceof ProductQualityControlFragment) {
             productQCFragment = (ProductQualityControlFragment) fragment;
-        }else if (halfQCFragment == null && fragment instanceof HalfQualityControlFragment) {
+        } else if (halfQCFragment == null && fragment instanceof HalfQualityControlFragment) {
             halfQCFragment = (HalfQualityControlFragment) fragment;
         }
     }
@@ -170,7 +169,7 @@ public class QualityControlActivity extends AppCompatActivity {
         // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况
         hideFragment(transaction);
         switch (index) {
-            case 0:{
+            case 0: {
                 rbQC.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -185,10 +184,10 @@ public class QualityControlActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbHalfQC.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbQC.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbProductQC.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbTraceBack.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbHalfQC.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (qcFragment == null) {
                     qcFragment = new MaterialQualityControlFragment();
                     transaction.add(R.id.content, qcFragment);
@@ -197,7 +196,7 @@ public class QualityControlActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 1:{
+            case 1: {
                 rbHalfQC.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbHalfQC.setBackgroundColor(getResources().getColor(R.color.colorBase));
@@ -212,10 +211,10 @@ public class QualityControlActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbQC.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbHalfQC.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbProductQC.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbTraceBack.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (halfQCFragment == null) {
                     halfQCFragment = new HalfQualityControlFragment();
                     transaction.add(R.id.content, halfQCFragment);
@@ -224,7 +223,7 @@ public class QualityControlActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 2:{
+            case 2: {
                 rbProductQC.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -239,10 +238,10 @@ public class QualityControlActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbQC.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbHalfQC.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbProductQC.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbTraceBack.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (productQCFragment == null) {
                     productQCFragment = new ProductQualityControlFragment();
                     transaction.add(R.id.content, productQCFragment);
@@ -251,7 +250,7 @@ public class QualityControlActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 3:{
+            case 3: {
                 rbTraceBack.setChecked(true);
                 rbQC.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbHalfQC.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -266,10 +265,10 @@ public class QualityControlActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbQC.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbHalfQC.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbProductQC.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbTraceBack.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbQC.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbHalfQC.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbProductQC.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbTraceBack.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (traceFragment == null) {
                     traceFragment = new TraceBackFragment();
                     transaction.add(R.id.content, traceFragment);

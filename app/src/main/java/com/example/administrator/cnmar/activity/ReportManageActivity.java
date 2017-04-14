@@ -93,8 +93,7 @@ public class ReportManageActivity extends AppCompatActivity {
 
     @OnClick(R.id.left_arrow)
     public void onClick() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+       startActivity(new Intent(ReportManageActivity.this,MainActivity.class));
     }
 
     /**

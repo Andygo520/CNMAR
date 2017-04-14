@@ -1,6 +1,5 @@
 package component.com.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -8,8 +7,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import component.system.model.SystemUser;
 
 /** 班组 */
-@SuppressWarnings("serial")
-public class ComTeam implements Serializable {
+public class ComTeam {
 
 	@JSONField(ordinal = 1)
 	private int id;

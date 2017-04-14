@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.RoleHelper;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -50,8 +52,8 @@ import zxing.activity.CaptureActivity;
 
 public class ProductInOrderDetailActivity extends AppCompatActivity {
     private Context context;
-    private TextView tvName11, tvName12, tvName21, tvName22, tvName31;
-    private TextView tvInOrder, tvInBatchNo, tvPlanNo, tvRemark, tvInOrderStatus;
+    private TextView tvName11, tvName12, tvName21, tvName22;
+    private TextView tvInOrder, tvInBatchNo, tvPlanNo, tvInOrderStatus;
     private TextView name1, name2, name3, name4;
     private TextView tvTitle;
     private MyListView listView;
@@ -59,6 +61,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
     private ImageView ivScann;
     private LinearLayout llLeftArrow;
     private Button btnSubmit;
+    private TableRow row3;
     private HashMap<Integer, String> map = new HashMap<>();
 
     private int id;
@@ -96,12 +99,13 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
-        context=ProductInOrderDetailActivity.this;
+        context = ProductInOrderDetailActivity.this;
         tvName11 = (TextView) findViewById(R.id.name11);
         tvName12 = (TextView) findViewById(R.id.name12);
         tvName21 = (TextView) findViewById(R.id.name21);
         tvName22 = (TextView) findViewById(R.id.name22);
-        tvName31 = (TextView) findViewById(R.id.name31);
+        row3 = (TableRow) findViewById(R.id.row3);
+        row3.setVisibility(View.GONE);
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
         ivScann = (ImageView) findViewById(R.id.scann);
         tvTitle = (TextView) findViewById(R.id.title);
@@ -109,14 +113,15 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProductInOrderDetailActivity.this.finish();
+                Intent intent = new Intent(context, ProductStockActivity.class);
+                intent.putExtra("flag", 1);
+                startActivity(intent);
             }
         });
         tvName11.setText("入库单号");
         tvName12.setText("入库批次号");
         tvName21.setText("加工单编号");
-        tvName22.setText("备注");
-        tvName31.setText("入库单状态");
+        tvName22.setText("入库单状态");
 
         name1 = (TextView) findViewById(R.id.column1);
         name2 = (TextView) findViewById(R.id.column2);
@@ -131,8 +136,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
         tvInOrder = (TextView) findViewById(R.id.tv11);
         tvInBatchNo = (TextView) findViewById(R.id.tv12);
         tvPlanNo = (TextView) findViewById(R.id.tv21);
-        tvRemark = (TextView) findViewById(R.id.tv22);
-        tvInOrderStatus = (TextView) findViewById(R.id.tv31);
+        tvInOrderStatus = (TextView) findViewById(R.id.tv22);
 
         listView = (MyListView) findViewById(R.id.lvTable);
 //        listView.addFooterView(new ViewStub(this));
@@ -150,16 +154,20 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                         return;
                     }
                 }
-                inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
-                preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+                if (inOrderSpaceIds.length() > 0)
+                    inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+                if (preInStocks.length() > 0)
+                    preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
                 //        每次点击提交入库按钮，将inNums设置为空，防止之前的数值对之后的数值产生影响
                 inNums = "";
                 for (int i = 0; i < map.size(); i++) {
                     inNums += map.get(i) + ",";
                 }
-                inNums1 = inNums.substring(0, inNums.length() - 1);
+                if (inNums.length() > 0)
+                    inNums1 = inNums.substring(0, inNums.length() - 1);
 
                 String url = UrlHelper.URL_PRODUCT_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inNums1);
+                Log.d("URL_PRODUCT_IN_ORDER",url);
                 url = UniversalHelper.getTokenUrl(url);
 
                 for (int position = 0; position < map.size(); position++) {
@@ -195,7 +203,9 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, ProductStockActivity.class);
+            intent.putExtra("flag", 1);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -221,7 +231,7 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                 if (!response.isStatus()) {
                     Toast.makeText(ProductInOrderDetailActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(ProductInOrderDetailActivity.this, ProductStockActivity.class);
+                    Intent intent = new Intent(context, ProductStockActivity.class);
                     intent.putExtra("flag", 1);
                     startActivity(intent);
                 }
@@ -262,8 +272,10 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                             list1.addAll(list2);
                         }
 
-
-                        if (productInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey()) {
+//             待入库的产品才能扫码提交入库
+//             只有超级用户、系统管理员、成品库管员才能输入“已入库数量”，点“确认入库”按钮
+                        if (productInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey()
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isProductStockman(context))) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             btnSubmit.setText("提交入库");
                             myAdapter = new MyAdapter(ProductInOrderDetailActivity.this, list1);
@@ -291,14 +303,12 @@ public class ProductInOrderDetailActivity extends AppCompatActivity {
                             tvInBatchNo.setText("");
 
 //       设置加工单内容
-                        if (productInOrder.getProducePlan() != null)
-                            tvPlanNo.setText(productInOrder.getProducePlan().getCode());
+                        if (productInOrder.getBatch() != null)
+                            tvPlanNo.setText(productInOrder.getBatch().getPlan().getCode());
                         else
                             tvPlanNo.setText("");
 
-                        tvRemark.setText(productInOrder.getRemark());
                         tvInOrderStatus.setText(productInOrder.getInOrderStatusVo().getValue());
-
 
                     }
                 }, new Response.ErrorListener() {

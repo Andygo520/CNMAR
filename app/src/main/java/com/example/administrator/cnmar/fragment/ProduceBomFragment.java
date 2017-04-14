@@ -90,11 +90,11 @@ public class ProduceBomFragment extends Fragment {
         tv6 = (TextView) view.findViewById(R.id.tv6);
 
         tv1.setText("子加工单编号");
-        tv2.setText("半成品编码");
+        tv2.setText("半成品名称");
         tv3.setText("计划生产");
-        tv4.setText("合格品数量");
-        tv5.setText("领料单编号");
-        tv6.setText("半成品入库单号");
+        tv4.setText("领料单编号");
+        tv5.setText("领料单状态");
+        tv6.setText("子加工单状态");
 
 
         listView = (MyListView) view.findViewById(R.id.listView);
@@ -326,36 +326,32 @@ public class ProduceBomFragment extends Fragment {
 //                偶数行背景设为灰色
                 if (position % 2 == 0)
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
-                holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvHalfProductCode = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvBomNo = (TextView) convertView.findViewById(R.id.column1);
+                holder.tvHalfProductName = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvProduceNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvValidNum = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvReceiveOrder = (TextView) convertView.findViewById(R.id.column5);
-                holder.tvHalfProductInOrder = (TextView) convertView.findViewById(R.id.column6);
+                holder.tvReceiveOrder = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvReceiveStatus= (TextView) convertView.findViewById(R.id.column5);
+                holder.tvBomStatus = (TextView) convertView.findViewById(R.id.column6);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
-            holder.tvPlanNo.setText(list.get(position).getCode());
-            holder.tvHalfProductCode.setText(list.get(position).getHalf().getCode());
+            holder.tvBomNo.setText(list.get(position).getCode());
+            holder.tvHalfProductName.setText(list.get(position).getHalf().getName());
             holder.tvProduceNum.setText(list.get(position).getReceiveNum() + list.get(position).getHalf().getUnit().getName());
-//          只有已检验的时候才显示合格品数
-            if (list.get(position).getTestId() > 0)
-                holder.tvValidNum.setText(list.get(position).getSuccessNum() + "");
-            else
-                holder.tvValidNum.setText("");
-
-            if (list.get(position).getReceive() != null)
+            if (list.get(position).getReceive() != null){
                 holder.tvReceiveOrder.setText(list.get(position).getReceive().getCode());
-            else
+                holder.tvReceiveStatus.setText(list.get(position).getReceive().getReceiveStatusVo().getValue());
+            }
+            else{
                 holder.tvReceiveOrder.setText("");
-            if (list.get(position).getHalfInOrder() != null)
-                holder.tvHalfProductInOrder.setText(list.get(position).getHalfInOrder().getCode());
-            else
-                holder.tvHalfProductInOrder.setText("");
-            holder.tvPlanNo.setTextColor(getResources().getColor(R.color.colorBase));
-            holder.tvPlanNo.setOnClickListener(new View.OnClickListener() {
+                holder.tvReceiveStatus.setText("");
+            }
+            holder.tvBomStatus.setText(list.get(position).getProduceStatusVo().getValue());
+
+            holder.tvBomNo.setTextColor(getResources().getColor(R.color.colorBase));
+            holder.tvBomNo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ProduceBomDetailActivity.class);
@@ -369,12 +365,12 @@ public class ProduceBomFragment extends Fragment {
         }
 
         class ViewHolder {
-            public TextView tvPlanNo;
-            public TextView tvHalfProductCode;
+            public TextView tvBomNo;
+            public TextView tvHalfProductName;
             public TextView tvProduceNum;
-            public TextView tvValidNum;
-            public TextView tvReceiveOrder;  // 领料单号
-            public TextView tvHalfProductInOrder;    //半成品入库单号
+            public TextView tvReceiveOrder;
+            public TextView tvReceiveStatus;
+            public TextView tvBomStatus;
         }
 
     }

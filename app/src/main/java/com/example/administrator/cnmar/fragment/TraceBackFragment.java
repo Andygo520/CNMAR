@@ -44,7 +44,7 @@ import zxing.activity.CaptureActivity;
  */
 public class TraceBackFragment extends Fragment {
     private Button btnScann;
-    private LinearLayout  llMaterial, llProduct;
+    private LinearLayout llMaterial, llProduct;
     private TextView tvMaterialCode, tvMaterialName, tvSpaceCode, tvMaterialInOrder,
             tvProductCode, tvProductName, tvSpaceCode1, tvProductInOrder, tvPlan;
     private MyListView lvProduct, lvMaterial;
@@ -81,15 +81,16 @@ public class TraceBackFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CaptureActivity.class);
-                intent.putExtra("FLAG",100);//作为跳转到扫描页面的标志位
+                intent.putExtra("FLAG", 100);//作为跳转到扫描页面的标志位
                 startActivityForResult(intent, 0);
             }
         });
         return view;
     }
-/*
-* Fragment的onActivityResult方法可能不执行，需要重写其所属的Activity的onActivityResult方法即可
-* */
+
+    /*
+    * Fragment的onActivityResult方法可能不执行，需要重写其所属的Activity的onActivityResult方法即可
+    * */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -110,7 +111,7 @@ public class TraceBackFragment extends Fragment {
                         if (codeUrl.contains("material")) {
                             llMaterial.setVisibility(View.VISIBLE);
                             llProduct.setVisibility(View.GONE);
-                             final MaterialInOrderSpace inOrderSpace = JSON.parseObject(response.getData().toString(), MaterialInOrderSpace.class);
+                            final MaterialInOrderSpace inOrderSpace = JSON.parseObject(response.getData().toString(), MaterialInOrderSpace.class);
                             tvMaterialCode.setText(inOrderSpace.getMaterial().getCode());
                             tvMaterialName.setText(inOrderSpace.getMaterial().getName());
                             tvSpaceCode.setText(inOrderSpace.getSpace().getCode());
@@ -120,13 +121,13 @@ public class TraceBackFragment extends Fragment {
                             tvMaterialInOrder.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent=new Intent(getActivity(), MaterialInOrderDetailActivity.class);
-                                    intent.putExtra("ID",inOrderSpace.getInOrderId());
+                                    Intent intent = new Intent(getActivity(), MaterialInOrderDetailActivity.class);
+                                    intent.putExtra("ID", inOrderSpace.getInOrderId());
                                     startActivity(intent);
                                 }
                             });
                             List<MaterialOutOrder> outOrderList = inOrderSpace.getOutOrders();
-                            lvMaterial.setAdapter(new BillAdapter(outOrderList,getActivity()));
+                            lvMaterial.setAdapter(new BillAdapter(outOrderList, getActivity()));
                         }
 //                        追溯成品二维码
                         else {
@@ -141,28 +142,27 @@ public class TraceBackFragment extends Fragment {
                             tvProductInOrder.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent=new Intent(getActivity(), ProductInOrderDetailActivity.class);
-                                    intent.putExtra("ID",inOrderSpace.getInOrderId());
+                                    Intent intent = new Intent(getActivity(), ProductInOrderDetailActivity.class);
+                                    intent.putExtra("ID", inOrderSpace.getInOrderId());
                                     startActivity(intent);
                                 }
                             });
-                            if (inOrderSpace.getInOrder().getProducePlan() != null){
-                                tvPlan.setText(inOrderSpace.getInOrder().getProducePlan().getCode());
+                            if (inOrderSpace.getInOrder().getBatch() != null) {
+                                tvPlan.setText(inOrderSpace.getInOrder().getBatch().getPlan() == null ? "" : inOrderSpace.getInOrder().getBatch().getPlan().getCode());
                                 tvPlan.setTextColor(getResources().getColor(R.color.colorBase));
                                 tvPlan.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
-                                        intent.putExtra("ID",inOrderSpace.getInOrder().getProducePlan().getId());
-                                        intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
+                                        Intent intent = new Intent(getActivity(), ProductionPlanDetailActivity.class);
+                                        intent.putExtra("ID", inOrderSpace.getInOrder().getBatch().getPlan().getId());
+                                        intent.putExtra("FLAG", 999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                                         startActivity(intent);
                                     }
                                 });
-                            }
-                            else
+                            } else
                                 tvPlan.setText("");
                             List<ProductOutOrder> outOrderList = inOrderSpace.getOutOrders();
-                            lvProduct.setAdapter(new BillAdapter1(outOrderList,getActivity()));
+                            lvProduct.setAdapter(new BillAdapter1(outOrderList, getActivity()));
                         }
                     }
 
@@ -177,7 +177,7 @@ public class TraceBackFragment extends Fragment {
             queue.add(stringRequest);
         }
 //        若没有扫码直接返回就不做任何处理
-        else if (resultCode == 1){
+        else if (resultCode == 1) {
 
         }
     }
@@ -233,13 +233,13 @@ public class TraceBackFragment extends Fragment {
             holder.materialOutOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), MaterialOutOrderDetailActivity.class);
+                    Intent intent = new Intent(getActivity(), MaterialOutOrderDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());
                     startActivity(intent);
                 }
             });
 
-            if (list.get(position).getReceive().getPlanId()>0){
+            if (list.get(position).getReceive().getPlanId() > 0) {
                 holder.tvPlan.setText("加工单");
 
                 holder.plan.setText(list.get(position).getReceive().getPlan().getCode());
@@ -247,22 +247,22 @@ public class TraceBackFragment extends Fragment {
                 holder.plan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(getActivity(), ProductionPlanDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), ProductionPlanDetailActivity.class);
                         intent.putExtra("ID", list.get(position).getReceive().getPlanId());
-                        intent.putExtra("FLAG",999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
+                        intent.putExtra("FLAG", 999);// 作为跳转到加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                         startActivity(intent);
                     }
                 });
-            }else if (list.get(position).getReceive().getBomId()>0){
+            } else if (list.get(position).getReceive().getBomId() > 0) {
                 holder.tvPlan.setText("子加工单");
                 holder.plan.setText(list.get(position).getReceive().getBom().getCode());
                 holder.plan.setTextColor(getResources().getColor(R.color.colorBase));
                 holder.plan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(getActivity(), ProduceBomDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), ProduceBomDetailActivity.class);
                         intent.putExtra("ID", list.get(position).getReceive().getBomId());
-                        intent.putExtra("FLAG",999);// 作为跳转到子加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
+                        intent.putExtra("FLAG", 999);// 作为跳转到子加工单详情页面的标志，不让用户操作，区别于“计划管理—加工单”
                         startActivity(intent);
                     }
                 });
@@ -330,7 +330,7 @@ public class TraceBackFragment extends Fragment {
             holder.productOutOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), ProductOutOrderDetailActivity.class);
+                    Intent intent = new Intent(getActivity(), ProductOutOrderDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());
                     startActivity(intent);
                 }
@@ -342,7 +342,7 @@ public class TraceBackFragment extends Fragment {
                 holder.plan.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(getActivity(), DeliveryPlanDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), DeliveryPlanDetailActivity.class);
                         intent.putExtra("ID", list.get(position).getDeliverPlan().getId());
                         startActivity(intent);
                     }

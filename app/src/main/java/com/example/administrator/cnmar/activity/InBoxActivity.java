@@ -35,12 +35,10 @@ import butterknife.OnClick;
 import component.com.model.ComBox;
 import component.com.model.ComTool;
 
-import static com.example.administrator.cnmar.R.id.num;
-
 public class InBoxActivity extends AppCompatActivity {
 
     private Context context;
-    private int receiveId, processId,stationId, boxId;
+    private int receiveId, processId, stationId, boxId, planId, bomId;
     @BindView(R.id.left_arrow)
     LinearLayout leftArrow;
     @BindView(R.id.title)
@@ -101,9 +99,12 @@ public class InBoxActivity extends AppCompatActivity {
 
         init();
         String url = getIntent().getStringExtra("result");
-        receiveId = getIntent().getIntExtra("receiveId",0);
-        processId= getIntent().getIntExtra("processId",0);
-        stationId = getIntent().getIntExtra("stationId",0);
+        Log.d("resulturl", url);
+        receiveId = getIntent().getIntExtra("receiveId", 0);
+        processId = getIntent().getIntExtra("processId", 0);
+        planId = getIntent().getIntExtra("planId", 0);
+        bomId = getIntent().getIntExtra("bomId", 0);
+        stationId = getIntent().getIntExtra("stationId", 0);
         url = UniversalHelper.getTokenUrl(url);
         getTableInfoFromNet(url);
     }
@@ -127,14 +128,14 @@ public class InBoxActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    public void sendRequest(final String url){
+    public void sendRequest(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -144,10 +145,10 @@ public class InBoxActivity extends AppCompatActivity {
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        if (response.isStatus()){
+                        if (response.isStatus()) {
                             finish();
-                        }else
-                            Toast.makeText(context,response.getMsg(),Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(context, response.getMsg(), Toast.LENGTH_SHORT).show();
 
                     }
                 }, new Response.ErrorListener() {
@@ -160,6 +161,7 @@ public class InBoxActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     public void getTableInfoFromNet(final String strUrl) {
         new Thread(new Runnable() {
             @Override
@@ -172,20 +174,20 @@ public class InBoxActivity extends AppCompatActivity {
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
 
-                        boxId=comBox.getId();
-//                        加工单详情
-                        if (comBox.getReceive().getPlan() != null) {
+                        boxId = comBox.getId();
+//                      加工单详情
+                        if (comBox.getPlan() != null) {
                             name11.setText("加工单编号");
                             name12.setText("成品编码");
                             tvTableTitle.setText("加工单");
 
-                            tv11.setText(comBox.getReceive().getPlan().getCode());
-                            tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
-                            tv21.setText(comBox.getReceive().getProcessProduct().getStation().getName());
-                            tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessProduct().getName());
+                            tv11.setText(comBox.getPlan().getCode());
+                            tv12.setText(comBox.getPlan().getProduct().getCode());
+                            tv21.setText(comBox.getPlan().getProcessProduct().getStation().getName());
+                            tv22.setText(comBox.getPlan().getProcessProduct().getStation().getWorkshop().getName());
+                            tv31.setText(comBox.getPlan().getProcessProduct().getName());
 //                          得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
+                            List<ComTool> tools = comBox.getPlan().getProcessProduct().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -200,18 +202,18 @@ public class InBoxActivity extends AppCompatActivity {
                             tv51.setText(comBox.getNum() + "");//现存数量
                         }
 //                       子加工单详情
-                        else {
+                        else if (comBox.getBom() != null) {
                             name11.setText("子加工单编号");
                             name12.setText("半成品编码");
                             tvTableTitle.setText("子加工单");
 
-                            tv11.setText(comBox.getReceive().getBom().getCode());
-                            tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
-                            tv21.setText(comBox.getReceive().getProcessHalf().getStation().getName());
-                            tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessHalf().getName());
+                            tv11.setText(comBox.getBom().getCode());
+                            tv12.setText(comBox.getBom().getHalf().getCode());
+                            tv21.setText(comBox.getBom().getProcessHalf().getStation().getName());
+                            tv22.setText(comBox.getBom().getProcessHalf().getStation().getWorkshop().getName());
+                            tv31.setText(comBox.getBom().getProcessHalf().getName());
 //                           得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
+                            List<ComTool> tools = comBox.getBom().getProcessHalf().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -251,17 +253,19 @@ public class InBoxActivity extends AppCompatActivity {
                         .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String inCommit=et52.getText().toString().trim();
-                                if (inCommit==null || inCommit.equals("")){
+                                String inCommit = et52.getText().toString().trim();
+                                if (inCommit == null || inCommit.equals("")) {
                                     Toast.makeText(context, "请输入入框数量", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                String commit_url= UrlHelper.URL_IN_BOX.replace("{boxId}",boxId+"").replace("{receiveId}",receiveId+"")
-                                        .replace("{processId}",processId+"")
-                                        .replace("{stationId}",stationId+"").replace("{num}",inCommit)
-                                        .replace("{userId}", SPHelper.getInt(context,"userId")+"");
-                                Log.d("commit_url",commit_url);
-                                commit_url=UniversalHelper.getTokenUrl(commit_url);
+                                String commit_url = UrlHelper.URL_IN_BOX.replace("{boxId}", boxId + "")
+                                        .replace("{planId}", planId + "")
+                                        .replace("{bomId}", bomId + "")
+                                        .replace("{processId}", processId + "")
+                                        .replace("{stationId}", stationId + "").replace("{num}", inCommit)
+                                        .replace("{userId}", SPHelper.getInt(context, "userId") + "");
+                                Log.d("commit_url", commit_url);
+                                commit_url = UniversalHelper.getTokenUrl(commit_url);
                                 sendRequest(commit_url);
                             }
                         })

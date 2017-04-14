@@ -1,6 +1,7 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -33,6 +34,7 @@ import component.product.model.ProductSpaceStock;
 import component.product.model.ProductStock;
 
 public class ProductStockDetailActivity extends AppCompatActivity {
+    private Context context;
     private TextView tvTitle;
     private TextView tvCode, tvName, tvSize, tvUnit, tvRemark, tvStockType,
             tvIsMixed, tvStockSum, tvMinStock, tvMaxStock;
@@ -58,19 +60,24 @@ public class ProductStockDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, ProductStockActivity.class);
+            intent.putExtra("flag", 0);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     public void init() {
+        context=this;
         tvTitle = (TextView) findViewById(R.id.title);
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               finish();
+                Intent intent = new Intent(context, ProductStockActivity.class);
+                intent.putExtra("flag", 0);
+                startActivity(intent);
             }
         });
 

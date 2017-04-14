@@ -33,6 +33,7 @@ import component.product.model.ProductSpaceStockCheck;
 import component.product.model.ProductStockCheck;
 
 public class ProductCheckStockDetailActivity extends AppCompatActivity {
+    private Context context;
     private TextView tvCode, tvName, tvSize, tvUnit, tvRemark, tvStockType, tvMixType, tvCheckTime, tvPreCheckNum, tvAfterCheckNum;
     private TextView name1, name2, name3, name4;
     private MyListView lvSpaceInfo;
@@ -65,6 +66,7 @@ public class ProductCheckStockDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
+        context=this;
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("成品仓库-盘点详情");
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);
@@ -105,7 +107,7 @@ public class ProductCheckStockDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK){
-            finish();
+           finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);

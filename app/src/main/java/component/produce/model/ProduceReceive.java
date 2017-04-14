@@ -5,17 +5,13 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import component.com.model.ComTeam;
 import component.half.model.HalfOutOrder;
 import component.material.model.MaterialOutOrder;
-import component.process.model.ProcessHalf;
-import component.process.model.ProcessProduct;
-import component.produce.vo.ProduceStatusVo;
 import component.produce.vo.ReceiveStatusVo;
 import component.system.model.SystemUser;
 
 /** 领料单 */
-public class ProduceReceive implements Cloneable {
+public class ProduceReceive {
 
 	@JSONField(ordinal = 1)
 	private int id;
@@ -40,8 +36,6 @@ public class ProduceReceive implements Cloneable {
 	@JSONField(ordinal = 11)
 	private int status; // 领料单状态 - 1未领料2已领料
 
-	@JSONField(ordinal = 12)
-	private int produceStatus; // 生产状态 - 1未生产2已生产
 	@JSONField(ordinal = 13)
 	private ProducePlan plan;
 	@JSONField(ordinal = 14)
@@ -58,13 +52,6 @@ public class ProduceReceive implements Cloneable {
 	private List<ProduceBackMaterial> backMaterials;
 	@JSONField(serialize = false)
 	private List<ProduceBackHalf> backHalfs;
-
-	@JSONField(ordinal = 18)
-	private ProcessProduct processProduct;
-	@JSONField(ordinal = 19)
-	private ProcessHalf processHalf;
-	@JSONField(ordinal = 20)
-	private ComTeam team;
 
 	public ProduceReceive() {
 
@@ -167,14 +154,6 @@ public class ProduceReceive implements Cloneable {
 		this.status = status;
 	}
 
-	public int getProduceStatus() {
-		return produceStatus;
-	}
-
-	public void setProduceStatus(int produceStatus) {
-		this.produceStatus = produceStatus;
-	}
-
 	public ProducePlan getPlan() {
 		return plan;
 	}
@@ -239,49 +218,9 @@ public class ProduceReceive implements Cloneable {
 		this.backHalfs = backHalfs;
 	}
 
-	public ProcessProduct getProcessProduct() {
-		return processProduct;
-	}
-
-	public void setProcessProduct(ProcessProduct processProduct) {
-		this.processProduct = processProduct;
-	}
-
-	public ProcessHalf getProcessHalf() {
-		return processHalf;
-	}
-
-	public void setProcessHalf(ProcessHalf processHalf) {
-		this.processHalf = processHalf;
-	}
-
-	public ComTeam getTeam() {
-		return team;
-	}
-
-	public void setTeam(ComTeam team) {
-		this.team = team;
-	}
-
 	@JSONField(serialize = false)
 	public ReceiveStatusVo getReceiveStatusVo() {
 		return ReceiveStatusVo.getInstance(status);
-	}
-
-	@JSONField(serialize = false)
-	public ProduceStatusVo getProduceStatusVo() {
-		return ProduceStatusVo.getInstance(produceStatus);
-	}
-
-	public ProduceReceive clone() throws CloneNotSupportedException {
-		ProduceReceive clone = (ProduceReceive) super.clone();
-		if (clone.processHalf != null) {
-			clone.processHalf = processHalf.clone();
-		}
-		if (clone.processProduct != null) {
-			clone.processProduct = processProduct.clone();
-		}
-		return clone;
 	}
 
 }

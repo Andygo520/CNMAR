@@ -2,6 +2,7 @@ package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +53,7 @@ public class SupplyManageActivity extends AppCompatActivity {
     private MyListView listView;
     private LinearLayout llSearch,llReturn;
     private EditText etSearchInput;
+    private Button btn;
 
     private ImageView ivDelete;
     private TwinklingRefreshLayout refreshLayout;
@@ -81,6 +84,11 @@ public class SupplyManageActivity extends AppCompatActivity {
 
         tvTitle= (TextView) findViewById(R.id.title);
         tvTitle.setText("供应商管理");
+        btn= (Button) findViewById(R.id.button);
+        //                动态设置单选按钮文本上下左右的图片
+        Drawable drawable1 = getResources().getDrawable(R.drawable.company_selected);
+        drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
+        btn.setCompoundDrawables(null, drawable1, null, null);//只放上边
 
         llReturn= (LinearLayout) findViewById(R.id.left_arrow);
         llReturn.setOnClickListener(new View.OnClickListener() {
@@ -114,26 +122,26 @@ public class SupplyManageActivity extends AppCompatActivity {
 
             @Override
             public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            page++;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page++;
 //                          当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
-                            if (page==total){
-                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_SUPPLY_LIST.replace("{page}", String.valueOf(page)));
-                                getSupplyListFromNet(url);
-                                Toast.makeText(context, "加载完成", Toast.LENGTH_SHORT).show();
-                                // 结束上拉刷新...
-                                refreshLayout.finishLoadmore();
-                                return;
-                            }
+                        if (page==total){
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_SUPPLY_LIST.replace("{page}", String.valueOf(page)));
                             getSupplyListFromNet(url);
-                            Toast.makeText(context, "已加载更多", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "加载完成", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
                             refreshLayout.finishLoadmore();
+                            return;
                         }
-                    },400);
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_SUPPLY_LIST.replace("{page}", String.valueOf(page)));
+                        getSupplyListFromNet(url);
+                        Toast.makeText(context, "已加载更多", Toast.LENGTH_SHORT).show();
+                        // 结束上拉刷新...
+                        refreshLayout.finishLoadmore();
+                    }
+                },400);
             }
         });
         llSearch = (LinearLayout) findViewById(R.id.llSearch);
@@ -145,7 +153,7 @@ public class SupplyManageActivity extends AppCompatActivity {
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
                     String input = etSearchInput.getText().toString().trim();
                     try {
-                        input=URLEncoder.encode(input, "utf-8");
+                        input= URLEncoder.encode(input, "utf-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -318,7 +326,7 @@ public class SupplyManageActivity extends AppCompatActivity {
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
-            
+
             holder.column1.setText(list.get(position).getCode());
             holder.column2.setText(list.get(position).getName());
             holder.column3.setText(list.get(position).getTel());

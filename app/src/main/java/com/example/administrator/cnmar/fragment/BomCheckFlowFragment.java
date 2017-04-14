@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.activity.CheckFlowDetailActivity;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
@@ -60,7 +61,7 @@ public class BomCheckFlowFragment extends Fragment {
     private int count; // 数据总条数
     //    用来存放从后台取出的数据列表，作为adapter的数据源
     private List<ProduceTest> data = new ArrayList<>();
-    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW.replace("{type}", "2").replace("{page}", String.valueOf(page)));
+    private String url;
 
     @BindView(R.id.etSearchInput)
     EditText etSearchInput;
@@ -100,7 +101,10 @@ public class BomCheckFlowFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         init();
-
+        url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW
+                .replace("{userId}", SPHelper.getInt(getActivity(), "userId") + "")
+                .replace("{type}", "2")
+                .replace("{page}", String.valueOf(page)));
         UniversalHelper.initRefresh(getActivity(), refreshLayout);
         refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -124,7 +128,9 @@ public class BomCheckFlowFragment extends Fragment {
                         page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
                         if (page == total) {
-                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW.replace("{type}", "2").replace("{page}", String.valueOf(page)));
+                            String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW
+                                    .replace("{userId}", SPHelper.getInt(getActivity(), "userId") + "")
+                                    .replace("{type}", "2").replace("{page}", String.valueOf(page)));
                             Log.d("urlfinish", url);
                             getDataFromNet(url);
                             Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
@@ -132,7 +138,9 @@ public class BomCheckFlowFragment extends Fragment {
                             refreshLayout.finishLoadmore();
                             return;
                         }
-                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW.replace("{type}", "2").replace("{page}", String.valueOf(page)));
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_CHECK_FLOW
+                                .replace("{userId}", SPHelper.getInt(getActivity(), "userId") + "")
+                                .replace("{type}", "2").replace("{page}", String.valueOf(page)));
                         getDataFromNet(url);
                         Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
                         // 结束上拉刷新...
@@ -150,7 +158,9 @@ public class BomCheckFlowFragment extends Fragment {
                     if (input.equals("")) {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
-                        String urlString = UrlHelper.URL_SEARCH_CHECK_FLOW.replace("{type}", "2").replace("{code}", input);
+                        String urlString = UrlHelper.URL_SEARCH_CHECK_FLOW
+                                .replace("{userId}", SPHelper.getInt(getActivity(), "userId") + "")
+                                .replace("{type}", "2").replace("{code}", input);
                         urlString = UniversalHelper.getTokenUrl(urlString);
                         getDataFromNet(urlString);
                     }
@@ -190,13 +200,13 @@ public class BomCheckFlowFragment extends Fragment {
         return view;
     }
 
-    public void init(){
-        tableLayout.setColumnCollapsed(9,false);
-        tableLayout.setColumnCollapsed(10,false);
-        tableLayout.setColumnCollapsed(11,false);
-        tableLayout.setColumnCollapsed(12,false);
-        tableLayout.setColumnStretchable(9,true);
-        tableLayout.setColumnStretchable(11,true);
+    public void init() {
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
         tv1.setText("子加工单编号");
         tv2.setText("工序");
         tv3.setText("检验数量");
@@ -281,7 +291,9 @@ public class BomCheckFlowFragment extends Fragment {
                     Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String urlString = UrlHelper.URL_SEARCH_CHECK_FLOW.replace("{type}", "2").replace("{code}", input);
+                String urlString = UrlHelper.URL_SEARCH_CHECK_FLOW
+                        .replace("{userId}", SPHelper.getInt(getActivity(), "userId") + "")
+                        .replace("{type}", "2").replace("{code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
                 getDataFromNet(urlString);
                 break;
@@ -340,12 +352,12 @@ public class BomCheckFlowFragment extends Fragment {
             } else
                 holder = (ViewHolder) convertView.getTag();
 
-            holder.tvCode.setText(list.get(position).getReceive().getBom().getCode());
-            holder.tvProcess.setText(list.get(position).getReceive().getProcessHalf()==null?"":list.get(position).getReceive().getProcessHalf().getName());
-            holder.tvTestNum.setText(list.get(position).getTestNum()+"");
-            holder.tvInvalidNum.setText(list.get(position).getFailNum()+"");
+            holder.tvCode.setText(list.get(position).getBom().getCode());
+            holder.tvProcess.setText(list.get(position).getBom().getProcessHalf() == null ? "" : list.get(position).getBom().getProcessHalf().getName());
+            holder.tvTestNum.setText(list.get(position).getTestNum() + "");
+            holder.tvInvalidNum.setText(list.get(position).getFailNum() + "");
             holder.tvPerson.setText(list.get(position).getTest().getName());
-            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             holder.tvTime.setText(sdf.format(list.get(position).getTestTime()));
 
 //            点击子加工单编码进入详情
@@ -353,9 +365,9 @@ public class BomCheckFlowFragment extends Fragment {
             holder.tvCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getActivity(), CheckFlowDetailActivity.class);
-                    intent.putExtra("Id",list.get(position).getId());
-                    intent.putExtra("Flag",2);//子加工单标志位
+                    Intent intent = new Intent(getActivity(), CheckFlowDetailActivity.class);
+                    intent.putExtra("Id", list.get(position).getId());
+                    intent.putExtra("Flag", 2);//子加工单标志位
                     startActivity(intent);
                 }
             });

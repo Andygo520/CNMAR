@@ -29,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.RoleHelper;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
@@ -50,7 +51,7 @@ import zxing.activity.CaptureActivity;
 public class HalfProductInOrderDetailActivity extends AppCompatActivity {
     private Context context = HalfProductInOrderDetailActivity.this;
     private TextView tvName11, tvName12, tvName21, tvName22;
-    private TextView tvInOrder, tvInBatchNo, tvRemark, tvInOrderStatus;
+    private TextView tvInOrder, tvInBatchNo, tvBomCode, tvInOrderStatus;
 
     private TextView name1, name2, name3, name4;
     private TextView tvTitle;
@@ -108,12 +109,14 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, HalfProductStockActivity.class);
+                intent.putExtra("flag", 1);
+                startActivity(intent);
             }
         });
         tvName11.setText("入库单号");
         tvName12.setText("入库批次号");
-        tvName21.setText("备注");
+        tvName21.setText("子加工单编号");
         tvName22.setText("入库单状态");
 
         name1 = (TextView) findViewById(R.id.column1);
@@ -128,7 +131,7 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
 
         tvInOrder = (TextView) findViewById(R.id.tv11);
         tvInBatchNo = (TextView) findViewById(R.id.tv12);
-        tvRemark = (TextView) findViewById(R.id.tv21);
+        tvBomCode = (TextView) findViewById(R.id.tv21);
         tvInOrderStatus = (TextView) findViewById(R.id.tv22);
 
         listView = (MyListView) findViewById(R.id.lvTable);
@@ -147,14 +150,17 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
                         return;
                     }
                 }
-                inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
-                preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+                if (inOrderSpaceIds.length() > 0)
+                    inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+                if (preInStocks.length() > 0)
+                    preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
                 //      每次点击提交入库按钮，将inNums设置为空，防止之前的数值对之后的数值产生影响
                 inNums = "";
                 for (int i = 0; i < map.size(); i++) {
                     inNums += map.get(i) + ",";
                 }
-                inNums1 = inNums.substring(0, inNums.length() - 1);
+                if (inNums.length() > 0)
+                    inNums1 = inNums.substring(0, inNums.length() - 1);
 
                 String url = UrlHelper.URL_HALF_PRODUCT_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inNums1);
                 url = UniversalHelper.getTokenUrl(url);
@@ -193,7 +199,9 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, HalfProductStockActivity.class);
+            intent.putExtra("flag", 1);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -261,7 +269,9 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
                         }
 
 //             待入库的产品才能扫码提交入库
-                        if (halfInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey() ) {
+//             只有超级用户、系统管理员、半成品库管员才能输入“已入库数量”，点“确认入库”按钮
+                        if (halfInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey()
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isHalfStockman(context))) {
                             btnSubmit.setVisibility(View.VISIBLE);
                             btnSubmit.setText("提交入库");
                             myAdapter = new MyAdapter(context, list1);
@@ -288,11 +298,8 @@ public class HalfProductInOrderDetailActivity extends AppCompatActivity {
                         } else
                             tvInBatchNo.setText("");
 
-
-                        tvRemark.setText(halfInOrder.getRemark());
+                        tvBomCode.setText(halfInOrder.getBatch() == null ? "" : halfInOrder.getBatch().getBom().getCode());
                         tvInOrderStatus.setText(halfInOrder.getInOrderStatusVo().getValue());
-
-
                     }
                 }, new Response.ErrorListener() {
                     @Override

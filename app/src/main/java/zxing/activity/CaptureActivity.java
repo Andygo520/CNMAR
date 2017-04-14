@@ -102,7 +102,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     //  判断是哪个页面启动的扫描页面
     private int FLAG = 0;
     private int id;  //三种出库单id
-    private int receiveId, processId, stationId;//料框扫描传递过来的参数
+    private int receiveId, processId, stationId, planId, bomId;//料框扫描传递过来的参数
     private int testBoxId;//待检验料框id
 
     private Rect mCropRect = null;
@@ -333,9 +333,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             receiveId = getIntent().getIntExtra("receiveId", 0);
             processId = getIntent().getIntExtra("processId", 0);
             stationId = getIntent().getIntExtra("stationId", 0);
-            strUrl = result + "?stationId=" + stationId
+            planId = getIntent().getIntExtra("planId", 0);
+            bomId = getIntent().getIntExtra("bomId", 0);
+
+//            planId=0&bomId=0&&processId=1&stationId=1
+            strUrl = result + "?planId=" + planId
+                    + "&bomId=" + bomId
                     + "&processId=" + processId
-                    + "&receiveId=" + receiveId;
+                    + "&stationId=" + stationId;
             Log.d("strUrl", strUrl);
 //            如果扫描料框的时候，扫到了机台，此处进行判断
             if (!strUrl.contains(UrlHelper.URL_SCANN_BOX)) {
@@ -353,7 +358,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             receiveId = getIntent().getIntExtra("receiveId", 0);
             processId = getIntent().getIntExtra("processId", 0);
             stationId = getIntent().getIntExtra("stationId", 0);
-            strUrl = result + "?op=prev&receiveId=" + receiveId
+            planId = getIntent().getIntExtra("planId", 0);
+            bomId = getIntent().getIntExtra("bomId", 0);
+            strUrl = result + "?op=prev"
+                    + "&planId=" + planId
+                    + "&bomId=" + bomId
                     + "&processId=" + processId
                     + "&stationId=" + stationId;
             Log.d("strUrl", strUrl);
@@ -428,6 +437,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         btnGoOnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tvCode.setText("");
                 scanCropView.setVisibility(View.VISIBLE);
                 goOnScanView.setVisibility(View.INVISIBLE);
 //               实现连扫
@@ -524,13 +534,15 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
                 } else {
                     tvCode.setText("");
-                    MaterialInOrderSpace materialInOrderSpace = JSON.parseObject(response.getData().toString(), MaterialInOrderSpace.class);
-                    if (materialInOrderSpace.getInOrOut().equals("in")) {
-                        Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                    if (response.getData() != null) {
+                        MaterialInOrderSpace materialInOrderSpace = JSON.parseObject(response.getData().toString(), MaterialInOrderSpace.class);
+                        if (materialInOrderSpace.getInOrOut().equals("in")) {
+                            Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CaptureActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
-
 
             }
         }, new Response.ErrorListener() {
@@ -596,11 +608,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
                 } else {
                     tvCode.setText("");
-                    ProductInOrderSpace productInOrderSpace = JSON.parseObject(response.getData().toString(), ProductInOrderSpace.class);
-                    if (productInOrderSpace.getInOrOut().equals("in")) {
-                        Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                    if (response.getData() != null) {
+                        ProductInOrderSpace productInOrderSpace = JSON.parseObject(response.getData().toString(), ProductInOrderSpace.class);
+                        if (productInOrderSpace.getInOrOut().equals("in")) {
+                            Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CaptureActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -668,11 +683,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
                 } else {
                     tvCode.setText("");
-                    HalfInOrderSpace halfInOrderSpace = JSON.parseObject(response.getData().toString(), HalfInOrderSpace.class);
-                    if (halfInOrderSpace.getInOrOut().equals("in")) {
-                        Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                    if (response.getData() != null) {
+                        HalfInOrderSpace halfInOrderSpace = JSON.parseObject(response.getData().toString(), HalfInOrderSpace.class);
+                        if (halfInOrderSpace.getInOrOut().equals("in")) {
+                            Toast.makeText(CaptureActivity.this, "入库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(CaptureActivity.this, "出库单" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CaptureActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -700,6 +718,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                     intent.putExtra("receiveId", receiveId);
                     intent.putExtra("processId", processId);
                     intent.putExtra("stationId", stationId);
+                    intent.putExtra("planId", planId);
+                    intent.putExtra("bomId", bomId);
                     startActivity(intent);
                     CaptureActivity.this.finish();
                 } else {

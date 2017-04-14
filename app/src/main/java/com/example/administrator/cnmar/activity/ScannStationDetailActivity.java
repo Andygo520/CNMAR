@@ -29,17 +29,28 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import component.com.model.ComStation;
 import component.com.model.ComTool;
-import component.produce.model.ProduceReceive;
 import zxing.activity.CaptureActivity;
+
+import static com.example.administrator.cnmar.R.id.tableRow;
 
 /*
 * 机台的(子)加工单列表的详情页
 * */
 public class ScannStationDetailActivity extends AppCompatActivity {
+
     private Context context;
     private String url;
-    private int processId, stationId, id;//工序id、机台id、条目id(领料单id)
+    private int processId, stationId, planId, bomId, id;//工序id、（子）加工单id、条目id
+    @BindView(R.id.name101)
+    TextView name101;
+    @BindView(R.id.tv101)
+    TextView tv101;
+    @BindView(R.id.name102)
+    TextView name102;
+    @BindView(R.id.tv102)
+    TextView tv102;
     @BindView(R.id.name91)
     TextView name91;
     @BindView(R.id.tv91)
@@ -48,8 +59,8 @@ public class ScannStationDetailActivity extends AppCompatActivity {
     TextView name92;
     @BindView(R.id.tv92)
     TextView tv92;
-    @BindView(R.id.tableRow)
-    TableRow tableRow;
+    @BindView(tableRow)
+    TableRow row10;
     @BindView(R.id.btnScannLast)
     Button btnScannLast;
     @BindView(R.id.left_arrow)
@@ -136,11 +147,14 @@ public class ScannStationDetailActivity extends AppCompatActivity {
         init();
         processId = getIntent().getIntExtra("processId", -1);
         stationId = getIntent().getIntExtra("stationId", -1);
+        planId = getIntent().getIntExtra("planId", 0);
+        bomId = getIntent().getIntExtra("bomId", 0);
         id = getIntent().getIntExtra("ID", -99);
 
         url = UrlHelper.URL_SCANN_STATION_DETAIL.replace("{ID}", id + "")
+                .replace("{planId}", planId + "")
+                .replace("{bomId}", bomId + "")
                 .replace("{processId}", processId + "")
-                .replace("{stationId}", stationId + "")
                 .replace("{userId}", SPHelper.getInt(context, "userId") + "");
         url = UniversalHelper.getTokenUrl(url);
     }
@@ -154,19 +168,21 @@ public class ScannStationDetailActivity extends AppCompatActivity {
     public void init() {
         title.setText("生产管理");
         name31.setText("计划生产数量");
-        name32.setText("末工序合格品数量");
-        name41.setText("领料单编号");
-        name42.setText("领料人");
-        name51.setText("工序");
-        name52.setText("车间");
-        name61.setText("机台工位");
-        name62.setText("工装");
-        name71.setText("班组");
-        name72.setText("操作工");
-        name81.setText("合格品数量");
-        name82.setText("不合格品数量");
-        name91.setText("上一道工序");
-        name92.setText("上工序合格品数量");
+        name32.setText("实际生产数量");
+        name41.setText("已入库合格品数量");
+        name42.setText("末工序合格品数量");
+        name51.setText("领料单编号");
+        name52.setText("领料人");
+        name61.setText("工序");
+        name62.setText("车间");
+        name71.setText("机台工位");
+        name72.setText("工装");
+        name81.setText("班组");
+        name82.setText("操作工");
+        name91.setText("工序合格品数量");
+        name92.setText("工序不合格品数量");
+        name101.setText("上一道工序");
+        name102.setText("上工序合格品数量");
     }
 
     @Override
@@ -188,47 +204,48 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                     public void onResponse(String s) {
                         String json = VolleyHelper.getJson(s);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        ProduceReceive produceReceive = JSON.parseObject(response.getData().toString(), ProduceReceive.class);
-
+                        ComStation station = JSON.parseObject(response.getData().toString(), ComStation.class);
 //                        加工单详情
-                        if (produceReceive.getPlan() != null) {
+                        if (station.getPlan() != null) {
                             tvTableTitle.setText("加工单详情");
                             name11.setText("加工单编号");
                             name12.setText("加工单名称");
                             name21.setText("成品编码");
                             name22.setText("成品名称");
-                            tv11.setText(produceReceive.getPlan().getCode());
-                            tv12.setText(produceReceive.getPlan().getName());
-                            tv21.setText(produceReceive.getPlan().getProduct().getCode());
-                            tv22.setText(produceReceive.getPlan().getProduct().getName());
-                            tv31.setText(produceReceive.getPlan().getProduceNum() + produceReceive.getPlan().getProduct().getUnit().getName());
-                            tv32.setText(produceReceive.getProcessProduct().getLast().getSuccessNum()+"");// 末工序合格品数量
-                            tv41.setText(produceReceive.getCode());
-                            tv42.setText(produceReceive.getReceiveUser().getName());
-                            tv51.setText(produceReceive.getProcessProduct().getName());
-                            tv52.setText(produceReceive.getProcessProduct().getStation().getWorkshop().getName());
-                            tv61.setText(produceReceive.getProcessProduct().getStation().getName());
+                            tv11.setText(station.getPlan().getCode());
+                            tv12.setText(station.getPlan().getName());
+                            tv21.setText(station.getPlan().getProduct().getCode());
+                            tv22.setText(station.getPlan().getProduct().getName());
+                            tv31.setText(station.getPlan().getProduceNum() + station.getPlan().getProduct().getUnit().getName());
+                            tv32.setText(station.getPlan().getBatchGroup() == null ? "" : station.getPlan().getBatchGroup().getActualNum() + "");
+                            tv41.setText(station.getPlan().getBatchGroup() == null ? "" : station.getPlan().getBatchGroup().getSuccessNum() + "");
+                            tv42.setText(station.getPlan().getProcessProduct().getLast().getSuccessNum() + "");// 末工序合格品数量
+                            tv51.setText(station.getCode());
+                            tv52.setText(station.getPlan().getReceive().getReceiveUser().getName());
+                            tv61.setText(station.getPlan().getProcessProduct().getName());
+                            tv62.setText(station.getWorkshop().getName());
+                            tv71.setText(station.getName());
 //                            得到工装列表
-                            List<ComTool> tools = produceReceive.getProcessProduct().getTools();
+                            List<ComTool> tools = station.getPlan().getProcessProduct().getTools();
                             if (tools.size() == 0) {
-                                tv62.setText("");
+                                tv72.setText("");
                             } else {
                                 String toolNames = "";
                                 for (ComTool tool : tools) {
                                     toolNames += tool.getName() + "，";
                                 }
-                                tv62.setText(toolNames.substring(0, toolNames.length() - 1));
+                                tv72.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv71.setText(produceReceive.getTeam().getName());
-                            tv72.setText(SPHelper.getString(context, "name"));
-                            tv81.setText(produceReceive.getProcessProduct().getSuccessNum() + "");
-                            tv82.setText(produceReceive.getProcessProduct().getFailureNum() + "");
+                            tv81.setText(station.getPlan().getProcessProduct().getTeam().getName());
+                            tv82.setText(SPHelper.getString(context, "name"));
+                            tv91.setText(station.getPlan().getProcessProduct().getSuccessNum() + "");
+                            tv92.setText(station.getPlan().getProcessProduct().getFailureNum() + "");
 //                            上工序不为空显示最后一行以及扫描上工序料框按钮
-                            if (produceReceive.getProcessProduct().getPrev() != null) {
-                                tableRow.setVisibility(View.VISIBLE);
+                            if (station.getPlan().getProcessProduct().getPrev() != null) {
+                                row10.setVisibility(View.VISIBLE);
                                 btnScannLast.setVisibility(View.VISIBLE);
-                                tv91.setText(produceReceive.getProcessProduct().getPrev().getName());
-                                tv92.setText(produceReceive.getProcessProduct().getPrev().getSuccessNum()+"");
+                                tv101.setText(station.getPlan().getProcessProduct().getPrev().getName());
+                                tv102.setText(station.getPlan().getProcessProduct().getPrev().getSuccessNum() + "");
                             }
                         }
 //                       子加工单详情
@@ -238,38 +255,40 @@ public class ScannStationDetailActivity extends AppCompatActivity {
                             name12.setText("加工单名称");
                             name21.setText("半成品编码");
                             name22.setText("半成品名称");
-                            tv11.setText(produceReceive.getBom().getCode());
-                            tv12.setText(produceReceive.getBom().getPlan().getName());
-                            tv21.setText(produceReceive.getBom().getHalf().getCode());
-                            tv22.setText(produceReceive.getBom().getHalf().getName());
-                            tv31.setText(produceReceive.getBom().getReceiveNum() + produceReceive.getBom().getHalf().getUnit().getName());
-                            tv32.setText(produceReceive.getProcessHalf().getLast().getSuccessNum()+"");// 末工序合格品数量
-                            tv41.setText(produceReceive.getCode());
-                            tv42.setText(produceReceive.getReceiveUser().getName());
-                            tv51.setText(produceReceive.getProcessHalf().getName());
-                            tv52.setText(produceReceive.getProcessHalf().getStation().getWorkshop().getName());
-                            tv61.setText(produceReceive.getProcessHalf().getStation().getName());
+                            tv11.setText(station.getBom().getCode());
+                            tv12.setText(station.getBom().getPlan().getName());
+                            tv21.setText(station.getBom().getHalf().getCode());
+                            tv22.setText(station.getBom().getHalf().getName());
+                            tv31.setText(station.getBom().getReceiveNum() + station.getBom().getHalf().getUnit().getName());
+                            tv32.setText(station.getBom().getBatchGroup() == null ? "" : station.getBom().getBatchGroup().getActualNum() + "");
+                            tv41.setText(station.getBom().getBatchGroup() == null ? "" : station.getBom().getBatchGroup().getSuccessNum() + "");
+                            tv42.setText(station.getBom().getProcessHalf().getLast().getSuccessNum() + "");// 末工序合格品数量
+                            tv51.setText(station.getCode());
+                            tv52.setText(station.getBom().getReceive().getReceiveUser().getName());
+                            tv61.setText(station.getBom().getProcessHalf().getName());
+                            tv62.setText(station.getWorkshop().getName());
+                            tv71.setText(station.getName());
                             //                       得到工装列表
-                            List<ComTool> tools = produceReceive.getProcessHalf().getTools();
+                            List<ComTool> tools = station.getBom().getProcessHalf().getTools();
                             if (tools.size() == 0) {
-                                tv62.setText("");
+                                tv72.setText("");
                             } else {
                                 String toolNames = "";
                                 for (ComTool tool : tools) {
                                     toolNames += tool.getName() + "，";
                                 }
-                                tv62.setText(toolNames.substring(0, toolNames.length() - 1));
+                                tv72.setText(toolNames.substring(0, toolNames.length() - 1));
                             }
-                            tv71.setText(produceReceive.getTeam().getName());
-                            tv72.setText(SPHelper.getString(context, "name"));
-                            tv81.setText(produceReceive.getProcessHalf().getSuccessNum() + "");
-                            tv82.setText(produceReceive.getProcessHalf().getFailureNum() + "");
- //                            上工序不为空显示最后一行以及扫描上工序料框按钮
-                            if (produceReceive.getProcessHalf().getPrev() != null) {
-                                tableRow.setVisibility(View.VISIBLE);
+                            tv81.setText(station.getBom().getProcessHalf().getTeam().getName());
+                            tv82.setText(SPHelper.getString(context, "name"));
+                            tv91.setText(station.getBom().getProcessHalf().getSuccessNum() + "");
+                            tv92.setText(station.getBom().getProcessHalf().getFailureNum() + "");
+                            //                            上工序不为空显示最后一行以及扫描上工序料框按钮
+                            if (station.getBom().getProcessHalf().getPrev() != null) {
+                                row10.setVisibility(View.VISIBLE);
                                 btnScannLast.setVisibility(View.VISIBLE);
-                                tv91.setText(produceReceive.getProcessHalf().getPrev().getName());
-                                tv92.setText(produceReceive.getProcessHalf().getPrev().getSuccessNum()+"");
+                                tv101.setText(station.getBom().getProcessHalf().getPrev().getName());
+                                tv102.setText(station.getBom().getProcessHalf().getPrev().getSuccessNum() + "");
                             }
                         }
 
@@ -285,7 +304,7 @@ public class ScannStationDetailActivity extends AppCompatActivity {
         }).start();
     }
 
-    @OnClick({R.id.left_arrow, R.id.btn,R.id.btnScannLast})
+    @OnClick({R.id.left_arrow, R.id.btn, R.id.btnScannLast})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_arrow:
@@ -294,7 +313,8 @@ public class ScannStationDetailActivity extends AppCompatActivity {
             case R.id.btnScannLast:
                 Intent intent1 = new Intent(context, CaptureActivity.class);
                 intent1.putExtra("FLAG", 666);//跳转标志位
-                intent1.putExtra("receiveId", id);
+                intent1.putExtra("planId", planId);
+                intent1.putExtra("bomId", bomId);
                 intent1.putExtra("processId", processId);
                 intent1.putExtra("stationId", stationId);
                 startActivity(intent1);
@@ -302,7 +322,8 @@ public class ScannStationDetailActivity extends AppCompatActivity {
             case R.id.btn:
                 Intent intent = new Intent(context, CaptureActivity.class);
                 intent.putExtra("FLAG", 50);//跳转标志位
-                intent.putExtra("receiveId", id);
+                intent.putExtra("planId", planId);
+                intent.putExtra("bomId", bomId);
                 intent.putExtra("processId", processId);
                 intent.putExtra("stationId", stationId);
                 startActivity(intent);

@@ -25,6 +25,7 @@
                 android:gravity="center"
                 />
             <include layout="@layout/table"></include>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

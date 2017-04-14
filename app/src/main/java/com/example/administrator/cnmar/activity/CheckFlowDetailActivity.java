@@ -98,7 +98,7 @@ public class CheckFlowDetailActivity extends AppCompatActivity {
         name21.setText("机台工位");
         name22.setText("检验数量");
         name31.setText("不合格品数量");
-        name32.setText("不合格原因");
+        name32.setText("检验备注");
         row.setVisibility(View.VISIBLE);
         name41.setText("检验员");
         name42.setText("检验时间");
@@ -117,19 +117,19 @@ public class CheckFlowDetailActivity extends AppCompatActivity {
                         ProduceTest test = JSON.parseObject(response.getData().toString(), ProduceTest.class);
 //      显示加工单检验流水
                         if (flag == 1) {
-                            tv11.setText(test.getReceive().getPlan().getCode());
-                            tv12.setText(test.getReceive().getProcessProduct() == null ? "" : test.getReceive().getProcessProduct().getName());
+                            tv11.setText(test.getPlan().getCode());
+                            tv12.setText(test.getPlan().getProcessProduct() == null ? "" : test.getPlan().getProcessProduct().getName());
+                            tv21.setText(test.getPlan().getProcessProduct().getStation().getName());
                         }
 //      显示子加工单检验流水
                         else if (flag == 2) {
-                            tv11.setText(test.getReceive().getBom().getCode());
-                            tv12.setText(test.getReceive().getProcessHalf() == null ? "" : test.getReceive().getProcessHalf().getName());
+                            tv11.setText(test.getBom().getCode());
+                            tv12.setText(test.getBom().getProcessHalf() == null ? "" : test.getBom().getProcessHalf().getName());
+                            tv21.setText(test.getBom().getProcessHalf().getStation().getName());
                         }
-
-                        tv21.setText(test.getStation().getName());
                         tv22.setText(test.getTestNum() + "");
                         tv31.setText(test.getFailNum() + "");
-                        tv32.setText(test.getReason());
+                        tv32.setText(test.getTestRemark());
                         tv41.setText(test.getTest().getName());
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         tv42.setText(sdf.format(test.getTestTime()));

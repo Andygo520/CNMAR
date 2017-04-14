@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -188,59 +189,12 @@
                             <View style="@style/list_item_cell_seperator_layout" />
 
                             <TextView
-                                android:id="@+id/name61"
-                                android:layout_width="65dip"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                android:text="开始日期"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold" />
-
-                            <View style="@style/list_item_cell_seperator_layout" />
-
-                            <TextView
-                                android:id="@+id/tv61"
-                                android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip" />
-
-                            <View style="@style/list_item_cell_seperator_layout" />
-
-                            <TextView
-                                android:id="@+id/name62"
-                                android:layout_width="65dip"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip"
-                                android:text="结束日期"
-                                android:textColor="@android:color/black"
-                                android:textStyle="bold" />
-
-                            <View style="@style/list_item_cell_seperator_layout" />
-
-                            <TextView
-                                android:id="@+id/tv62"
-                                android:layout_width="35dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:padding="2dip" />
-
-                            <View style="@style/list_item_cell_seperator_layout" />
-                        </TableRow>
-
-                        <TableRow android:background="@drawable/table_frame">
-
-                            <View style="@style/list_item_cell_seperator_layout" />
-
-                            <TextView
                                 android:id="@+id/name41"
                                 android:layout_width="65dip"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="计划生产数量"
+                                android:text="开始日期"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
@@ -261,21 +215,18 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="实际生产数量"
+                                android:text="结束日期"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
                             <View style="@style/list_item_cell_seperator_layout" />
 
-                            <EditText
+                            <TextView
                                 android:id="@+id/tv42"
                                 android:layout_width="35dp"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@null"
-                                android:inputType="number"
-                                android:textColor="@color/color_red"
-                                android:textColorHint="@color/color_red" />
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
 
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
@@ -290,7 +241,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="检验员"
+                                android:text="计划生产数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
@@ -311,7 +262,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="合格品数量"
+                                android:text="当前批次生产数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
@@ -321,11 +272,58 @@
                                 android:id="@+id/tv52"
                                 android:layout_width="35dp"
                                 android:layout_height="match_parent"
-                                android:gravity="center"
                                 android:background="@null"
+                                android:gravity="center"
                                 android:inputType="number"
                                 android:textColor="@color/color_red"
                                 android:textColorHint="@color/color_red" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name61"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="实际生产数量"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv61"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/name62"
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="已入库合格品数量"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv62"
+                                android:layout_width="35dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip" />
 
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
@@ -375,7 +373,6 @@
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
 
-
                         <TableRow android:background="@drawable/table_frame">
 
                             <View style="@style/list_item_cell_seperator_layout" />
@@ -406,7 +403,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip"
-                                android:text="成品入库单号"
+                                android:text="末工序合格品数量"
                                 android:textColor="@android:color/black"
                                 android:textStyle="bold" />
 
@@ -418,6 +415,147 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/rowBox"
+                            android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="末工序合格品料框"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tvBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="2dp"></TextView>
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/rowBoxFlow"
+                            android:background="@drawable/table_frame"
+                            android:visibility="gone">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="末工序合格品料框"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <cn.lankton.flowlayout.FlowLayout
+                                android:id="@+id/flowlayout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:padding="3dp"
+                                app:lineSpacing="3dp">
+
+                                <CheckBox
+                                    android:id="@+id/checkAll"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:enabled="false"
+                                    android:text="全选"
+                                    android:textColor="@color/colorBase"
+                                    android:textSize="16sp"
+                                    android:visibility="gone" />
+                            </cn.lankton.flowlayout.FlowLayout>
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/row"
+                            android:background="@drawable/table_frame">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="加工单状态"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:id="@+id/tv92"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:padding="2dip" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/rowRg"
+                            android:background="@drawable/table_frame"
+                            android:visibility="gone">
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <TextView
+                                android:layout_width="65dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="2dip"
+                                android:text="加工单状态"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold" />
+
+                            <View style="@style/list_item_cell_seperator_layout" />
+
+                            <RadioGroup
+                                android:id="@+id/rg"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <RadioButton
+                                    android:id="@+id/rb1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="未完工" />
+
+                                <RadioButton
+                                    android:id="@+id/rb2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="已完工" />
+
+                            </RadioGroup>
 
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
@@ -454,7 +592,7 @@
                         android:layout_height="wrap_content"
                         android:stretchColumns="1,3,5,7,9">
 
-                        <TableRow >
+                        <TableRow>
 
                             <View style="@style/list_item_cell_seperator_layout" />
 
@@ -628,13 +766,54 @@
             </LinearLayout>
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="成品入库信息"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <include layout="@layout/table_list" />
+
+            <LinearLayout
+                android:id="@+id/llRemark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                    <EditText
+                        android:id="@+id/etRemark"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:hint="检验备注"
+                        android:padding="2dip"
+                        android:textColor="@color/color_red" />
+
+                    <View style="@style/list_item_cell_seperator_layout" />
+
+                </LinearLayout>
+
+                <View style="@style/list_item_seperator_layout" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/button_bg"
-                android:text="领料"
+                android:text="生成领料单"
                 android:textColor="@color/color_white"
                 android:textSize="17sp"
                 android:visibility="gone" />

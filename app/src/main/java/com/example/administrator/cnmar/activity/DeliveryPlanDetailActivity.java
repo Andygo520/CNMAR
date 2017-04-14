@@ -1,6 +1,7 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -80,7 +81,9 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent=new Intent(DeliveryPlanDetailActivity.this,PlanManageActivity.class);
+            intent.putExtra("flag",3);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -139,7 +142,9 @@ public class DeliveryPlanDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.left_arrow)
     public void onClick() {
-        finish();
+        Intent intent=new Intent(DeliveryPlanDetailActivity.this,PlanManageActivity.class);
+        intent.putExtra("flag",3);
+        startActivity(intent);
     }
 
     public class MyAdapter extends BaseAdapter {

@@ -30,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
@@ -62,7 +63,7 @@ public class ValidBinFragment extends Fragment {
     private int count; // 数据总条数
     //    用来存放从后台取出的数据列表，作为adapter的数据源
     private List<ComBox> data = new ArrayList<>();
-    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_BIN.replace("{type}", BoxTypeVo.success.getKey() + "").replace("{page}", String.valueOf(page)));
+    private String url;
 
     @BindView(R.id.etSearchInput)
     EditText etSearchInput;
@@ -102,6 +103,10 @@ public class ValidBinFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         init();
+        url = UniversalHelper.getTokenUrl(UrlHelper.URL_BIN
+                .replace("{userId}", "" + SPHelper.getInt(getActivity(), "userId"))
+                .replace("{type}", BoxTypeVo.success.getKey() + "")
+                .replace("{page}", String.valueOf(page)));
 //        注册EventBus
         EventBus.getDefault().register(this);
         UniversalHelper.initRefresh(getActivity(), refreshLayout);
@@ -359,19 +364,18 @@ public class ValidBinFragment extends Fragment {
 
             holder.tvBoxCode.setText(list.get(position).getCode());
 //            判断显示加工单还是子加工单
-            if (list.get(position).getReceive().getPlan() != null) {
-                holder.tvCode.setText(list.get(position).getReceive().getPlan().getCode());
-            } else
-                holder.tvCode.setText(list.get(position).getReceive().getBom().getCode());
-//            工序的判断
-            if (list.get(position).getReceive().getProcessProduct() != null) {
-                holder.tvProcess.setText(list.get(position).getReceive().getProcessProduct().getName());
-            } else
-                holder.tvProcess.setText(list.get(position).getReceive().getProcessHalf().getName());
+            if (list.get(position).getPlan() != null) {
+                holder.tvCode.setText(list.get(position).getPlan().getCode());
+                holder.tvProcess.setText(list.get(position).getPlan().getProcessProduct().getName());
+                holder.tvStation.setText(list.get(position).getPlan().getProcessProduct().getStation().getName());
+            } else if (list.get(position).getBom() != null) {
+                holder.tvProcess.setText(list.get(position).getBom().getProcessHalf().getName());
+                holder.tvStation.setText(list.get(position).getBom().getProcessHalf().getStation().getName());
+                holder.tvCode.setText(list.get(position).getBom().getCode());
+            }
 
-            holder.tvStation.setText(list.get(position).getStation().getName());
             holder.tvNum.setText(list.get(position).getNum() + "");
-            holder.tvPerson.setText(list.get(position).getUser().getName());
+            holder.tvPerson.setText(list.get(position).getUser() == null ? "" : list.get(position).getUser().getName());
 
             return convertView;
         }

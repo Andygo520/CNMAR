@@ -6,7 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
-import component.produce.model.ProducePlan;
+import component.produce.model.ProducePlanBatch;
 import component.product.vo.InOrderStatusVo;
 
 /** 成品入库单 */
@@ -22,7 +22,7 @@ public class ProductInOrder extends BaseModel {
 	private int status; // 入库单状态 - 1待打印2待入库3已入库4未全部入库
 
 	@JSONField(ordinal = 7)
-	private ProducePlan producePlan;
+	private ProducePlanBatch batch;
 	@JSONField(ordinal = 8)
 	private List<ProductInOrderProduct> inOrderProducts;
 	@JSONField(serialize = false)
@@ -71,12 +71,12 @@ public class ProductInOrder extends BaseModel {
 		this.status = status;
 	}
 
-	public ProducePlan getProducePlan() {
-		return producePlan;
+	public ProducePlanBatch getBatch() {
+		return batch;
 	}
 
-	public void setProducePlan(ProducePlan producePlan) {
-		this.producePlan = producePlan;
+	public void setBatch(ProducePlanBatch batch) {
+		this.batch = batch;
 	}
 
 	public List<ProductInOrderProduct> getInOrderProducts() {

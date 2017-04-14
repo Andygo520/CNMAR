@@ -71,7 +71,7 @@ public class HalfProductCheckStockDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HalfProductCheckStockDetailActivity.this.finish();
+                finish();
             }
         });
 
@@ -105,7 +105,7 @@ public class HalfProductCheckStockDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK){
-            finish();
+           finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);

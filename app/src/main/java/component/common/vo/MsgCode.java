@@ -21,6 +21,7 @@ public interface MsgCode {
 
 	public static final String task_error = "该机台没有您的加工任务";
 	public static final String user_error = "非空料框只能被同一操作工使用";
-	public static final String different_error = "料框只能放入同一机台同种工序的在制品";
+	public static final String different_error = "非空料框只能放入同一机台同一工序的在制品";
+	public static final String not_prev_error = "只能扫描上一道工序的料框";
 
 }

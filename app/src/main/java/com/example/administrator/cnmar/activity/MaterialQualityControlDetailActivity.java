@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +34,19 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import component.material.model.MaterialInOrder;
 import component.material.model.MaterialInOrderMaterial;
 import component.material.vo.InOrderStatusVo;
 
 public class MaterialQualityControlDetailActivity extends AppCompatActivity {
+    @BindView(R.id.name51)
+    TextView name51;
+    @BindView(R.id.tv51)
+    TextView tv51;
+    @BindView(R.id.row5)
+    TableRow row5;
     private TextView tvTitle;
     private LinearLayout llReturn;
     private TextView tvName11, tvName12, tvName21, tvName22, tvName31, tvName32;
@@ -58,6 +67,7 @@ public class MaterialQualityControlDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quality_control_detail);
+        ButterKnife.bind(this);
         AppExit.getInstance().addActivity(this);
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("原料检验-详情");
@@ -69,7 +79,8 @@ public class MaterialQualityControlDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+        row5.setVisibility(View.VISIBLE);
+        name51.setText("检验备注");
         tvName11 = (TextView) findViewById(R.id.name11);
         tvName12 = (TextView) findViewById(R.id.name12);
         tvName21 = (TextView) findViewById(R.id.name21);
@@ -169,7 +180,7 @@ public class MaterialQualityControlDetailActivity extends AppCompatActivity {
 
                         tvTestPerson.setText(materialInOrder.getTest().getName());
                         tvTestTime.setText(sdf1.format(materialInOrder.getTestTime()));
-
+                        tv51.setText(materialInOrder.getTestRemark());//检验备注
                         myAdapter = new MaterialInfoAdapter(MaterialQualityControlDetailActivity.this, list);
                         listView.setAdapter(myAdapter);
 //                        只有单据状态为待检验并且用户拥有“检验员”角色或者是超级用户才能显示按钮

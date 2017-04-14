@@ -53,13 +53,13 @@ public class CompanyManageActivity extends AppCompatActivity {
         rbProductManage.setText(R.string.rbProductManage);
 
 //       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-        if (sublist.contains(","+getResources().getString(R.string.company_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.company_url) + ",")) {
             rbCompanyInfo.setVisibility(View.VISIBLE);
             setTabSelection(0);
         }
-        if (sublist.contains(","+getResources().getString(R.string.company_product_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.company_product_url) + ",")) {
             rbProductManage.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.company_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.company_url) + ","))
                 setTabSelection(1);
         }
 
@@ -97,8 +97,7 @@ public class CompanyManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(CompanyManageActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -135,8 +134,8 @@ public class CompanyManageActivity extends AppCompatActivity {
                 Drawable drawable2 = getResources().getDrawable(R.drawable.product);
                 drawable1.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbCompanyInfo.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbProductManage.setCompoundDrawables(null,drawable2,null,null);//只放上边
+                rbCompanyInfo.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbProductManage.setCompoundDrawables(null, drawable2, null, null);//只放上边
                 if (companyInfoFragment == null) {
                     companyInfoFragment = new CompanyInfoFragment();
                     transaction.add(R.id.content, companyInfoFragment);
@@ -153,8 +152,8 @@ public class CompanyManageActivity extends AppCompatActivity {
                 Drawable drawable4 = getResources().getDrawable(R.drawable.product_selected);
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbCompanyInfo.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbProductManage.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbCompanyInfo.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbProductManage.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (productManageFragment == null) {
                     productManageFragment = new ProductManageFragment();
                     transaction.add(R.id.content, productManageFragment);
@@ -182,7 +181,6 @@ public class CompanyManageActivity extends AppCompatActivity {
 
     @OnClick(R.id.left_arrow)
     public void onClick() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(CompanyManageActivity.this, MainActivity.class));
     }
 }

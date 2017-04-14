@@ -1,7 +1,6 @@
 package com.example.administrator.cnmar.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,10 +8,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,14 +24,14 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import java.text.SimpleDateFormat;
 
 import component.basic.vo.PackTypeVo;
-import component.produce.model.ProduceBom;
+import component.produce.model.ProduceBomBatch;
 
 
 public class HalfQualityControlDetailActivity extends AppCompatActivity {
 
     private Context context;
     private TextView tvPlanCode, tvPlanName, tvHalfCode, tvHalfName, tvSize, tvCheckTime,
-            tvUnit, tvProduceNum, tvCheckMan, tvHalfInOrder;
+            tvUnit, tvProduceNum, tvRemark, tvCheckMan, tvHalfInOrder;
     private TextView tvSuccessNum, tvActualNum;
     private String strUrl;
     private LinearLayout llLeftArrow;
@@ -66,22 +63,19 @@ public class HalfQualityControlDetailActivity extends AppCompatActivity {
             }
         });
 
-
-
-
         tvPlanCode = (TextView) findViewById(R.id.tv11);
         tvPlanName = (TextView) findViewById(R.id.tv12);
         tvHalfCode = (TextView) findViewById(R.id.tv21);
         tvHalfName = (TextView) findViewById(R.id.tv22);
         tvSize = (TextView) findViewById(R.id.tv31);
         tvUnit = (TextView) findViewById(R.id.tv32);
-        tvProduceNum = (TextView) findViewById(R.id.tv51);
-        tvActualNum = (TextView) findViewById(R.id.tv52);
-        tvCheckMan = (TextView) findViewById(R.id.tv61);
-        tvCheckTime = (TextView) findViewById(R.id.tv62);
-        tvSuccessNum = (TextView) findViewById(R.id.tv71);
-        tvHalfInOrder = (TextView) findViewById(R.id.tv72);
-
+        tvProduceNum = (TextView) findViewById(R.id.tv41);
+        tvActualNum = (TextView) findViewById(R.id.tv42);
+        tvSuccessNum = (TextView) findViewById(R.id.tv51);
+        tvHalfInOrder = (TextView) findViewById(R.id.tv52);
+        tvRemark = (TextView) findViewById(R.id.tv61);
+        tvCheckMan = (TextView) findViewById(R.id.tv71);
+        tvCheckTime = (TextView) findViewById(R.id.tv72);
     }
 
     @Override
@@ -104,34 +98,35 @@ public class HalfQualityControlDetailActivity extends AppCompatActivity {
                         String json = VolleyHelper.getJson(s);
                         Log.d("production", json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
-                        ProduceBom produceBom = JSON.parseObject(response.getData().toString(), ProduceBom.class);
+                        ProduceBomBatch ProduceBomBatch = JSON.parseObject(response.getData().toString(), ProduceBomBatch.class);
 
-                        tvPlanCode.setText(produceBom.getCode());
-                        tvPlanName.setText(produceBom.getPlan().getName());
-                        tvHalfCode.setText(produceBom.getHalf().getCode());
-                        tvHalfName.setText(produceBom.getHalf().getName());
-                        tvSize.setText(produceBom.getHalf().getSpec());
+                        tvPlanCode.setText(ProduceBomBatch.getBom().getPlan().getCode());
+                        tvPlanName.setText(ProduceBomBatch.getBom().getPlan().getName());
+                        tvHalfCode.setText(ProduceBomBatch.getBom().getHalf().getCode());
+                        tvHalfName.setText(ProduceBomBatch.getBom().getHalf().getName());
+                        tvSize.setText(ProduceBomBatch.getBom().getHalf().getSpec());
 //                        有包装的，单位格式为“9个/袋”
-                        if (produceBom.getHalf().getPackType() != PackTypeVo.empty.getKey())
-                            tvUnit.setText(produceBom.getHalf().getPackNum()
-                                    + produceBom.getHalf().getUnit().getName()
-                                    + " / " + produceBom.getHalf().getPackTypeVo().getValue().substring(1, 2));
+                        if (ProduceBomBatch.getBom().getHalf().getPackType() != PackTypeVo.empty.getKey())
+                            tvUnit.setText(ProduceBomBatch.getBom().getHalf().getPackNum()
+                                    + ProduceBomBatch.getBom().getHalf().getUnit().getName()
+                                    + " / " + ProduceBomBatch.getBom().getHalf().getPackTypeVo().getValue().substring(1, 2));
                         else
-                            tvUnit.setText(produceBom.getHalf().getUnit().getName());
+                            tvUnit.setText(ProduceBomBatch.getBom().getHalf().getUnit().getName());
 
 
-                        tvCheckMan.setText(produceBom.getTest().getName());
+                        tvCheckMan.setText(ProduceBomBatch.getTest().getName());
+                        tvRemark.setText(ProduceBomBatch.getTestRemark());//检验备注
 //                        计划生产的半成品数
-                        tvProduceNum.setText(produceBom.getReceiveNum() + produceBom.getHalf().getUnit().getName());
+                        tvProduceNum.setText(ProduceBomBatch.getBom().getReceiveNum() + ProduceBomBatch.getBom().getHalf().getUnit().getName());
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                        tvActualNum.setText(produceBom.getActualNum() + "");
-                        tvHalfInOrder.setText(produceBom.getHalfInOrder().getCode());
-                        tvSuccessNum.setText(String.valueOf(produceBom.getSuccessNum()));
+                        tvActualNum.setText(ProduceBomBatch.getActualNum() + "");
+                        tvHalfInOrder.setText(ProduceBomBatch.getHalfInOrder().getCode());
+                        tvSuccessNum.setText(String.valueOf(ProduceBomBatch.getSuccessNum()));
 
                         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        tvCheckTime.setText(sdf1.format(produceBom.getTestTime()));
+                        tvCheckTime.setText(sdf1.format(ProduceBomBatch.getTestTime()));
 
                     }
                 }, new Response.ErrorListener() {

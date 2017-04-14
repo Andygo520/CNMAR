@@ -3,7 +3,8 @@ package component.com.model;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import component.com.vo.BoxTypeVo;
-import component.produce.model.ProduceReceive;
+import component.produce.model.ProduceBom;
+import component.produce.model.ProducePlan;
 import component.system.model.SystemUser;
 
 /** 料框 */
@@ -18,25 +19,27 @@ public class ComBox {
 	@JSONField(serialize = false)
 	private String qrcode; // 二维码相对路径
 	@JSONField(ordinal = 4)
-	private int receiveId; // 领料单id
+	private int planId; // 加工单id
 	@JSONField(ordinal = 5)
-	private int processId; // 工序id
+	private int bomId; // 子加工单id
 	@JSONField(ordinal = 6)
-	private int stationId; // 机台工位id
+	private int processId; // 工序id
 	@JSONField(ordinal = 7)
-	private int num; // 现存数量
+	private int stationId; // 机台工位id
 	@JSONField(ordinal = 8)
+	private int num; // 现存数量
+	@JSONField(ordinal = 9)
 	private int userId; // 操作工id
 	@JSONField(serialize = false)
 	private Boolean isDel;
 
-	@JSONField(ordinal = 10)
-	private ComBox testBox; // 待检验料框
 	@JSONField(ordinal = 11)
-	private ProduceReceive receive;
+	private ComBox testBox; // 待检验料框
 	@JSONField(ordinal = 12)
-	private ComStation station;
+	private ProducePlan plan;
 	@JSONField(ordinal = 13)
+	private ProduceBom bom;
+	@JSONField(ordinal = 17)
 	private SystemUser user;
 
 	public int getId() {
@@ -71,12 +74,20 @@ public class ComBox {
 		this.qrcode = qrcode;
 	}
 
-	public int getReceiveId() {
-		return receiveId;
+	public int getPlanId() {
+		return planId;
 	}
 
-	public void setReceiveId(int receiveId) {
-		this.receiveId = receiveId;
+	public void setPlanId(int planId) {
+		this.planId = planId;
+	}
+
+	public int getBomId() {
+		return bomId;
+	}
+
+	public void setBomId(int bomId) {
+		this.bomId = bomId;
 	}
 
 	public int getProcessId() {
@@ -127,20 +138,20 @@ public class ComBox {
 		this.testBox = testBox;
 	}
 
-	public ProduceReceive getReceive() {
-		return receive;
+	public ProducePlan getPlan() {
+		return plan;
 	}
 
-	public void setReceive(ProduceReceive receive) {
-		this.receive = receive;
+	public void setPlan(ProducePlan plan) {
+		this.plan = plan;
 	}
 
-	public ComStation getStation() {
-		return station;
+	public ProduceBom getBom() {
+		return bom;
 	}
 
-	public void setStation(ComStation station) {
-		this.station = station;
+	public void setBom(ProduceBom bom) {
+		this.bom = bom;
 	}
 
 	public SystemUser getUser() {

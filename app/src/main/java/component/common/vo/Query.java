@@ -22,6 +22,7 @@ public class Query implements Cloneable {
 	private Integer packType;
 	private Integer categoryId;
 	private Integer deptId;
+	private Integer userId;
 
 	private Date sdate;
 	private Date edate;
@@ -29,16 +30,16 @@ public class Query implements Cloneable {
 	public static final Query getInstance(Query query) throws Exception {
 		Query clone = (Query) query.clone();
 		if (StringUtils.isNotEmpty(clone.getUsername())) {
-			clone.setUsername("%" + clone.getUsername() + "%");
+			clone.setUsername("%" + clone.getUsername().trim() + "%");
 		}
 		if (StringUtils.isNotEmpty(clone.getName())) {
-			clone.setName("%" + clone.getName() + "%");
+			clone.setName("%" + clone.getName().trim() + "%");
 		}
 		if (StringUtils.isNotEmpty(clone.getCode())) {
-			clone.setCode("%" + clone.getCode() + "%");
+			clone.setCode("%" + clone.getCode().trim() + "%");
 		}
 		if (StringUtils.isNotEmpty(clone.getSupplyCode())) {
-			clone.setSupplyCode("%" + clone.getSupplyCode() + "%");
+			clone.setSupplyCode("%" + clone.getSupplyCode().trim() + "%");
 		}
 		return clone;
 	}
@@ -145,6 +146,14 @@ public class Query implements Cloneable {
 
 	public void setDeptId(Integer deptId) {
 		this.deptId = deptId;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public Date getSdate() {

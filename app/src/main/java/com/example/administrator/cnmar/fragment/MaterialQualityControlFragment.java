@@ -18,7 +18,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +50,6 @@ import component.material.vo.InOrderStatusVo;
 public class MaterialQualityControlFragment extends Fragment {
     //    表头5个字段
     private TextView tv1, tv2, tv3, tv4;
-    private TableLayout tableLayout;
     private TextView tvTitle;
     private MyListView listView;
     private LinearLayout llSearch, llReturn;
@@ -88,7 +86,7 @@ public class MaterialQualityControlFragment extends Fragment {
         tv4 = (TextView) view.findViewById(R.id.tv4);
 
         tv1.setText("入库单号");
-        tv2.setText("检验人");
+        tv2.setText("检验员");
         tv3.setText("检验时间");
         tv4.setText("检验状态");
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
@@ -97,8 +95,8 @@ public class MaterialQualityControlFragment extends Fragment {
 //        listView.addFooterView(new ViewStub(getActivity()));
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
-        UniversalHelper.initRefresh(getActivity(),refreshLayout);
-        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+        UniversalHelper.initRefresh(getActivity(), refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -109,7 +107,7 @@ public class MaterialQualityControlFragment extends Fragment {
                         getQCListFromNet(url);
                         refreshLayout.finishRefreshing();
                     }
-                },400);
+                }, 400);
             }
 
             @Override
@@ -133,7 +131,7 @@ public class MaterialQualityControlFragment extends Fragment {
                         // 结束上拉刷新...
                         refreshLayout.finishLoadmore();
                     }
-                },400);
+                }, 400);
             }
         });
 
@@ -216,8 +214,8 @@ public class MaterialQualityControlFragment extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden){
-            page=1;
+        if (!hidden) {
+            page = 1;
             getQCListFromNet(url);
         }
     }
@@ -239,7 +237,7 @@ public class MaterialQualityControlFragment extends Fragment {
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
                         //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
-                        if (count <= 10 || num==total)
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);
@@ -302,8 +300,8 @@ public class MaterialQualityControlFragment extends Fragment {
             if (convertView == null) {
                 holder = new BillAdapter.ViewHolder();
                 convertView = LayoutInflater.from(context).inflate(R.layout.table_list_item, parent, false);
-
                 TableRow tableRow = (TableRow) convertView.findViewById(R.id.table_row);
+
 //                偶数行背景设为灰色
                 if (position % 2 == 0)
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));

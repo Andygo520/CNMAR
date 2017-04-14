@@ -91,11 +91,11 @@ public class ProducePlanFragment extends Fragment {
         tv6 = (TextView) view.findViewById(R.id.tv6);
 
         tv1.setText("加工单编号");
-        tv2.setText("成品编码");
+        tv2.setText("成品名称");
         tv3.setText("计划生产");
-        tv4.setText("合格品数量");
-        tv5.setText("领料单编号");
-        tv6.setText("成品入库单号");
+        tv4.setText("领料单编号");
+        tv5.setText("领料单状态");
+        tv6.setText("加工单状态");
 
 
         listView = (MyListView) view.findViewById(R.id.listView);
@@ -328,32 +328,29 @@ public class ProducePlanFragment extends Fragment {
                 if (position % 2 == 0)
                     tableRow.setBackgroundColor(getResources().getColor(R.color.color_light_grey));
                 holder.tvPlanNo = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvProductCode = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvProductName = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvProduceNum = (TextView) convertView.findViewById(R.id.column3);
-                holder.tvValidNum = (TextView) convertView.findViewById(R.id.column4);
-                holder.tvReceiveOrder = (TextView) convertView.findViewById(R.id.column5);
-                holder.tvProductInOrder = (TextView) convertView.findViewById(R.id.column6);
+                holder.tvReceiveOrder = (TextView) convertView.findViewById(R.id.column4);
+                holder.tvReceiveStatus = (TextView) convertView.findViewById(R.id.column5);
+                holder.tvPlanStatus = (TextView) convertView.findViewById(R.id.column6);
 
                 convertView.setTag(holder);
             } else
                 holder = (ViewHolder) convertView.getTag();
 
             holder.tvPlanNo.setText(list.get(position).getCode());
-            holder.tvProductCode.setText(list.get(position).getProduct().getCode());
+            holder.tvProductName.setText(list.get(position).getProduct().getName());
             holder.tvProduceNum.setText(list.get(position).getProduceNum() + list.get(position).getProduct().getUnit().getName());
-//          只有已检验的时候才显示合格品数
-            if (list.get(position).getTestId() > 0)
-                holder.tvValidNum.setText(list.get(position).getSuccessNum() + "");
-            else
-                holder.tvValidNum.setText("");
-            if (list.get(position).getReceive() != null)
+            if (list.get(position).getReceive() != null){
                 holder.tvReceiveOrder.setText(list.get(position).getReceive().getCode());
-            else
+                holder.tvReceiveStatus.setText(list.get(position).getReceive().getReceiveStatusVo().getValue());
+            }
+            else{
                 holder.tvReceiveOrder.setText("");
-            if (list.get(position).getProductInOrder() != null)
-                holder.tvProductInOrder.setText(list.get(position).getProductInOrder().getCode());
-            else
-                holder.tvProductInOrder.setText("");
+                holder.tvReceiveStatus.setText("");
+            }
+            holder.tvPlanStatus.setText(list.get(position).getProduceStatusVo().getValue());
+
             holder.tvPlanNo.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tvPlanNo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -370,11 +367,11 @@ public class ProducePlanFragment extends Fragment {
 
         class ViewHolder {
             public TextView tvPlanNo;
-            public TextView tvProductCode;
-            public TextView tvProduceNum;
-            public TextView tvValidNum;
-            public TextView tvReceiveOrder;  // 领料单号
-            public TextView tvProductInOrder;    //成品入库单号
+            public TextView tvProductName;
+            public TextView tvProduceNum;//计划生产
+            public TextView tvReceiveOrder;// 领料单号
+            public TextView tvReceiveStatus;//领料单状态
+            public TextView tvPlanStatus;    //加工单状态
         }
 
     }

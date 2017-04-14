@@ -54,7 +54,6 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
     private String spaceIds = "";
     private String inOrderSpaceIds = "";
     private String beforeStocks = "";
-    private String afterStocks = "";
     private HashMap<Integer, String> map = new HashMap<>();
 
     @Override
@@ -87,7 +86,9 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, ProductStockActivity.class);
+                intent.putExtra("flag", 3);
+                startActivity(intent);
             }
         });
 
@@ -125,6 +126,7 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
                 String spaceIds1 = spaceIds.substring(0, spaceIds.length() - 1);
                 String inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
                 String beforeStocks1 = beforeStocks.substring(0, beforeStocks.length() - 1);
+                String afterStocks = "";
                 for (int i = 0; i < map.size(); i++) {
                     afterStocks += map.get(i) + ",";
                 }
@@ -141,7 +143,9 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, ProductStockActivity.class);
+            intent.putExtra("flag", 3);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -158,7 +162,7 @@ public class ProductCheckStockManageActivity extends AppCompatActivity {
                 if (!response.isStatus()) {
                     Toast.makeText(ProductCheckStockManageActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Intent intent = new Intent(ProductCheckStockManageActivity.this, ProductStockActivity.class);
+                    Intent intent = new Intent(context, ProductStockActivity.class);
                     intent.putExtra("flag", 3);
                     startActivity(intent);
                 }

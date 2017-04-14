@@ -38,7 +38,7 @@ public class MaterialStockActivity extends AppCompatActivity {
         setContentView(R.layout.activity_material_stock);
         AppExit.getInstance().addActivity(this);
 //        取出一级菜单name与其二级菜单url的对应关系
-        String sublist = SPHelper.getString(this,getResources().getString(R.string.HOME_YLCK), "");
+        String sublist = SPHelper.getString(this, getResources().getString(R.string.HOME_YLCK), "");
 //        Log.d("subList",sublist);
 
         tvTitle = (TextView) findViewById(R.id.title);
@@ -52,35 +52,34 @@ public class MaterialStockActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MaterialStockActivity.this, MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MaterialStockActivity.this, MainActivity.class));
             }
         });
 
         tvTitle.setText("原料仓库");
 
 //       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-        if (sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_stock_url) + ",")) {
             rbStock.setVisibility(View.VISIBLE);
             setSelection(0);
         }
-        if (sublist.contains(","+getResources().getString(R.string.material_in_order_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_in_order_url) + ",")) {
             rbInOrder.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.material_stock_url) + ","))
                 setSelection(1);
         }
-        if (sublist.contains(","+getResources().getString(R.string.material_out_order_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_out_order_url) + ",")) {
             rbOutOrder.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.material_in_order_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.material_stock_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.material_in_order_url) + ","))
                 setSelection(2);
 
         }
-        if (sublist.contains(","+getResources().getString(R.string.material_stock_check_manage_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_stock_check_manage_url) + ",")) {
             rbCheckStock.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.material_stock_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.material_in_order_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.material_out_order_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.material_stock_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.material_in_order_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.material_out_order_url) + ","))
                 setSelection(3);
         }
 
@@ -113,8 +112,10 @@ public class MaterialStockActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        flag = getIntent().getIntExtra("flag", 0);
-        if (flag == 1) {
+        flag = getIntent().getIntExtra("flag", 999);
+        if (flag == 0) {
+            setSelection(0);
+        } else if (flag == 1) {
             setSelection(1);
         } else if (flag == 2) {
             setSelection(2);
@@ -140,9 +141,7 @@ public class MaterialStockActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            startActivity(new Intent(MaterialStockActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -158,7 +157,7 @@ public class MaterialStockActivity extends AppCompatActivity {
         hideFragment(transaction);
 
         switch (id) {
-            case 0:{
+            case 0: {
                 rbStock.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.colorBase));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -174,10 +173,10 @@ public class MaterialStockActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbStock.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbInOrder.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbOutOrder.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbCheckStock.setCompoundDrawables(null, drawable4, null, null);//只放上边
 
                 if (materialStockFragment == null) {
                     materialStockFragment = new MaterialStockFragment();
@@ -186,7 +185,7 @@ public class MaterialStockActivity extends AppCompatActivity {
                     transaction.show(materialStockFragment);
                 break;
             }
-            case 1:{
+            case 1: {
                 rbInOrder.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.colorBase));
@@ -202,10 +201,10 @@ public class MaterialStockActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbStock.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbInOrder.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbOutOrder.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbCheckStock.setCompoundDrawables(null, drawable4, null, null);//只放上边
                 if (inHouseBillFragment == null) {
                     inHouseBillFragment = new InOrderFragment();
                     transaction.add(R.id.content, inHouseBillFragment);
@@ -213,7 +212,7 @@ public class MaterialStockActivity extends AppCompatActivity {
                     transaction.show(inHouseBillFragment);
                 break;
             }
-            case 2:{
+            case 2: {
                 rbOutOrder.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -229,10 +228,10 @@ public class MaterialStockActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbStock.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbInOrder.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbOutOrder.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbCheckStock.setCompoundDrawables(null, drawable4, null, null);//只放上边
 
                 if (outHouseBillFragment == null) {
                     outHouseBillFragment = new OutOrderFragment();
@@ -241,7 +240,7 @@ public class MaterialStockActivity extends AppCompatActivity {
                     transaction.show(outHouseBillFragment);
                 break;
             }
-            case 3:{
+            case 3: {
                 rbCheckStock.setChecked(true);
                 rbStock.setBackgroundColor(getResources().getColor(R.color.color_white));
                 rbInOrder.setBackgroundColor(getResources().getColor(R.color.color_white));
@@ -257,10 +256,10 @@ public class MaterialStockActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbStock.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbInOrder.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbOutOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbCheckStock.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbStock.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbInOrder.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbOutOrder.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbCheckStock.setCompoundDrawables(null, drawable4, null, null);//只放上边
 
                 if (materialCheckStockFragment == null) {
                     materialCheckStockFragment = new MaterialCheckStockFragment();

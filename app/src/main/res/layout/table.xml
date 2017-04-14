@@ -1,4 +1,4 @@
-<!--默认显示3行，第4行设置为不可见-->
+<!--默认显示3行，第4、5行设置为不可见-->
 <LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
@@ -23,7 +23,6 @@
                     />
                 <TextView
                     android:id="@+id/name11"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -46,7 +45,6 @@
                     />
                 <TextView
                     android:id="@+id/name12"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -76,7 +74,6 @@
                     />
                 <TextView
                     android:id="@+id/name21"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -99,7 +96,6 @@
                     />
                 <TextView
                     android:id="@+id/name22"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -122,6 +118,7 @@
                     />
             </TableRow>
             <TableRow
+                android:id="@+id/row3"
                 android:background="@drawable/table_frame"
                 >
                 <View
@@ -129,7 +126,6 @@
                     />
                 <TextView
                     android:id="@+id/name31"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -183,7 +179,6 @@
                     />
                 <TextView
                     android:id="@+id/name41"
-                    android:text="文本"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_width="60dip"
@@ -227,6 +222,39 @@
                     style="@style/list_item_cell_seperator_layout"
                     />
             </TableRow>
+            <TableRow
+                android:id="@+id/row5"
+                android:background="@drawable/table_frame"
+                android:visibility="gone"
+                >
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/name51"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:layout_width="60dip"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+                <TextView
+                    android:id="@+id/tv51"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="2dip"
+                    />
+                <View
+                    style="@style/list_item_cell_seperator_layout"
+                    />
+            </TableRow>
+
         </TableLayout>
     </LinearLayout>
     <View

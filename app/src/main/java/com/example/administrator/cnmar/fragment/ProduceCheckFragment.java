@@ -41,8 +41,8 @@ import zxing.activity.CaptureActivity;
  */
 public class ProduceCheckFragment extends Fragment {
     private int flag;//区分加工单、子加工单的标志位
-    private int testBoxId, stationId, processId, receiveId;
-    private String codeUrl="";
+    private int testBoxId, stationId, processId, receiveId, planId, bomId;
+    private String codeUrl = "";
     @BindView(R.id.btnScann)
     Button btnScann;
     @BindView(R.id.tvTableTitle)
@@ -114,7 +114,7 @@ public class ProduceCheckFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (codeUrl != null && !codeUrl.equals("")){
+        if (codeUrl != null && !codeUrl.equals("")) {
             getData(codeUrl);
         }
     }
@@ -158,23 +158,25 @@ public class ProduceCheckFragment extends Fragment {
                     scrollView.setVisibility(View.VISIBLE);
                     ComBox comBox = JSON.parseObject(response.getData().toString(), ComBox.class);
                     testBoxId = comBox.getId();
-                    receiveId = comBox.getReceiveId();
                     stationId = comBox.getStationId();
                     processId = comBox.getProcessId();
+                    planId = comBox.getPlanId();
+                    bomId = comBox.getBomId();
+
 //                        加工单详情
-                    if (comBox.getReceive().getPlan() != null) {
+                    if (comBox.getPlan() != null) {
                         flag = 0;
                         name11.setText("加工单编号");
                         name12.setText("成品编码");
                         tvTableTitle.setText("加工单");
 
-                        tv11.setText(comBox.getReceive().getPlan().getCode());
-                        tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
-                        tv21.setText(comBox.getReceive().getProcessProduct().getName());
-                        tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                        tv31.setText(comBox.getReceive().getProcessProduct().getStation().getName());
+                        tv11.setText(comBox.getPlan().getCode());
+                        tv12.setText(comBox.getPlan().getProduct().getCode());
+                        tv21.setText(comBox.getPlan().getProcessProduct().getName());
+                        tv22.setText(comBox.getPlan().getProcessProduct().getStation().getWorkshop().getName());
+                        tv31.setText(comBox.getPlan().getProcessProduct().getStation().getName());
 //                               得到工装列表
-                        List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
+                        List<ComTool> tools = comBox.getPlan().getProcessProduct().getTools();
                         if (tools.size() == 0) {
                             tv32.setText("");
                         } else {
@@ -184,8 +186,8 @@ public class ProduceCheckFragment extends Fragment {
                             }
                             tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                         }
-                        tv41.setText(comBox.getReceive().getProcessProduct().getSuccessNum() + "");//合格品数量
-                        tv42.setText(comBox.getReceive().getProcessProduct().getFailureNum() + "");//不合格品数量
+                        tv41.setText(comBox.getPlan().getProcessProduct().getSuccessNum() + "");//合格品数量
+                        tv42.setText(comBox.getPlan().getProcessProduct().getFailureNum() + "");//不合格品数量
 
                     }
 //                       子加工单详情
@@ -195,13 +197,13 @@ public class ProduceCheckFragment extends Fragment {
                         name12.setText("半成品编码");
                         tvTableTitle.setText("子加工单");
 
-                        tv11.setText(comBox.getReceive().getBom().getCode());
-                        tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
-                        tv21.setText(comBox.getReceive().getProcessHalf().getName());
-                        tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                        tv31.setText(comBox.getReceive().getProcessHalf().getStation().getName());
+                        tv11.setText(comBox.getBom().getCode());
+                        tv12.setText(comBox.getBom().getHalf().getCode());
+                        tv21.setText(comBox.getBom().getProcessHalf().getName());
+                        tv22.setText(comBox.getBom().getProcessHalf().getStation().getWorkshop().getName());
+                        tv31.setText(comBox.getBom().getProcessHalf().getStation().getName());
 //                           得到工装列表
-                        List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
+                        List<ComTool> tools = comBox.getBom().getProcessHalf().getTools();
                         if (tools.size() == 0) {
                             tv32.setText("");
                         } else {
@@ -211,8 +213,8 @@ public class ProduceCheckFragment extends Fragment {
                             }
                             tv32.setText(toolNames.substring(0, toolNames.length() - 1));
                         }
-                        tv41.setText(comBox.getReceive().getProcessHalf().getSuccessNum() + "");//合格品数量
-                        tv42.setText(comBox.getReceive().getProcessHalf().getFailureNum() + "");//不合格品数量
+                        tv41.setText(comBox.getBom().getProcessHalf().getSuccessNum() + "");//合格品数量
+                        tv42.setText(comBox.getBom().getProcessHalf().getFailureNum() + "");//不合格品数量
                     }
                     tv51.setText(comBox.getCode());
                     tv52.setText(comBox.getNum() + "");//现存数量
@@ -233,7 +235,8 @@ public class ProduceCheckFragment extends Fragment {
             public void run() {
                 String url = UrlHelper.URL_FAIL_IN_BOX_COMMIT.replace("{boxId}", "0")
                         .replace("{testBoxId}", "" + testBoxId)
-                        .replace("{receiveId}", "" + receiveId)
+                        .replace("{planId}", "" + planId)
+                        .replace("{bomId}", "" + bomId)
                         .replace("{processId}", "" + processId)
                         .replace("{stationId}", "" + stationId)
                         .replace("{testId}", "" + SPHelper.getInt(getActivity(), "userId"))
@@ -248,7 +251,7 @@ public class ProduceCheckFragment extends Fragment {
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         if (!response.isStatus()) {
                             Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_SHORT).show();
-                        }else
+                        } else
                             Toast.makeText(getActivity(), "操作成功", Toast.LENGTH_SHORT).show();
 
                     }
@@ -292,6 +295,8 @@ public class ProduceCheckFragment extends Fragment {
                 Intent intent1 = new Intent(getActivity(), CaptureActivity.class);
                 intent1.putExtra("FLAG", -60);//作为跳转到扫描页面的标志位
                 intent1.putExtra("testBoxId", testBoxId);
+                intent1.putExtra("planId", planId);
+                intent1.putExtra("bomId", bomId);
                 startActivity(intent1);
                 break;
         }

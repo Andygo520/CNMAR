@@ -2,11 +2,11 @@ package component.com.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import java.io.Serializable;
+import component.produce.model.ProduceBom;
+import component.produce.model.ProducePlan;
 
 /** 机台工位 */
-@SuppressWarnings("serial")
-public class ComStation implements Serializable {
+public class ComStation implements Cloneable {
 
 	@JSONField(ordinal = 1)
 	private int id;
@@ -23,6 +23,10 @@ public class ComStation implements Serializable {
 
 	@JSONField(ordinal = 5)
 	private ComWorkshop workshop;
+	@JSONField(ordinal = 6)
+	private ProducePlan plan;
+	@JSONField(ordinal = 7)
+	private ProduceBom bom;
 
 	@JSONField(serialize = false)
 	private boolean checked;
@@ -83,12 +87,39 @@ public class ComStation implements Serializable {
 		this.workshop = workshop;
 	}
 
+	public ProducePlan getPlan() {
+		return plan;
+	}
+
+	public void setPlan(ProducePlan plan) {
+		this.plan = plan;
+	}
+
+	public ProduceBom getBom() {
+		return bom;
+	}
+
+	public void setBom(ProduceBom bom) {
+		this.bom = bom;
+	}
+
 	public boolean isChecked() {
 		return checked;
 	}
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+
+	public ComStation clone() throws CloneNotSupportedException {
+		ComStation clone = (ComStation) super.clone();
+		if (clone.plan != null) {
+			clone.plan = plan.clone();
+		}
+		if (clone.bom != null) {
+			clone.bom = bom.clone();
+		}
+		return clone;
 	}
 
 }

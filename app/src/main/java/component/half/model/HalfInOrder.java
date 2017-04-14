@@ -7,7 +7,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import component.common.model.BaseModel;
 import component.half.vo.InOrderStatusVo;
-import component.produce.model.ProduceBom;
+import component.produce.model.ProduceBomBatch;
 
 /** 半成品入库单 */
 public class HalfInOrder extends BaseModel {
@@ -22,7 +22,7 @@ public class HalfInOrder extends BaseModel {
 	private int status; // 入库单状态 - 1待打印2待入库3已入库4未全部入库
 
 	@JSONField(ordinal = 7)
-	private ProduceBom produceBom;
+	private ProduceBomBatch batch;
 	@JSONField(ordinal = 8)
 	private List<HalfInOrderHalf> inOrderHalfs;
 	@JSONField(serialize = false)
@@ -71,12 +71,12 @@ public class HalfInOrder extends BaseModel {
 		this.status = status;
 	}
 
-	public ProduceBom getProduceBom() {
-		return produceBom;
+	public ProduceBomBatch getBatch() {
+		return batch;
 	}
 
-	public void setProduceBom(ProduceBom produceBom) {
-		this.produceBom = produceBom;
+	public void setBatch(ProduceBomBatch batch) {
+		this.batch = batch;
 	}
 
 	public List<HalfInOrderHalf> getInOrderHalfs() {

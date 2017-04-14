@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -56,7 +57,6 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
     private String spaceIds = "";
     private String inOrderSpaceIds = "";
     private String beforeStocks = "";
-    private String afterStocks = "";
     private HashMap<Integer, String> map = new HashMap<>();   //map用来存放列表position与盘点数量的映射关系
 //    private SpaceInfoAdapter myAdapter;
 //    private SpaceInfoAdapter1 myAdapter;
@@ -91,7 +91,9 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, MaterialStockActivity.class);
+                intent.putExtra("flag", 3);
+                startActivity(intent);
             }
         });
 
@@ -119,7 +121,7 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
 
 
         lvSpaceInfo = (MyListView) findViewById(R.id.lvTable);
-//        lvSpaceInfo.addFooterView(new ViewStub(this));
+//      lvSpaceInfo.addFooterView(new ViewStub(this));
 
         btnSubmit.setVisibility(View.VISIBLE);
         btnSubmit.setText("提交");
@@ -131,12 +133,14 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
                 String spaceIds1 = spaceIds.substring(0, spaceIds.length() - 1);
                 String inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
                 String beforeStocks1 = beforeStocks.substring(0, beforeStocks.length() - 1);
+                String afterStocks = "";//记录盘点后数量
                 for (int i = 0; i < map.size(); i++) {
                     afterStocks += map.get(i) + ",";
                 }
                 String afterStocks1 = afterStocks.substring(0, afterStocks.length() - 1);
                 String url = UrlHelper.URL_CHECK_COMMIT.replace("{stockId}", String.valueOf(id)).replace("{spaceStockIds}", spaceStockIds1).replace("{spaceIds}", spaceIds1).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{beforeStocks}", beforeStocks1).replace("{afterStocks}", afterStocks1);
-//                Log.d("tAGTAG",url);
+                Log.d("tAGTAG",url);
+                Log.d("tAGTAG",map.size()+"");
                 url = UniversalHelper.getTokenUrl(url);
                 UniversalHelper.showProgressDialog(context);
                 sendRequest(url);
@@ -148,7 +152,9 @@ public class MaterialCheckStockManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK){
-            finish();
+            Intent intent = new Intent(context, MaterialStockActivity.class);
+            intent.putExtra("flag", 3);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);

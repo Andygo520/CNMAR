@@ -4,12 +4,12 @@ package com.example.administrator.cnmar.helper;
  * Created by Administrator on 2016/9/29.
  */
 public class UrlHelper {
-//    public static String URL_BASE = "http://192.168.1.112:8092";
-  public static final String URL_BASE = "http://benxiao.cnmar.com:8092";
+    public static String URL_BASE = "http://192.168.1.112:8092";
+//   public static final String URL_BASE = "http://benxiao.cnmar.com:8092";
 
     //显示图片的绝对路径
-    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090";
-//    public static String URL_IMAGE = "http://192.168.1.112:8090";
+//    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090";
+    public static String URL_IMAGE = "http://192.168.1.112:8090";
 
     //    原料出入库扫描
     public static final String URL_MATERIAL_SCAN = URL_BASE + "/material_in_order/qrcode";
@@ -42,7 +42,7 @@ public class UrlHelper {
     public static final String URL_PRODUCT_CHECK_STOCK_COMMIT = URL_BASE + "/product_stock_check_manage/check_commit?stockId={stockId}&spaceStockIds={spaceStockIds}&spaceIds={spaceIds}&inOrderSpaceIds={inOrderSpaceIds}&beforeStocks={beforeStocks}&afterStocks={afterStocks}";
 
     public static final String URL_PRODUCT_STOCK_DETAIL = URL_BASE + "/product_stock/detail/{id}";
-    public static final String URL_TEST_COMMIT = URL_BASE + "/material_in_order/test_commit?inOrderId={inOrderId}&testId={testId}&inOrderMaterialIds={inOrderMaterialIds}&res={res}&failNums={failNums}";
+    public static final String URL_TEST_COMMIT = URL_BASE + "/material_in_order/test_commit?inOrderId={inOrderId}&testId={testId}&testRemark={testRemark}&inOrderMaterialIds={inOrderMaterialIds}&res={res}&failNums={failNums}";
     public static final String URL_IN_ORDER_COMMIT = URL_BASE + "/material_in_order/in_stock_commit?inOrderId={inOrderId}&inOrderSpaceIds={inOrderSpaceIds}&preInStocks={preInStocks}&inStocks={inStocks}";
     public static final String URL_IN_ORDER = URL_BASE + "/material_in_order/list?query.code=&page.num={page}";
     public static final String URL_SEARCH_IN_ORDER = URL_BASE + "/material_in_order/list?query.code={query.code}&query.status={query.status}&page.num=1";
@@ -82,12 +82,12 @@ public class UrlHelper {
     public static final String URL_DELIVERY_PLAN_DETAIL = URL_BASE + "/custom_deliver_plan/detail/{ID}";
 
     public static final String URL_RECEIVE_MATERIAL_COMMIT = URL_BASE + "/produce_plan/receive_commit?producePlanId={ID}&receiveId={receiveId}";//加工单领料
-    public static final String URL_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "/produce_plan/pre_in_stock_commit?producePlanId={ID}&successNum={successNum}&testId={testId}";//成品提交待入库
-    public static final String URL_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "/produce_plan/actual_num_commit?producePlanId={ID}&actualNum={actualNum}&actualId={actualId}";//成品提交待检验
+    public static final String URL_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "/produce_plan/pre_in_stock_commit?batchId={batchId}&successNum={successNum}&testId={testId}&testRemark={testRemark}";//成品提交待入库
+    public static final String URL_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "/produce_plan/actual_num_commit?producePlanId={ID}&actualNum={actualNum}&actualId={actualId}&lastProcessBoxIds={lastProcessBoxIds}&status={status}";//成品提交待检验
 
     public static final String URL_BOM_RECEIVE_MATERIAL_COMMIT = URL_BASE + "/produce_bom/receive_commit?produceBomId={ID}&receiveId={receiveId}";//子加工单领料
-    public static final String URL_HALF_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "/produce_bom/pre_in_stock_commit?produceBomId={ID}&successNum={successNum}&testId={testId}";//半成品提交待入库
-    public static final String URL_HALF_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "/produce_bom/actual_num_commit?produceBomId={ID}&actualNum={actualNum}&actualId={actualId}";//半成品提交待检验
+    public static final String URL_HALF_PRODUCT_PRE_IN_STOCK_COMMIT = URL_BASE + "/produce_bom/pre_in_stock_commit?batchId={batchId}&successNum={successNum}&testId={testId}&testRemark={testRemark}";//半成品提交待入库
+    public static final String URL_HALF_PRODUCT_ACTUAL_NUM_COMMIT = URL_BASE + "/produce_bom/actual_num_commit?produceBomId={ID}&actualNum={actualNum}&actualId={actualId}&lastProcessBoxIds={lastProcessBoxIds}&status={status}";//半成品提交待检验
 
 
     public static final String URL_PRODUCT_IN_ORDER = URL_BASE + "/product_in_order/list?query.code=&page.num={page}";
@@ -164,15 +164,14 @@ public class UrlHelper {
 
     //    生产管理
     public static final String URL_SCANN_STATION = URL_BASE + "/com_station/qrcode/";//机床扫描
-    public static final String URL_SCANN_STATION_DETAIL = URL_BASE + "/com_station/detail/{ID}?processId={processId}&stationId={stationId}&userId={userId}";//加工任务详情
+    public static final String URL_SCANN_STATION_DETAIL = URL_BASE + "/com_station/detail/{ID}?planId={planId}&bomId={bomId}&processId={processId}&userId={userId}";//加工任务详情
     public static final String URL_SCANN_BOX = URL_BASE + "/com_box/qrcode/";//料框扫描
-    public static final String URL_IN_BOX = URL_BASE + "/com_box/in_commit?boxId={boxId}&receiveId={receiveId}&processId={processId}&stationId={stationId}&num={num}&userId={userId}";//入料框
-    public static final String URL_FAIL_IN_BOX_COMMIT = URL_BASE + "/com_box/fail_in_commit?boxId={boxId}&testBoxId={testBoxId}&receiveId={receiveId}&processId={processId}&stationId={stationId}&failNum={failNum}&reason={reason}&testId={testId}";//不合格品入料框
-    public static final String URL_BIN = URL_BASE + "/com_box/list?query.type={type}&query.code=&page.num={page}";//线边仓
+    public static final String URL_IN_BOX = URL_BASE + "/com_box/in_commit?boxId={boxId}&planId={planId}&bomId={bomId}&processId={processId}&stationId={stationId}&num={num}&userId={userId}";//入料框
+    public static final String URL_FAIL_IN_BOX_COMMIT = URL_BASE + "/com_box/fail_in_commit?boxId={boxId}&testBoxId={testBoxId}&planId={planId}&bomId={bomId}&processId={processId}&stationId={stationId}&failNum={failNum}&testRemark={testRemark}&testId={testId}";//不合格品入料框
+    public static final String URL_BIN = URL_BASE + "/com_box/list?query.userId={userId}&query.type={type}&query.code=&page.num={page}";//线边仓
     public static final String URL_SEARCH_BIN = URL_BASE + "/com_box/list?query.type={type}&query.code={code}&page.num=1";//查找线边仓
-    public static final String URL_CHECK_FLOW = URL_BASE + "/produce_test/list?query.type={type}&query.code=&page.num={page}";//检验流水
-    public static final String URL_SEARCH_CHECK_FLOW = URL_BASE + "/produce_test/list?query.type={type}&query.code={code}&page.num=1";//查找检验流水
-    public static final String URL_CHECK_FLOW_DETAIL= URL_BASE + "/produce_test/detail/{Id}";//检验流水详情
-    public static final String URL_PREV_OUT_COMMIT= URL_BASE + "/com_box/prev_out_commit?boxId={boxId}&num={num}";//上工序合格品出料框
-
+    public static final String URL_CHECK_FLOW = URL_BASE + "/produce_test/list?query.userId={userId}&query.type={type}&query.code=&page.num={page}";//检验流水
+    public static final String URL_SEARCH_CHECK_FLOW = URL_BASE + "/produce_test/list?query.userId={userId}&query.type={type}&query.code={code}&page.num=1";//查找检验流水
+    public static final String URL_CHECK_FLOW_DETAIL = URL_BASE + "/produce_test/detail/{Id}";//检验流水详情
+    public static final String URL_PREV_OUT_COMMIT = URL_BASE + "/com_box/prev_out_commit?boxId={boxId}&num={num}";//上工序合格品出料框
 }

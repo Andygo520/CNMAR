@@ -14,7 +14,9 @@ public enum LogOperateVo {
 	/** 编辑 */
 	edit("edit", "编辑"),
 	/** 删除 */
-	delete("delete", "删除");
+	delete("delete", "删除"),
+	/** APP登录 */
+	app_login("app_login", "APP登录");
 
 	private String key;
 	private String value;

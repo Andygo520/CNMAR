@@ -5,16 +5,15 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import component.com.model.ComBox;
 import component.common.model.BaseModel;
+import component.process.model.ProcessProduct;
+import component.produce.vo.ProduceStatusVo;
 import component.product.model.Product;
-import component.product.model.ProductInOrder;
-import component.system.model.SystemUser;
 
 /** 加工单 */
-public class ProducePlan extends BaseModel {
+public class ProducePlan extends BaseModel implements Cloneable {
 
-	@JSONField(ordinal = 1)
-	private int productInOrderId; // 成品入库单id
 	@JSONField(ordinal = 2)
 	private int productId; // 成品id
 	@JSONField(ordinal = 3)
@@ -28,38 +27,27 @@ public class ProducePlan extends BaseModel {
 	@JSONField(ordinal = 7, format = "yyyy-MM-dd")
 	private Date endDate; // 结束日期
 	@JSONField(ordinal = 8)
-	private int actualNum; // 实际生产数量
-	@JSONField(ordinal = 9)
-	private int actualId; // 统计员id
-	@JSONField(ordinal = 10)
-	private int successNum; // 合格品数量
+	private int status; // 状态
+
 	@JSONField(ordinal = 11)
-	private int testId;
-	@JSONField(ordinal = 12, format = "yyyy-MM-dd HH:mm:ss")
-	private Date testTime;
-
-	@JSONField(ordinal = 13)
 	private Product product;
-	@JSONField(ordinal = 14)
+	@JSONField(ordinal = 12)
 	private ProduceReceive receive;
-	@JSONField(ordinal = 15)
-	private SystemUser test;
-	@JSONField(ordinal = 16)
-	private ProductInOrder productInOrder;
-	@JSONField(ordinal = 17)
+	@JSONField(ordinal = 13)
 	private List<ProduceBom> produceBoms;
-	@JSONField(ordinal = 18)
+	@JSONField(ordinal = 14)
 	private List<ProduceBom> materialSubs;
-	@JSONField(ordinal = 19)
+	@JSONField(ordinal = 15)
 	private List<ProduceBom> halfSubs;
+	@JSONField(ordinal = 18)
+	private List<ProducePlanBatch> batchs;
+	@JSONField(ordinal = 19)
+	private ProducePlanBatch batchGroup;
 
-	public int getProductInOrderId() {
-		return productInOrderId;
-	}
-
-	public void setProductInOrderId(int productInOrderId) {
-		this.productInOrderId = productInOrderId;
-	}
+	@JSONField(ordinal = 20)
+	private ProcessProduct processProduct;
+	@JSONField(ordinal = 21)
+	private List<ComBox> lastProcessBoxs;
 
 	public int getProductId() {
 		return productId;
@@ -109,44 +97,12 @@ public class ProducePlan extends BaseModel {
 		this.endDate = endDate;
 	}
 
-	public int getActualNum() {
-		return actualNum;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setActualNum(int actualNum) {
-		this.actualNum = actualNum;
-	}
-
-	public int getActualId() {
-		return actualId;
-	}
-
-	public void setActualId(int actualId) {
-		this.actualId = actualId;
-	}
-
-	public int getSuccessNum() {
-		return successNum;
-	}
-
-	public void setSuccessNum(int successNum) {
-		this.successNum = successNum;
-	}
-
-	public int getTestId() {
-		return testId;
-	}
-
-	public void setTestId(int testId) {
-		this.testId = testId;
-	}
-
-	public Date getTestTime() {
-		return testTime;
-	}
-
-	public void setTestTime(Date testTime) {
-		this.testTime = testTime;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public Product getProduct() {
@@ -163,22 +119,6 @@ public class ProducePlan extends BaseModel {
 
 	public void setReceive(ProduceReceive receive) {
 		this.receive = receive;
-	}
-
-	public SystemUser getTest() {
-		return test;
-	}
-
-	public void setTest(SystemUser test) {
-		this.test = test;
-	}
-
-	public ProductInOrder getProductInOrder() {
-		return productInOrder;
-	}
-
-	public void setProductInOrder(ProductInOrder productInOrder) {
-		this.productInOrder = productInOrder;
 	}
 
 	public List<ProduceBom> getProduceBoms() {
@@ -203,6 +143,51 @@ public class ProducePlan extends BaseModel {
 
 	public void setHalfSubs(List<ProduceBom> halfSubs) {
 		this.halfSubs = halfSubs;
+	}
+
+	public List<ProducePlanBatch> getBatchs() {
+		return batchs;
+	}
+
+	public void setBatchs(List<ProducePlanBatch> batchs) {
+		this.batchs = batchs;
+	}
+
+	public ProducePlanBatch getBatchGroup() {
+		return batchGroup;
+	}
+
+	public void setBatchGroup(ProducePlanBatch batchGroup) {
+		this.batchGroup = batchGroup;
+	}
+
+	public ProcessProduct getProcessProduct() {
+		return processProduct;
+	}
+
+	public void setProcessProduct(ProcessProduct processProduct) {
+		this.processProduct = processProduct;
+	}
+
+	public List<ComBox> getLastProcessBoxs() {
+		return lastProcessBoxs;
+	}
+
+	public void setLastProcessBoxs(List<ComBox> lastProcessBoxs) {
+		this.lastProcessBoxs = lastProcessBoxs;
+	}
+
+	@JSONField(serialize = false)
+	public ProduceStatusVo getProduceStatusVo() {
+		return ProduceStatusVo.getInstance(status);
+	}
+
+	public ProducePlan clone() throws CloneNotSupportedException {
+		ProducePlan clone = (ProducePlan) super.clone();
+		if (clone.processProduct != null) {
+			clone.processProduct = processProduct.clone();
+		}
+		return clone;
 	}
 
 }

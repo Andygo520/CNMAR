@@ -54,7 +54,7 @@ public class SystemUserDetailActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               finish();
+                finish();
             }
         });
 
@@ -91,7 +91,7 @@ public class SystemUserDetailActivity extends AppCompatActivity {
 
                         tvAccount.setText(user.getUsername());
                         tvName.setText(user.getName());
-                        tvSex.setText(user.getGender() + "");
+                        tvSex.setText(user.getGender()==null ? "" : user.getGender());
                         if (user.getBirthday() == null)
                             tvBirthday.setText("");
                         else

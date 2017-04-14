@@ -82,8 +82,7 @@ public class SystemManageActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_arrow:
-                Intent intent = new Intent(context, MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(SystemManageActivity.this, MainActivity.class));
                 break;
         }
     }
@@ -91,8 +90,7 @@ public class SystemManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(SystemManageActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);

@@ -377,13 +377,15 @@
                                 android:hint="请输入"
                                 android:inputType="number"
                                 android:textColor="@color/color_red"
-                                android:textColorHint="@color/color_red"
-                                />
+                                android:textColorHint="@color/color_red" />
 
                             <View style="@style/list_item_cell_seperator_layout" />
                         </TableRow>
 
-                        <LinearLayout android:background="@drawable/table_frame">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:background="@drawable/table_frame">
 
                             <View style="@style/list_item_cell_seperator_layout" />
 
@@ -403,11 +405,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:background="@null"
                                 android:gravity="center"
                                 android:inputType="text"
-                                android:textColor="@color/color_red"
-                                />
+                                android:textColor="@color/color_red" />
 
                             <View style="@style/list_item_cell_seperator_layout" />
                         </LinearLayout>

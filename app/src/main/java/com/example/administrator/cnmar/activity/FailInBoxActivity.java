@@ -40,7 +40,7 @@ import component.com.model.ComTool;
 public class FailInBoxActivity extends AppCompatActivity {
 
     private Context context;
-    private int boxId, testBoxId, receiveId, processId, stationId, testId;
+    private int boxId, testBoxId, receiveId, processId, stationId, testId,planId,bomId;
     private int num;//记录待检验料框现存数量
     private int flag;//区分加工单、子加工单的标志
     @BindView(R.id.left_arrow)
@@ -135,7 +135,7 @@ public class FailInBoxActivity extends AppCompatActivity {
         name52.setText("类型");
         name61.setText("现存数量");
         name62.setText("入框数量");
-        name71.setText("不合格原因");
+        name71.setText("检验备注");
         tvTableTitle1.setText("待检验料框");
         tvTableTitle2.setText("不合格品料框");
 //       因为et71默认获得焦点，而我们希望et62默认获得焦点，所以将et71设置为触摸的时候获得焦点
@@ -163,24 +163,25 @@ public class FailInBoxActivity extends AppCompatActivity {
 
                         boxId = comBox.getId();//不合格料框id
                         testBoxId = comBox.getTestBox().getId();//待检验料框id
-                        receiveId = comBox.getTestBox().getReceiveId();
                         processId = comBox.getTestBox().getProcessId();
                         stationId = comBox.getTestBox().getStationId();
+                        planId = comBox.getTestBox().getPlanId();
+                        bomId = comBox.getTestBox().getBomId();
 
 //                        加工单详情
-                        if (comBox.getReceive().getPlan() != null) {
+                        if (comBox.getTestBox().getPlan() != null) {
                             flag = 0;
                             name11.setText("加工单编号");
                             name12.setText("成品编码");
                             tvTableTitle.setText("加工单");
 
-                            tv11.setText(comBox.getReceive().getPlan().getCode());
-                            tv12.setText(comBox.getReceive().getPlan().getProduct().getCode());
-                            tv21.setText(comBox.getReceive().getProcessProduct().getName());
-                            tv22.setText(comBox.getReceive().getProcessProduct().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessProduct().getStation().getName());
+                            tv11.setText(comBox.getTestBox().getPlan().getCode());
+                            tv12.setText(comBox.getTestBox().getPlan().getProduct().getCode());
+                            tv21.setText(comBox.getTestBox().getPlan().getProcessProduct().getName());
+                            tv22.setText(comBox.getTestBox().getPlan().getProcessProduct().getStation().getWorkshop().getName());
+                            tv31.setText(comBox.getTestBox().getPlan().getProcessProduct().getStation().getName());
 //                          得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessProduct().getTools();
+                            List<ComTool> tools = comBox.getTestBox().getPlan().getProcessProduct().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -193,19 +194,19 @@ public class FailInBoxActivity extends AppCompatActivity {
 
                         }
 //                       子加工单详情
-                        else {
+                        else if (comBox.getTestBox().getBom() != null)  {
                             flag = 1;
                             name11.setText("子加工单编号");
                             name12.setText("半成品编码");
                             tvTableTitle.setText("子加工单");
 
-                            tv11.setText(comBox.getReceive().getBom().getCode());
-                            tv12.setText(comBox.getReceive().getBom().getHalf().getCode());
-                            tv21.setText(comBox.getReceive().getProcessHalf().getName());
-                            tv22.setText(comBox.getReceive().getProcessHalf().getStation().getWorkshop().getName());
-                            tv31.setText(comBox.getReceive().getProcessHalf().getStation().getName());
+                            tv11.setText(comBox.getTestBox().getBom().getCode());
+                            tv12.setText(comBox.getTestBox().getBom().getHalf().getCode());
+                            tv21.setText(comBox.getTestBox().getBom().getProcessHalf().getName());
+                            tv22.setText(comBox.getTestBox().getBom().getProcessHalf().getStation().getWorkshop().getName());
+                            tv31.setText(comBox.getTestBox().getBom().getProcessHalf().getStation().getName());
 //                           得到工装列表
-                            List<ComTool> tools = comBox.getReceive().getProcessHalf().getTools();
+                            List<ComTool> tools = comBox.getTestBox().getBom().getProcessHalf().getTools();
                             if (tools.size() == 0) {
                                 tv32.setText("");
                             } else {
@@ -295,12 +296,13 @@ public class FailInBoxActivity extends AppCompatActivity {
                                 }
                                 String url = UrlHelper.URL_FAIL_IN_BOX_COMMIT.replace("{boxId}", "" + boxId)
                                         .replace("{testBoxId}", "" + testBoxId)
-                                        .replace("{receiveId}", "" + receiveId)
+                                        .replace("{planId}", "" + planId)
+                                        .replace("{bomId}", "" + bomId)
                                         .replace("{processId}", "" + processId)
                                         .replace("{stationId}", "" + stationId)
                                         .replace("{testId}", "" + SPHelper.getInt(context, "userId"))
                                         .replace("{failNum}", failNum)
-                                        .replace("{reason}", failReason);
+                                        .replace("{testRemark}", failReason);
                                 Log.d("URL_FAIL_IN_BOX_COMMIT", url);
                                 url = UniversalHelper.getTokenUrl(url);
                                 sendRequest(url);

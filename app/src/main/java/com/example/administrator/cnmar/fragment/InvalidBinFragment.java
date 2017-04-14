@@ -30,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
@@ -49,6 +50,7 @@ import component.com.vo.BoxTypeVo;
  * A simple {@link Fragment} subclass.
  */
 public class InvalidBinFragment extends Fragment {
+
     private BillAdapter myAdapter;
     private Handler handler = new Handler();
 
@@ -58,7 +60,7 @@ public class InvalidBinFragment extends Fragment {
     private int count; // 数据总条数
     //    用来存放从后台取出的数据列表，作为adapter的数据源
     private List<ComBox> data = new ArrayList<>();
-    private String url = UniversalHelper.getTokenUrl(UrlHelper.URL_BIN.replace("{type}", BoxTypeVo.failure.getKey() + "").replace("{page}", String.valueOf(page)));
+    private String url;
 
     @BindView(R.id.etSearchInput)
     EditText etSearchInput;
@@ -98,7 +100,10 @@ public class InvalidBinFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         init();
-
+        url = UniversalHelper.getTokenUrl(UrlHelper.URL_BIN
+                .replace("{userId}", "" + SPHelper.getInt(getActivity(), "userId"))
+                .replace("{type}", BoxTypeVo.failure.getKey() + "")
+                .replace("{page}", String.valueOf(page)));
         UniversalHelper.initRefresh(getActivity(), refreshLayout);
         refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -148,7 +153,7 @@ public class InvalidBinFragment extends Fragment {
                     if (input.equals("")) {
                         Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     } else {
-                        String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.failure.getKey()+"").replace("{code}", input);
+                        String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.failure.getKey() + "").replace("{code}", input);
                         urlString = UniversalHelper.getTokenUrl(urlString);
                         getDataFromNet(urlString);
                     }
@@ -188,13 +193,13 @@ public class InvalidBinFragment extends Fragment {
         return view;
     }
 
-    public void init(){
-        tableLayout.setColumnCollapsed(9,false);
-        tableLayout.setColumnCollapsed(10,false);
-        tableLayout.setColumnCollapsed(11,false);
-        tableLayout.setColumnCollapsed(12,false);
-        tableLayout.setColumnStretchable(9,true);
-        tableLayout.setColumnStretchable(11,true);
+    public void init() {
+        tableLayout.setColumnCollapsed(9, false);
+        tableLayout.setColumnCollapsed(10, false);
+        tableLayout.setColumnCollapsed(11, false);
+        tableLayout.setColumnCollapsed(12, false);
+        tableLayout.setColumnStretchable(9, true);
+        tableLayout.setColumnStretchable(11, true);
         tv1.setText("料框编码");
         tv2.setText("（子）加工单编号");
         tv3.setText("工序");
@@ -279,7 +284,7 @@ public class InvalidBinFragment extends Fragment {
                     Toast.makeText(getActivity(), "请输入内容后再查询", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.failure.getKey()+"").replace("{code}", input);
+                String urlString = UrlHelper.URL_SEARCH_BIN.replace("{type}", BoxTypeVo.failure.getKey() + "").replace("{code}", input);
                 urlString = UniversalHelper.getTokenUrl(urlString);
                 getDataFromNet(urlString);
                 break;
@@ -340,20 +345,18 @@ public class InvalidBinFragment extends Fragment {
 
             holder.tvBoxCode.setText(list.get(position).getCode());
 //            判断显示加工单还是子加工单
-            if (list.get(position).getReceive().getPlan() != null) {
-                holder.tvCode.setText(list.get(position).getReceive().getPlan().getCode());
-            } else
-                holder.tvCode.setText(list.get(position).getReceive().getBom().getCode());
-//            工序的判断
-            if (list.get(position).getReceive().getProcessProduct() != null) {
-                holder.tvProcess.setText(list.get(position).getReceive().getProcessProduct().getName());
-            }else
-                holder.tvProcess.setText(list.get(position).getReceive().getProcessHalf().getName());
+            if (list.get(position).getPlan() != null) {
+                holder.tvCode.setText(list.get(position).getPlan().getCode());
+                holder.tvProcess.setText(list.get(position).getPlan().getProcessProduct().getName());
+                holder.tvStation.setText(list.get(position).getPlan().getProcessProduct().getStation().getName());
+            } else if (list.get(position).getBom() != null) {
+                holder.tvCode.setText(list.get(position).getBom().getCode());
+                holder.tvProcess.setText(list.get(position).getBom().getProcessHalf().getName());
+                holder.tvStation.setText(list.get(position).getBom().getProcessHalf().getStation().getName());
+            }
 
-            holder.tvStation.setText(list.get(position).getStation().getName());
-            holder.tvNum.setText(list.get(position).getNum()+"");
-            holder.tvPerson.setText(list.get(position).getUser()==null?"":list.get(position).getUser().getName());
-
+            holder.tvNum.setText(list.get(position).getNum() + "");
+            holder.tvPerson.setText(list.get(position).getUser() == null ? "" : list.get(position).getUser().getName());
             return convertView;
         }
 

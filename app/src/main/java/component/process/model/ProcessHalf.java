@@ -30,12 +30,14 @@ public class ProcessHalf implements Cloneable {
 	@JSONField(ordinal = 7)
 	private ComStation station;
 	@JSONField(ordinal = 8)
-	private int successNum; // 合格品数量
+	private ComTeam team;
 	@JSONField(ordinal = 9)
-	private int failureNum; // 不合格品数量
+	private int successNum; // 合格品数量
 	@JSONField(ordinal = 10)
-	private ProcessHalf prev; // 上工序
+	private int failureNum; // 不合格品数量
 	@JSONField(ordinal = 11)
+	private ProcessHalf prev; // 上工序
+	@JSONField(ordinal = 12)
 	private ProcessHalf last; // 末工序
 
 	public ProcessHalf() {
@@ -110,6 +112,14 @@ public class ProcessHalf implements Cloneable {
 
 	public void setStation(ComStation station) {
 		this.station = station;
+	}
+
+	public ComTeam getTeam() {
+		return team;
+	}
+
+	public void setTeam(ComTeam team) {
+		this.team = team;
 	}
 
 	public int getSuccessNum() {

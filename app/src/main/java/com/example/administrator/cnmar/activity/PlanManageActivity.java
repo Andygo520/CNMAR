@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,14 +26,12 @@ public class PlanManageActivity extends AppCompatActivity {
 
     private TextView tvTitle;
     private RadioGroup radioGroup;
-    private RadioButton rbProductionPlan,rbProduceBom,rbReceiveMaterialOrder, rbDeliveryPlan;
+    private RadioButton rbProductionPlan, rbProduceBom, rbReceiveMaterialOrder, rbDeliveryPlan;
     private ProducePlanFragment productionPlanFragment;
     private ProduceBomFragment produceBomFragment;
     private ReceiveMaterialOrderFragment receiveMaterialOrderFragment;
     private DeliveryPlanFragment deliveryPlanFragment;
     private LinearLayout llLeftArrow;
-    //    判断从哪个页面跳转过来的标志
-    private int flag = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class PlanManageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_plan_manage);
         AppExit.getInstance().addActivity(this);
 //       取出登录界面获得的一级菜单与其二级菜单url的对应关系
-        String sublist = SPHelper.getString(this,getResources().getString(R.string.HOME_JHGL), "");
+        String sublist = SPHelper.getString(this, getResources().getString(R.string.HOME_JHGL), "");
 
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("计划管理");
@@ -62,33 +61,32 @@ public class PlanManageActivity extends AppCompatActivity {
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PlanManageActivity.this, MainActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(PlanManageActivity.this, MainActivity.class));
             }
         });
 
 
 //       根据sublist的内容来设置默认选中的单选按钮(默认不可见)
-        if (sublist.contains(","+getResources().getString(R.string.produce_plan_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")) {
             rbProductionPlan.setVisibility(View.VISIBLE);
             setTabSelection(0);
         }
-        if (sublist.contains(","+getResources().getString(R.string.produce_bom_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ",")) {
             rbProduceBom.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.produce_plan_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ","))
                 setTabSelection(1);
         }
-        if (sublist.contains(","+getResources().getString(R.string.material_out_order_receive_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.material_out_order_receive_url) + ",")) {
             rbReceiveMaterialOrder.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.produce_plan_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.produce_bom_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ","))
                 setTabSelection(2);
         }
-        if (sublist.contains(","+getResources().getString(R.string.custom_deliver_plan_url)+",")) {
+        if (sublist.contains("," + getResources().getString(R.string.custom_deliver_plan_url) + ",")) {
             rbDeliveryPlan.setVisibility(View.VISIBLE);
-            if (!sublist.contains(","+getResources().getString(R.string.produce_plan_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.produce_bom_url)+",")
-                    && !sublist.contains(","+getResources().getString(R.string.material_out_order_receive_url)+","))
+            if (!sublist.contains("," + getResources().getString(R.string.produce_plan_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.produce_bom_url) + ",")
+                    && !sublist.contains("," + getResources().getString(R.string.material_out_order_receive_url) + ","))
                 setTabSelection(3);
         }
 
@@ -125,11 +123,17 @@ public class PlanManageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        flag = getIntent().getIntExtra("flag", 999);
+        //    判断从哪个页面跳转过来的标志
+        int flag = getIntent().getIntExtra("flag", 999);
+        Log.d("FLAGflagg", flag + "");
         if (flag == 0) {
             setTabSelection(0);
         } else if (flag == 1) {
             setTabSelection(1);
+        } else if (flag == 2) {
+            setTabSelection(2);
+        } else if (flag == 3) {
+            setTabSelection(3);
         }
     }
 
@@ -137,8 +141,7 @@ public class PlanManageActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(PlanManageActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -151,9 +154,9 @@ public class PlanManageActivity extends AppCompatActivity {
             productionPlanFragment = (ProducePlanFragment) fragment;
         } else if (deliveryPlanFragment == null && fragment instanceof DeliveryPlanFragment) {
             deliveryPlanFragment = (DeliveryPlanFragment) fragment;
-        }else if (receiveMaterialOrderFragment == null && fragment instanceof ReceiveMaterialOrderFragment) {
+        } else if (receiveMaterialOrderFragment == null && fragment instanceof ReceiveMaterialOrderFragment) {
             receiveMaterialOrderFragment = (ReceiveMaterialOrderFragment) fragment;
-        }else if (produceBomFragment == null && fragment instanceof ProduceBomFragment) {
+        } else if (produceBomFragment == null && fragment instanceof ProduceBomFragment) {
             produceBomFragment = (ProduceBomFragment) fragment;
         }
     }
@@ -185,10 +188,10 @@ public class PlanManageActivity extends AppCompatActivity {
                 drawable2.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable3.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable4.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbProductionPlan.setCompoundDrawables(null,drawable1,null,null);//只放上边
-                rbProduceBom.setCompoundDrawables(null,drawable2,null,null);//只放上边
-                rbReceiveMaterialOrder.setCompoundDrawables(null,drawable3,null,null);//只放上边
-                rbDeliveryPlan.setCompoundDrawables(null,drawable4,null,null);//只放上边
+                rbProductionPlan.setCompoundDrawables(null, drawable1, null, null);//只放上边
+                rbProduceBom.setCompoundDrawables(null, drawable2, null, null);//只放上边
+                rbReceiveMaterialOrder.setCompoundDrawables(null, drawable3, null, null);//只放上边
+                rbDeliveryPlan.setCompoundDrawables(null, drawable4, null, null);//只放上边
 
                 if (productionPlanFragment == null) {
                     productionPlanFragment = new ProducePlanFragment();
@@ -206,16 +209,16 @@ public class PlanManageActivity extends AppCompatActivity {
                 //                动态设置单选按钮文本上下左右的图片
                 Drawable drawable5 = getResources().getDrawable(R.drawable.production_plan);
                 Drawable drawable6 = getResources().getDrawable(R.drawable.produce_bom_selected);
-                Drawable drawable7= getResources().getDrawable(R.drawable.receive_order);
-                Drawable drawable8= getResources().getDrawable(R.drawable.delivery_plan);
+                Drawable drawable7 = getResources().getDrawable(R.drawable.receive_order);
+                Drawable drawable8 = getResources().getDrawable(R.drawable.delivery_plan);
                 drawable5.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable6.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable7.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable8.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbProductionPlan.setCompoundDrawables(null,drawable5,null,null);//只放上边
-                rbProduceBom.setCompoundDrawables(null,drawable6,null,null);//只放上边
-                rbReceiveMaterialOrder.setCompoundDrawables(null,drawable7,null,null);//只放上边
-                rbDeliveryPlan.setCompoundDrawables(null,drawable8,null,null);//只放上边
+                rbProductionPlan.setCompoundDrawables(null, drawable5, null, null);//只放上边
+                rbProduceBom.setCompoundDrawables(null, drawable6, null, null);//只放上边
+                rbReceiveMaterialOrder.setCompoundDrawables(null, drawable7, null, null);//只放上边
+                rbDeliveryPlan.setCompoundDrawables(null, drawable8, null, null);//只放上边
 
                 if (produceBomFragment == null) {
                     produceBomFragment = new ProduceBomFragment();
@@ -239,10 +242,10 @@ public class PlanManageActivity extends AppCompatActivity {
                 drawable10.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable11.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable12.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbProductionPlan.setCompoundDrawables(null,drawable9,null,null);//只放上边
-                rbProduceBom.setCompoundDrawables(null,drawable10,null,null);//只放上边
-                rbReceiveMaterialOrder.setCompoundDrawables(null,drawable11,null,null);//只放上边
-                rbDeliveryPlan.setCompoundDrawables(null,drawable12,null,null);//只放上边
+                rbProductionPlan.setCompoundDrawables(null, drawable9, null, null);//只放上边
+                rbProduceBom.setCompoundDrawables(null, drawable10, null, null);//只放上边
+                rbReceiveMaterialOrder.setCompoundDrawables(null, drawable11, null, null);//只放上边
+                rbDeliveryPlan.setCompoundDrawables(null, drawable12, null, null);//只放上边
                 if (receiveMaterialOrderFragment == null) {
                     receiveMaterialOrderFragment = new ReceiveMaterialOrderFragment();
                     transaction.add(R.id.content, receiveMaterialOrderFragment);
@@ -259,16 +262,16 @@ public class PlanManageActivity extends AppCompatActivity {
                 //                动态设置单选按钮文本上下左右的图片
                 Drawable drawable13 = getResources().getDrawable(R.drawable.production_plan);
                 Drawable drawable14 = getResources().getDrawable(R.drawable.produce_bom);
-                Drawable drawable15= getResources().getDrawable(R.drawable.receive_order);
+                Drawable drawable15 = getResources().getDrawable(R.drawable.receive_order);
                 Drawable drawable16 = getResources().getDrawable(R.drawable.delivery_plan_selected);
                 drawable13.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable14.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable15.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
                 drawable16.setBounds(0, 15, 70, 85);//第一0是距左边距离，第二15是距上边距离，长宽为70
-                rbProductionPlan.setCompoundDrawables(null,drawable13,null,null);//只放上边
-                rbProduceBom.setCompoundDrawables(null,drawable14,null,null);//只放上边
-                rbReceiveMaterialOrder.setCompoundDrawables(null,drawable15,null,null);//只放上边
-                rbDeliveryPlan.setCompoundDrawables(null,drawable16,null,null);//只放上边
+                rbProductionPlan.setCompoundDrawables(null, drawable13, null, null);//只放上边
+                rbProduceBom.setCompoundDrawables(null, drawable14, null, null);//只放上边
+                rbReceiveMaterialOrder.setCompoundDrawables(null, drawable15, null, null);//只放上边
+                rbDeliveryPlan.setCompoundDrawables(null, drawable16, null, null);//只放上边
                 if (deliveryPlanFragment == null) {
                     deliveryPlanFragment = new DeliveryPlanFragment();
                     transaction.add(R.id.content, deliveryPlanFragment);

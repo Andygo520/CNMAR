@@ -74,12 +74,12 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
 
         //        存放菜单名的列表
         List<String> titleList = new ArrayList<>();
-        if (roleMenu.contains(",")){
+        if (roleMenu.contains(",")) {
             String[] menuText = roleMenu.split(",");
             for (String title : menuText) {
                 titleList.add(title);
             }
-        }else {
+        } else if (!roleMenu.contains(",") && roleMenu.length() > 0) {
             titleList.add(roleMenu);
         }
 
@@ -97,9 +97,12 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         if (items != null && name != null && name.equalsIgnoreCase(username)) {
             results.addAll(items);
         } else {
-            for (int i = 0; i < titleList.size(); i++) {
-                results.add(new Item(titleList.get(i), imageList.get(i)));
+            if (titleList.size() > 0) {
+                for (int i = 0; i < titleList.size(); i++) {
+                    results.add(new Item(titleList.get(i), imageList.get(i)));
+                }
             }
+
         }
 
 //        设置recyclerView的布局方式

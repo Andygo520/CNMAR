@@ -31,11 +31,14 @@ import com.android.volley.toolbox.Volley;
 import com.example.administrator.cnmar.AppExit;
 import com.example.administrator.cnmar.R;
 import com.example.administrator.cnmar.entity.MyListView;
+import com.example.administrator.cnmar.helper.RoleHelper;
 import com.example.administrator.cnmar.helper.SPHelper;
 import com.example.administrator.cnmar.helper.UniversalHelper;
 import com.example.administrator.cnmar.helper.UrlHelper;
 import com.example.administrator.cnmar.helper.VolleyHelper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,13 +120,13 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
     Button btnInOrderSubmit;
     @BindView(R.id.llInOrderSubmit)
     LinearLayout llInOrderSubmit;
+    @BindView(R.id.etRemark)
+    EditText etRemark;
 
 
     private Context context = MaterialInOrderDetailActivity.this;
     private int id, testId;//id是传递到详情页面的入库单id,testId为用户ID
     private String strUrl;
-    private String role;//判断用户角色
-    private Boolean isSuper;//用户是否是超级管理员
     private String inOrderMaterialIds = "";
     private String res = "";
     private String failNums = "";
@@ -149,9 +152,6 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
         id = getIntent().getIntExtra("ID", 0);
         testId = SPHelper.getInt(context, "userId", 0);
         init();
-//        从SharedPreference中取出用户的角色，若角色包含"检验员"就显示按钮;如果是超级用户显示所有按钮
-        role = SPHelper.getString(context, "Role", "");
-        isSuper = SPHelper.getBoolean(context, "isSuper", false);
 
         strUrl = UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
@@ -179,14 +179,14 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
         column2.setText("检验数量");
         column3.setText("不合格数量");
         column4.setText("检验结果");
-
-
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
+            Intent intent = new Intent(context, MaterialStockActivity.class);
+            intent.putExtra("flag", 1);
+            startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -252,12 +252,12 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                         }
 
 //                        获取用户“品控管理”菜单与其二级子菜单的对应关系，后面按钮的显示与此有关
-                        String subList=SPHelper.getString(context,getResources().getString(R.string.HOME_PKGL),"");
+                        String subList = SPHelper.getString(context, getResources().getString(R.string.HOME_PKGL), "");
 
 //                        显示“提交检验”按钮两条件：
-//                        1.单据状态为待检验 2.用户是超级用户或者用户拥有“原料检验”的子菜单才能
+//                        1.单据状态为待检验 2.原料入库单只有超级用户、系统管理员或者检验员才能“提交检验结果”
                         if (materialInOrder.getStatus() == InOrderStatusVo.pre_test.getKey()
-                                && (isSuper ||subList.contains(","+getResources().getString(R.string.material_in_order_test_url)+",")) ) {
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isTestman(context))) {
                             btnTestSubmit.setVisibility(View.VISIBLE);
                             myAdapter = new MaterialTestAdapter(MaterialInOrderDetailActivity.this, inOrderMaterials);
                             lvTestTable.setAdapter(myAdapter);
@@ -278,9 +278,9 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                             list1.addAll(list2);
                         }
 //                        显示“提交入库”按钮两条件：
-//                        1.单据状态为待入库 2.用户是超级用户或者用户没有“原料检验”的子菜单才能
+//                        1.单据状态为待入库 2.只有超级用户、系统管理员或原料库管理（角色id=2）的角色才能“提交入库”
                         if (materialInOrder.getStatus() == InOrderStatusVo.pre_in_stock.getKey()
-                                && (isSuper || !subList.contains(","+getResources().getString(R.string.material_in_order_test_url)+","))) {
+                                && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isMaterialStockman(context))) {
                             btnInOrderSubmit.setVisibility(View.VISIBLE);
                             btnInOrderSubmit.setText("提交入库");
                             myAdapter1 = new MaterialInOrderAdapter(context, list1);
@@ -343,7 +343,9 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_arrow: {
-                finish();
+                Intent intent = new Intent(context, MaterialStockActivity.class);
+                intent.putExtra("flag", 1);
+                startActivity(intent);
                 break;
             }
             case R.id.scann: {
@@ -371,7 +373,18 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 UniversalHelper.showProgressDialog(context);
-                                String url = UrlHelper.URL_TEST_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{testId}", String.valueOf(testId)).replace("{inOrderMaterialIds}", inOrderMaterialIds1).replace("{res}", res1).replace("{failNums}", failNums1);
+                                String testRemark=etRemark.getText().toString().trim();
+                                try {
+                                    testRemark= URLEncoder.encode(testRemark,"utf-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                String url = UrlHelper.URL_TEST_COMMIT.replace("{inOrderId}", String.valueOf(id))
+                                        .replace("{testId}", String.valueOf(testId))
+                                        .replace("{testRemark}", testRemark)
+                                        .replace("{inOrderMaterialIds}", inOrderMaterialIds1)
+                                        .replace("{res}", res1)
+                                        .replace("{failNums}", failNums1);
                                 url = UniversalHelper.getTokenUrl(url);
                                 sendRequest(url);
                             }
@@ -396,17 +409,18 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                         return;
                     }
                 }
-
-                inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
-                preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
+                if (inOrderSpaceIds.length() > 0)
+                    inOrderSpaceIds1 = inOrderSpaceIds.substring(0, inOrderSpaceIds.length() - 1);
+                if (preInStocks.length() > 0)
+                    preInStocks1 = preInStocks.substring(0, preInStocks.length() - 1);
 
 //      每次点击提交入库按钮，将inStocks设置为空，防止之前的数值对之后的数值产生影响
                 inStocks = "";
                 for (int i = 0; i < map.size(); i++) {
                     inStocks += map.get(i) + ",";
                 }
-
-                inStocks1 = inStocks.substring(0, inStocks.length() - 1);
+                if (inStocks.length() > 0)
+                    inStocks1 = inStocks.substring(0, inStocks.length() - 1);
 
                 String url = UrlHelper.URL_IN_ORDER_COMMIT.replace("{inOrderId}", String.valueOf(id)).replace("{inOrderSpaceIds}", inOrderSpaceIds1).replace("{preInStocks}", preInStocks1).replace("{inStocks}", inStocks1);
                 url = UniversalHelper.getTokenUrl(url);

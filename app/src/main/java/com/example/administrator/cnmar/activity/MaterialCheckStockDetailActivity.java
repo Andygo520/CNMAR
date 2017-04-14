@@ -37,6 +37,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
     private TextView name1, name2, name3, name4;
     private MyListView lvSpaceInfo;
     private static String strUrl;
+    private Context context;
     private LinearLayout llLeftArrow;
     private TableLayout tableLayout;
     private TextView tvTitle;
@@ -65,6 +66,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
     }
 
     public void init() {
+        context = MaterialCheckStockDetailActivity.this;
         tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setText("原料仓库-盘点详情");
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);
@@ -105,7 +107,7 @@ public class MaterialCheckStockDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             finish();
             return true;
         }

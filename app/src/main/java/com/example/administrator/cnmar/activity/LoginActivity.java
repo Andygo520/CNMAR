@@ -138,6 +138,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                  判断是否是超级管理员，如果是就显示所有按钮
                     Boolean isSuper = userInfor.getIsSuper();
                     SPHelper.putBoolean(LoginActivity.this, "isSuper", isSuper);
+
+
 //                 操作工跟测试员的判断，这与“生产管理”显示的模块有关
                     Boolean isOperator = userInfor.getIsOperator();
                     Boolean isTest = userInfor.getIsTest();
@@ -156,14 +158,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 //                    用来存放用户的角色以及可以查看的菜单信息
                     String strMenus = "";
-                    String strRoles = "";
+                    String strRoles = ",";
+                    String roleName = "";
 
 //                  通过一层循环取出角色名
                     if (roles != null && roles.size() > 0) {
                         for (SystemRole role : roles) {
-                            strRoles += role.getName() + "，";
+                            strRoles += role.getId() + ",";
+                            roleName += role.getName() + ",";
                         }
-                        SPHelper.putString(LoginActivity.this, "Role", strRoles.substring(0, strRoles.length() - 1));
+                        SPHelper.putString(LoginActivity.this, "RoleId", strRoles);
+                        SPHelper.putString(LoginActivity.this, "Role", roleName.substring(0, roleName.length() - 1));
                     }
 
                     String roleMenu = "";
@@ -203,13 +208,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 roleMenu += menus[j] + ",";
                             }
                         }
-                        roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
+                        if (roleMenu.length() > 0)
+                            roleMenu = roleMenu.substring(0, roleMenu.length() - 1);
                     }
                     //  让操作工跟测试员、超级用户可以显示生产管理模块
                     if (isOperator || isTest || isSuper)
                         roleMenu = roleMenu + "," + getResources().getString(R.string.HOME_SCGL);
                     if (roleMenu.startsWith(","))
-                        roleMenu=roleMenu.substring(1);
+                        roleMenu = roleMenu.substring(1);
 //                   将用户拥有的app模块菜单名存入sp中
                     SPHelper.putString(LoginActivity.this, "Menu", roleMenu);
 

@@ -31,7 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import component.produce.model.ProduceReceive;
+import component.com.model.ComStation;
 import zxing.activity.CaptureActivity;
 
 
@@ -39,8 +39,6 @@ import zxing.activity.CaptureActivity;
  * A simple {@link Fragment} subclass.
  */
 public class StationFragment extends Fragment {
-
-    private int stationId;//扫描机台的id
     @BindView(R.id.bomTable)
     LinearLayout bomTable;
     @BindView(R.id.planTable)
@@ -98,14 +96,14 @@ public class StationFragment extends Fragment {
         tableLayout.setColumnStretchable(11,true);
 
         column1.setText("加工单编号");
-        column2.setText("成品编码");
+        column2.setText("成品名称");
         column3.setText("计划生产数量");
         column4.setText("领料单编号");
         column5.setText("工序");
         column6.setText("机台工位");
 
         col1.setText("子加工单编号");
-        col2.setText("半成品编码");
+        col2.setText("半成品名称");
         col3.setText("计划生产数量");
         col4.setText("领料单编号");
         col5.setText("工序");
@@ -120,9 +118,6 @@ public class StationFragment extends Fragment {
         if (resultCode == 0) {
             RequestQueue queue = Volley.newRequestQueue(getActivity());
             final String codeUrl = data.getStringExtra("result");
-//            从返回的结果中取出机台id
-            String id = codeUrl.substring(codeUrl.indexOf("qrcode/"), codeUrl.indexOf("?")).substring(7);
-            stationId = Integer.parseInt(id);
             StringRequest stringRequest = new StringRequest(codeUrl, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
@@ -134,18 +129,18 @@ public class StationFragment extends Fragment {
 //                        btnScann.setVisibility(View.GONE);//有返回数据的时候，不显示扫描按钮
 //                      response.getData()对应着一个数组，数组包括两个列表，分别为加工单跟子加工单列表，判断各自的长度，如果长度为0就不显示
                         List list = JSON.parseArray(response.getData().toString(), List.class);
-                        List<ProduceReceive> producePlan = JSON.parseArray(list.get(0).toString(), ProduceReceive.class);//数组第0个元素代表加工单
-                        List<ProduceReceive> produceBom = JSON.parseArray(list.get(1).toString(), ProduceReceive.class);//数组第1个元素代表子加工单
-                        if (producePlan.size() > 0) {
+                        List<ComStation> planStation = JSON.parseArray(list.get(0).toString(), ComStation.class);//数组第0个元素代表加工单
+                        List<ComStation> bomStation = JSON.parseArray(list.get(1).toString(), ComStation.class);//数组第1个元素代表子加工单
+                        if (planStation.size() > 0) {
                             planTable.setVisibility(View.VISIBLE);
-                            lvTable.setAdapter(new BillAdapter(producePlan, getActivity()));
+                            lvTable.setAdapter(new BillAdapter(planStation, getActivity()));
                         } else {
                             planTable.setVisibility(View.GONE);
                         }
 
-                        if (produceBom.size() > 0) {
+                        if (bomStation.size() > 0) {
                             bomTable.setVisibility(View.VISIBLE);
-                            lvProduceBom.setAdapter(new BillAdapter1(produceBom, getActivity()));
+                            lvProduceBom.setAdapter(new BillAdapter1(bomStation, getActivity()));
                         } else {
                             bomTable.setVisibility(View.GONE);
                         }
@@ -186,9 +181,9 @@ public class StationFragment extends Fragment {
     * */
     class BillAdapter extends BaseAdapter {
         private Context context;
-        private List<ProduceReceive> list = null;
+        private List<ComStation> list = null;
 
-        public BillAdapter(List<ProduceReceive> list, Context context) {
+        public BillAdapter(List<ComStation> list, Context context) {
             this.list = list;
             this.context = context;
         }
@@ -222,7 +217,7 @@ public class StationFragment extends Fragment {
                 tableLayout.setColumnStretchable(9,true);
                 tableLayout.setColumnStretchable(11,true);
                 holder.tvPlanCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvProductCode = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvProductName = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvPlanProduceNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvReceive = (TextView) convertView.findViewById(R.id.column4);
                 holder.tvProcess = (TextView) convertView.findViewById(R.id.column5);
@@ -233,18 +228,19 @@ public class StationFragment extends Fragment {
 
             holder.tvPlanCode.setText(list.get(position).getPlan().getCode());
             holder.tvPlanProduceNum.setText(list.get(position).getPlan().getProduceNum() + list.get(position).getPlan().getProduct().getUnit().getName());
-            holder.tvProductCode.setText(list.get(position).getPlan().getProduct().getCode());
+            holder.tvProductName.setText(list.get(position).getPlan().getProduct().getName());
             holder.tvReceive.setText(list.get(position).getCode());
-            holder.tvProcess.setText(list.get(position).getProcessProduct().getName());
-            holder.tvStation.setText(list.get(position).getProcessProduct().getStation().getName());
+            holder.tvProcess.setText(list.get(position).getPlan().getProcessProduct().getName());
+            holder.tvStation.setText(list.get(position).getName());
             holder.tvPlanCode.setTextColor(getResources().getColor(R.color.colorBase));
             holder.tvPlanCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ScannStationDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());// 列表项id
-                    intent.putExtra("processId", list.get(position).getProcessProduct().getId());//工序id
-                    intent.putExtra("stationId", stationId);
+                    intent.putExtra("processId", list.get(position).getPlan().getProcessProduct().getId());//工序id
+                    intent.putExtra("planId", list.get(position).getPlan().getId());//加工单Id
+                    intent.putExtra("stationId", list.get(position).getId());//机台Id
                     startActivity(intent);
                 }
             });
@@ -253,7 +249,7 @@ public class StationFragment extends Fragment {
 
         class ViewHolder {
             public TextView tvPlanCode;//加工单编号
-            public TextView tvProductCode;//成品编码
+            public TextView tvProductName;//成品名称
             public TextView tvPlanProduceNum;//计划生产数量
             public TextView tvReceive;//领料单编号
             public TextView tvProcess;//工序
@@ -266,9 +262,9 @@ public class StationFragment extends Fragment {
     * */
     class BillAdapter1 extends BaseAdapter {
         private Context context;
-        private List<ProduceReceive> list = null;
+        private List<ComStation> list = null;
 
-        public BillAdapter1(List<ProduceReceive> list, Context context) {
+        public BillAdapter1(List<ComStation> list, Context context) {
             this.list = list;
             this.context = context;
         }
@@ -302,7 +298,7 @@ public class StationFragment extends Fragment {
                 tableLayout.setColumnStretchable(9,true);
                 tableLayout.setColumnStretchable(11,true);
                 holder.tvProduceBomCode = (TextView) convertView.findViewById(R.id.column1);
-                holder.tvHalfCode = (TextView) convertView.findViewById(R.id.column2);
+                holder.tvHalfName = (TextView) convertView.findViewById(R.id.column2);
                 holder.tvPlanProduceNum = (TextView) convertView.findViewById(R.id.column3);
                 holder.tvReceive = (TextView) convertView.findViewById(R.id.column4);
                 holder.tvProcess = (TextView) convertView.findViewById(R.id.column5);
@@ -319,24 +315,25 @@ public class StationFragment extends Fragment {
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ScannStationDetailActivity.class);
                     intent.putExtra("ID", list.get(position).getId());// 列表项id
-                    intent.putExtra("processId", list.get(position).getProcessHalf().getId());//工序id
-                    intent.putExtra("stationId", stationId);
+                    intent.putExtra("processId", list.get(position).getBom().getProcessHalf().getId());//工序id
+                    intent.putExtra("bomId", list.get(position).getBom().getId());//子加工单Id
+                    intent.putExtra("stationId", list.get(position).getId());//机台Id
                     startActivity(intent);
                 }
             });
-            holder.tvHalfCode.setText(list.get(position).getBom().getHalf().getCode());
+            holder.tvHalfName.setText(list.get(position).getBom().getHalf().getName());
             holder.tvPlanProduceNum.setText(list.get(position).getBom().getReceiveNum() + list.get(position).getBom().getHalf().getUnit().getName());
             holder.tvReceive.setText(list.get(position).getCode());
-            holder.tvProcess.setText(list.get(position).getProcessHalf().getName());
-            holder.tvStation.setText(list.get(position).getProcessHalf().getStation().getName());
+            holder.tvProcess.setText(list.get(position).getBom().getProcessHalf().getName());
+            holder.tvStation.setText(list.get(position).getName());
 
             return convertView;
         }
 
         class ViewHolder {
-            //           子加工单编号，半成品编码，计划生产数量，领料单编号，工序，机台工位
+            //           子加工单编号，半成品名称，计划生产数量，领料单编号，工序，机台工位
             public TextView tvProduceBomCode;
-            public TextView tvHalfCode;
+            public TextView tvHalfName;
             public TextView tvPlanProduceNum;
             public TextView tvReceive;
             public TextView tvProcess;//工序
