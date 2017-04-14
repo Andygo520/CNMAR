@@ -1,0 +1,61 @@
+<!--所有ListView列表项的布局（默认显示四列也可以显示更多列-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:collapseColumns="9,10,11,12"
+        android:stretchColumns="1,3,5,7">
+
+        <TableRow
+            android:id="@+id/table_row"
+            android:minHeight="?android:attr/listPreferredItemHeight">
+
+            <View style="@style/list_item_cell_seperator_layout" />
+
+            <TextView
+                android:id="@+id/column1"
+                style="@style/textview_style"
+                android:layout_width="60dip"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+
+            <View style="@style/list_item_cell_seperator_layout" />
+
+            <EditText
+                android:id="@+id/column2"
+                android:layout_width="60dip"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:enabled="false"
+                android:gravity="center"
+                android:inputType="number"
+                android:textColor="@color/color_red"
+                android:textColorHint="@color/color_red" />
+
+            <View style="@style/list_item_cell_seperator_layout" />
+
+            <TextView
+                android:id="@+id/column3"
+                style="@style/textview_style"
+                android:layout_width="60dip"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+
+            <View style="@style/list_item_cell_seperator_layout" />
+
+            <TextView
+                android:id="@+id/column4"
+                style="@style/textview_style"
+                android:layout_width="60dip"
+                android:layout_height="match_parent"
+                android:gravity="center" />
+
+            <View style="@style/list_item_cell_seperator_layout" />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

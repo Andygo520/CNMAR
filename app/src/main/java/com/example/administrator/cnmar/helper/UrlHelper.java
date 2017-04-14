@@ -4,12 +4,12 @@ package com.example.administrator.cnmar.helper;
  * Created by Administrator on 2016/9/29.
  */
 public class UrlHelper {
-    public static String URL_BASE = "http://192.168.1.112:8092";
-//   public static final String URL_BASE = "http://benxiao.cnmar.com:8092";
+//    public static String URL_BASE = "http://192.168.1.112:8092";
+   public static final String URL_BASE = "http://benxiao.cnmar.com:8092";
 
     //显示图片的绝对路径
-//    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090";
-    public static String URL_IMAGE = "http://192.168.1.112:8090";
+    public static final String URL_IMAGE = "http://benxiao.cnmar.com:8090";
+//    public static String URL_IMAGE = "http://192.168.1.112:8090";
 
     //    原料出入库扫描
     public static final String URL_MATERIAL_SCAN = URL_BASE + "/material_in_order/qrcode";
