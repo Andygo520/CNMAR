@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -20,6 +19,8 @@ import com.example.administrator.cnmar.fragment.MaterialStockFragment;
 import com.example.administrator.cnmar.fragment.OutOrderFragment;
 import com.example.administrator.cnmar.helper.SPHelper;
 
+import cn.bingoogolapple.badgeview.BGABadgeRadioButton;
+
 public class MaterialStockActivity extends AppCompatActivity {
     private TextView tvTitle;
     private MaterialStockFragment materialStockFragment;
@@ -27,7 +28,7 @@ public class MaterialStockActivity extends AppCompatActivity {
     private OutOrderFragment outHouseBillFragment;
     private MaterialCheckStockFragment materialCheckStockFragment;
     private RadioGroup rg;
-    private RadioButton rbStock, rbInOrder, rbOutOrder, rbCheckStock;
+    private BGABadgeRadioButton rbStock, rbInOrder, rbOutOrder, rbCheckStock;
     private LinearLayout llLeftArrow;
     //    定义一个标志位，判断是哪个activity启动的本页面
     private int flag = 0;
@@ -43,10 +44,10 @@ public class MaterialStockActivity extends AppCompatActivity {
 
         tvTitle = (TextView) findViewById(R.id.title);
         rg = (RadioGroup) findViewById(R.id.rg);
-        rbStock = (RadioButton) findViewById(R.id.rb1);
-        rbInOrder = (RadioButton) findViewById(R.id.rb2);
-        rbOutOrder = (RadioButton) findViewById(R.id.rb3);
-        rbCheckStock = (RadioButton) findViewById(R.id.rb4);
+        rbStock = (BGABadgeRadioButton) findViewById(R.id.rb1);
+        rbInOrder = (BGABadgeRadioButton) findViewById(R.id.rb2);
+        rbOutOrder = (BGABadgeRadioButton) findViewById(R.id.rb3);
+        rbCheckStock = (BGABadgeRadioButton) findViewById(R.id.rb4);
         llLeftArrow = (LinearLayout) findViewById(R.id.left_arrow);
 
         llLeftArrow.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +124,7 @@ public class MaterialStockActivity extends AppCompatActivity {
             setSelection(3);
         }
     }
+
 
     @Override
     public void onAttachFragment(android.support.v4.app.Fragment fragment) {

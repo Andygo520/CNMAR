@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.administrator.cnmar.R;
 
 import java.util.Collections;
 import java.util.List;
+
+import cn.bingoogolapple.badgeview.BGABadgeImageView;
 
 /**
  * Created by Administrator on 2016/4/12.
@@ -23,7 +24,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
     private int src;
     private List<Item> results;
 
-    public RecyclerAdapter(int src,List<Item> results){
+    public RecyclerAdapter(int src, List<Item> results) {
         this.results = results;
         this.src = src;
     }
@@ -70,20 +71,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         notifyItemRemoved(position);
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
-        public ImageView imageView;
+        public BGABadgeImageView imageView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             int width = wm.getDefaultDisplay().getWidth();
             ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-            layoutParams.height = width/3;
+            layoutParams.height = width / 3;
             itemView.setLayoutParams(layoutParams);
             textView = (TextView) itemView.findViewById(R.id.item_text);
-            imageView = (ImageView) itemView.findViewById(R.id.item_img);
+            imageView = (BGABadgeImageView) itemView.findViewById(R.id.item_img);
         }
     }
 }

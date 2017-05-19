@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
+    app:tr_enable_loadmore="false"
     app:tr_head_height="100dp"
-    app:tr_wave_height="180dp">
+    app:tr_wave_height="180dp"
+    >
 
     <ScrollView
         android:layout_width="match_parent"

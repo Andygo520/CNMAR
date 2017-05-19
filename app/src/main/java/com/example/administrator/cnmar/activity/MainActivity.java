@@ -115,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (iskill) {
                 //退出
-                AppExit.getInstance().exit();
+//                AppExit.getInstance().exit();
+                moveTaskToBack(true);
             } else {
                 iskill = true;
                 Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();

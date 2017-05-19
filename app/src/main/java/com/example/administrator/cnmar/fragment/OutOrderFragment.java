@@ -40,6 +40,8 @@ import com.example.administrator.cnmar.helper.VolleyHelper;
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +63,8 @@ public class OutOrderFragment extends Fragment {
     private Spinner spinner;
     //    配合Spinner使用的分割线
     private TextView tvLine;
+    private int i = 0;//统计BadgeView显示的数目
+
 
     //   数组用来存放所有出库单状态
     String[] status = {"所有状态", "待出库", "未全部出库", "已出库"};
@@ -141,8 +145,8 @@ public class OutOrderFragment extends Fragment {
         });
 
         refreshLayout = (TwinklingRefreshLayout) view.findViewById(R.id.refreshLayout);
-        UniversalHelper.initRefresh(getActivity(),refreshLayout);
-        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter(){
+        UniversalHelper.initRefresh(getActivity(), refreshLayout);
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(final TwinklingRefreshLayout refreshLayout) {
                 new Handler().postDelayed(new Runnable() {
@@ -154,34 +158,34 @@ public class OutOrderFragment extends Fragment {
                         refreshLayout.setEnableLoadmore(true);
                         refreshLayout.finishRefreshing();
                     }
-                },400);
+                }, 400);
             }
 
             @Override
             public void onLoadMore(final TwinklingRefreshLayout refreshLayout) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            page++;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        page++;
 //                            当page等于总页数的时候，提示“加载完成”，不能继续上拉加载更多
-                            if (page == total) {
-                                String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
-                                Log.d("urlfinish", url);
-                                getOutOrderListFromNet(url);
-                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
-                                // 结束上拉刷新...
-                                refreshLayout.finishLoadmore();
-                                refreshLayout.setEnableLoadmore(false);
-                                return;
-                            }
+                        if (page == total) {
                             String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
-                            Log.d("urlmore", url);
+                            Log.d("urlfinish", url);
                             getOutOrderListFromNet(url);
-                            Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
                             // 结束上拉刷新...
                             refreshLayout.finishLoadmore();
+                            refreshLayout.setEnableLoadmore(false);
+                            return;
                         }
-                    },400);
+                        String url = UniversalHelper.getTokenUrl(UrlHelper.URL_OUT_ORDER.replace("{page}", String.valueOf(page)));
+                        Log.d("urlmore", url);
+                        getOutOrderListFromNet(url);
+                        Toast.makeText(getActivity(), "已加载更多", Toast.LENGTH_SHORT).show();
+                        // 结束上拉刷新...
+                        refreshLayout.finishLoadmore();
+                    }
+                }, 400);
 
             }
         });
@@ -264,8 +268,8 @@ public class OutOrderFragment extends Fragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
 //        Fragment重新显示到最前端中
-        if (!hidden){
-            page=1;
+        if (!hidden) {
+            page = 1;
             getOutOrderListFromNet(url);
         }
     }
@@ -283,11 +287,16 @@ public class OutOrderFragment extends Fragment {
 //                        Log.d("GGGG",json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         List<MaterialOutOrder> list = JSON.parseArray(response.getData().toString(), MaterialOutOrder.class);
+                        for (MaterialOutOrder materialOutOrder : list) {
+//                         统计出库单状态为待出库的记录数
+                            if (materialOutOrder.getOutOrderStatusVo().getKey() == 2)
+                                i++;
+                        }
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
                         //      数据超过10条才可以上拉加载更多
-                        if (count <= 10 || num==total)
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);

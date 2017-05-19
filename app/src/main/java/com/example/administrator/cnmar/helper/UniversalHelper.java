@@ -8,17 +8,22 @@ import com.lcodecore.tkrefreshlayout.Footer.LoadingView;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.lcodecore.tkrefreshlayout.header.progresslayout.ProgressLayout;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
  * Created by Administrator on 2016/9/6.
  */
 public class UniversalHelper {
-    private static CustomDialog dialog=null;
+    private static CustomDialog dialog = null;
+
     public static String getTokenUrl(String url) {
         String token = url.replaceAll(UrlHelper.URL_BASE, "");
-        String strUrl="";
+        String strUrl = "";
         if (token.indexOf("/") == 0) {
             token = token.substring(1, token.length());
         }
@@ -30,7 +35,7 @@ public class UniversalHelper {
         }
         String param = url.indexOf("?") == -1 ? "?token=" : "&token=";
         try {
-             strUrl=url + param + md5Encode(token);
+            strUrl = url + param + md5Encode(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,10 +67,11 @@ public class UniversalHelper {
 
     /**
      * 显示进度条
+     *
      * @param pContext 上下文
      */
     public static void showProgressDialog(Context pContext) {
-        dialog=new CustomDialog(pContext, R.style.CustomDialog);
+        dialog = new CustomDialog(pContext, R.style.CustomDialog);
         dialog.show();
     }
 
@@ -77,10 +83,11 @@ public class UniversalHelper {
             dialog.dismiss();
         }
     }
+
     /**
      * 处理刷新的初始化
      */
-    public static void initRefresh(Context context,TwinklingRefreshLayout refreshLayout) {
+    public static void initRefresh(Context context, TwinklingRefreshLayout refreshLayout) {
 //        设置刷新头部
         ProgressLayout headerView = new ProgressLayout(context);
         headerView.setColorSchemeResources(R.color.colorBase);
@@ -88,5 +95,27 @@ public class UniversalHelper {
 //        设置刷新尾部
         LoadingView loadingView = new LoadingView(context);
         refreshLayout.setBottomView(loadingView);
+    }
+
+    /**
+     * 从Date中得到字符串数据
+     */
+    public static String getDateString(Date date, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        String dateString = sdf.format(date);
+        return dateString;
+    }
+
+    /**
+     * 中文字符的转码
+     */
+    public static String getUtf8String(String character) {
+        String utf8String= null;
+        try {
+            utf8String = URLEncoder.encode(character,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return utf8String;
     }
 }

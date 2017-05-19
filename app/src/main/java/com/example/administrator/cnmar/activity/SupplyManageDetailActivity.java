@@ -3,6 +3,7 @@ package com.example.administrator.cnmar.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebView;
@@ -86,11 +87,10 @@ public class SupplyManageDetailActivity extends AppCompatActivity {
                 StringRequest stringRequest = new StringRequest(strUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
+                        Log.d("company", s);
                         String json = VolleyHelper.getJson(s);
-//                        Log.d("RRRRR",json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         Supply supply = JSON.parseObject(response.getData().toString(), Supply.class);
-
 
                         tvSupplyCode.setText(supply.getCode());
                         tvSupplyName.setText(supply.getName());

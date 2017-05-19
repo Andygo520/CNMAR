@@ -102,7 +102,6 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
                     results.add(new Item(titleList.get(i), imageList.get(i)));
                 }
             }
-
         }
 
 //        设置recyclerView的布局方式

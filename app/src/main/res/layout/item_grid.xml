@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -12,12 +13,18 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <ImageView
+        <cn.bingoogolapple.badgeview.BGABadgeImageView
             android:id="@+id/item_img"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_launcher"
+            app:badge_horizontalMargin="0dp"
+            app:badge_padding="5dp"
+            app:badge_textColor="@android:color/white"
+            app:badge_textSize="15sp"
+            app:badge_verticalMargin="0dp"
+            app:borderWidth="4dp" />
 
         <TextView
             android:id="@+id/item_text"

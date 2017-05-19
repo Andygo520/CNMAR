@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_gravity="bottom">
@@ -16,7 +17,7 @@
         android:layout_below="@id/view"
         android:orientation="horizontal">
 
-        <RadioButton
+        <cn.bingoogolapple.badgeview.BGABadgeRadioButton
             android:id="@+id/rb1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -26,9 +27,15 @@
             android:gravity="center"
             android:text="@string/rbStock"
             android:textColor="@color/text_color"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:badge_horizontalMargin="0dp"
+            app:badge_padding="5dp"
+            app:badge_textColor="@android:color/white"
+            app:badge_textSize="15sp"
+            app:badge_verticalMargin="0dp"
+            app:borderWidth="4dp" />
 
-        <RadioButton
+        <cn.bingoogolapple.badgeview.BGABadgeRadioButton
             android:id="@+id/rb2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -38,9 +45,15 @@
             android:gravity="center"
             android:text="@string/rbInBill"
             android:textColor="@color/text_color"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:badge_horizontalMargin="0dp"
+            app:badge_padding="5dp"
+            app:badge_textColor="@android:color/white"
+            app:badge_textSize="15sp"
+            app:badge_verticalMargin="0dp"
+            app:borderWidth="4dp" />
 
-        <RadioButton
+        <cn.bingoogolapple.badgeview.BGABadgeRadioButton
             android:id="@+id/rb3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -49,9 +62,15 @@
             android:gravity="center"
             android:text="@string/rbOutBill"
             android:textColor="@color/text_color"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:badge_horizontalMargin="0dp"
+            app:badge_padding="5dp"
+            app:badge_textColor="@android:color/white"
+            app:badge_textSize="15sp"
+            app:badge_verticalMargin="0dp"
+            app:borderWidth="4dp" />
 
-        <RadioButton
+        <cn.bingoogolapple.badgeview.BGABadgeRadioButton
             android:id="@+id/rb4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -60,6 +79,12 @@
             android:gravity="center"
             android:text="@string/rbCheckStock"
             android:textColor="@color/text_color"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:badge_horizontalMargin="0dp"
+            app:badge_padding="5dp"
+            app:badge_textColor="@android:color/white"
+            app:badge_textSize="15sp"
+            app:badge_verticalMargin="0dp"
+            app:borderWidth="4dp" />
     </RadioGroup>
 </RelativeLayout>

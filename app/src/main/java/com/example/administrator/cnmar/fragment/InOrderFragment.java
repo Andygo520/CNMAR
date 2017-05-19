@@ -85,6 +85,7 @@ public class InOrderFragment extends Fragment {
     public InOrderFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -265,7 +266,7 @@ public class InOrderFragment extends Fragment {
         super.onHiddenChanged(hidden);
 //        Fragment重新显示到最前端中
         if (!hidden) {
-            page=1;
+            page = 1;
             getInOrderListFromNet(strUrl);
         }
     }
@@ -283,16 +284,23 @@ public class InOrderFragment extends Fragment {
                         Log.d("GGGG", json);
                         component.common.model.Response response = JSON.parseObject(json, component.common.model.Response.class);
                         List<MaterialInOrder> list = JSON.parseArray(response.getData().toString(), MaterialInOrder.class);
-
+                        int i = 0;
+                        for (MaterialInOrder materialInOrder : list) {
+//                         统计入库单状态为待打印、待检验、待入库的记录数
+                            if (materialInOrder.getInOrderStatusVo().getKey() == 1 ||
+                                    materialInOrder.getInOrderStatusVo().getKey() == 2 ||
+                                    materialInOrder.getInOrderStatusVo().getKey() == 5)
+                                i++;
+                        }
                         count = response.getPage().getCount();
                         total = response.getPage().getTotal();
                         num = response.getPage().getNum();
-    //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
-                        if (count <= 10 || num==total)
+                        //      数据小于10条或者当前页为最后一页就设置不能上拉加载更多
+                        if (count <= 10 || num == total)
                             refreshLayout.setEnableLoadmore(false);
                         else
                             refreshLayout.setEnableLoadmore(true);
-   //  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
+                        //  当前是第一页的时候，直接显示list内容；当显示更多页的时候，将后面页的list数据加到data中
                         if (num == 1) {
                             data = list;
                             myAdapter = new BillAdapter(data, getActivity());

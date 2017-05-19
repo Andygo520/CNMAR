@@ -3,6 +3,7 @@ package com.example.administrator.cnmar.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -62,7 +63,7 @@ public class CompanyInfoDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         AppExit.getInstance().addActivity(this);
 
-        context=CompanyInfoDetailActivity.this;
+        context = CompanyInfoDetailActivity.this;
         tvTitle.setText("企业详情");
         id = getIntent().getIntExtra("ID", 0);
         strUrl = UrlHelper.URL_COMPANY_DETAIL.replace("{id}", String.valueOf(id));

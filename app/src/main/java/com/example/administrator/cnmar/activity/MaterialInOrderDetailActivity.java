@@ -122,6 +122,8 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
     LinearLayout llInOrderSubmit;
     @BindView(R.id.etRemark)
     EditText etRemark;
+    @BindView(R.id.llRemark)
+    LinearLayout llRemark;
 
 
     private Context context = MaterialInOrderDetailActivity.this;
@@ -155,9 +157,9 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
 
         strUrl = UrlHelper.URL_IN_ORDER_DETAIL.replace("{id}", String.valueOf(id));
         strUrl = UniversalHelper.getTokenUrl(strUrl);
+
 //        保存从列表页面传递过来的id对应的URL地址，在扫描页面返回的时候用到
         SPHelper.putString(this, "URL", strUrl);
-
         getInOrderDetailFromNet();
     }
 
@@ -259,9 +261,9 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                         if (materialInOrder.getStatus() == InOrderStatusVo.pre_test.getKey()
                                 && (RoleHelper.isSuper(context) || RoleHelper.isAdministrator(context) || RoleHelper.isTestman(context))) {
                             btnTestSubmit.setVisibility(View.VISIBLE);
+                            llRemark.setVisibility(View.VISIBLE);//检验备注输入框跟检验按钮同时显示
                             myAdapter = new MaterialTestAdapter(MaterialInOrderDetailActivity.this, inOrderMaterials);
                             lvTestTable.setAdapter(myAdapter);
-
                         } else {
                             MaterialTestAdapter1 myAdapter = new MaterialTestAdapter1(MaterialInOrderDetailActivity.this, inOrderMaterials);
                             lvTestTable.setAdapter(myAdapter);
@@ -373,9 +375,9 @@ public class MaterialInOrderDetailActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 UniversalHelper.showProgressDialog(context);
-                                String testRemark=etRemark.getText().toString().trim();
+                                String testRemark = etRemark.getText().toString().trim();
                                 try {
-                                    testRemark= URLEncoder.encode(testRemark,"utf-8");
+                                    testRemark = URLEncoder.encode(testRemark, "utf-8");
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }

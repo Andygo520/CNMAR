@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +81,7 @@ public class MaterialStockFragment extends Fragment {
         tv2.setText("原料名称");
         tv3.setText("单位");
         tv4.setText("库存总量");
+
 
         lvStock = (MyListView) view.findViewById(R.id.listView);
         ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
