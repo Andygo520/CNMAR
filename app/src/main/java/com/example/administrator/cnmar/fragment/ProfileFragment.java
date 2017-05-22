@@ -75,6 +75,8 @@ public class ProfileFragment extends Fragment {
 //               注销账号的时候，只保留账号内容
                 SPHelper.putString(getActivity(), "password", "");
                 SPHelper.putBoolean(getActivity(), "isChecked", true);
+                SPHelper.putBoolean(getActivity(), "flag", false);
+
 //                注销账号的时候，清除用户数据
                 SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_XTGL),"");
                 SPHelper.putString(getActivity(),getResources().getString(R.string.HOME_QYGL),"");

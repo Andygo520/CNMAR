@@ -134,11 +134,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         SPHelper.putBoolean(LoginActivity.this, "isChecked", true);
 //                 登陆成功并且勾选了自动登录就给标志位赋值为true,下次登陆的时候直接从引导页跳转到主页面
                         flag = true;
-                        SPHelper.putBoolean(LoginActivity.this, "flag", flag);
                     } else{
                         SPHelper.putBoolean(LoginActivity.this, "isChecked", false);
-                        SPHelper.putBoolean(LoginActivity.this, "flag", flag);
                     }
+//                  保存flag的值
+                    SPHelper.putBoolean(LoginActivity.this, "flag", flag);
 
 //                  判断是否是超级管理员，如果是就显示所有按钮
                     Boolean isSuper = userInfor.getIsSuper();
