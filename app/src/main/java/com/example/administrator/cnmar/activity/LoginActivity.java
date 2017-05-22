@@ -128,8 +128,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                只有状态为true才能登陆系统
                 if (response.isStatus()) {
                     SystemUser userInfor = JSON.parseObject(response.getData().toString(), SystemUser.class);
+                    SPHelper.putString(LoginActivity.this, "username", etUserName.getText().toString().trim());
                     if (auto_login.isChecked()) {
-                        SPHelper.putString(LoginActivity.this, "username", etUserName.getText().toString().trim());
                         SPHelper.putString(LoginActivity.this, "password", etPassword.getText().toString().trim());
                         SPHelper.putBoolean(LoginActivity.this, "isChecked", true);
 //                 登陆成功并且勾选了自动登录就给标志位赋值为true,下次登陆的时候直接从引导页跳转到主页面

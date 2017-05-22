@@ -72,7 +72,7 @@ public class HomeFragment extends Fragment implements MyItemTouchCallback.OnDrag
         String roleMenu = SPHelper.getString(getActivity(), "Menu", "");
         username = SPHelper.getString(getActivity(), "username");
 
-        //        存放菜单名的列表
+//        存放菜单名的列表
         List<String> titleList = new ArrayList<>();
         if (roleMenu.contains(",")) {
             String[] menuText = roleMenu.split(",");
