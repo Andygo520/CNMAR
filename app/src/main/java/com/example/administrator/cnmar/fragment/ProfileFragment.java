@@ -88,6 +88,7 @@ public class ProfileFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
         new Thread(new Runnable() {
@@ -152,8 +153,6 @@ public class ProfileFragment extends Fragment {
                     VolleyHelper.showImageByUrl(getActivity(), path, ivImage);
                 } else
                     ivImage.setDefaultImageResId(R.mipmap.user_icon);
-
-
             }
         }, new Response.ErrorListener() {
             @Override

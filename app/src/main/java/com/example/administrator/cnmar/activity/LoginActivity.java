@@ -34,7 +34,7 @@ import component.system.model.SystemUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public String strUrl;
+    private String strUrl;
     private Button mLoginButton;
     private EditText etUserName, etPassword;
     private CheckBox auto_login;
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
     private boolean iskill = false;
-
+    private boolean flag = false;//引导页跳转的标志位
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,20 +132,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         SPHelper.putString(LoginActivity.this, "username", etUserName.getText().toString().trim());
                         SPHelper.putString(LoginActivity.this, "password", etPassword.getText().toString().trim());
                         SPHelper.putBoolean(LoginActivity.this, "isChecked", true);
-                    } else
+//                 登陆成功并且勾选了自动登录就给标志位赋值为true,下次登陆的时候直接从引导页跳转到主页面
+                        flag = true;
+                        SPHelper.putBoolean(LoginActivity.this, "flag", flag);
+                    } else{
                         SPHelper.putBoolean(LoginActivity.this, "isChecked", false);
+                        SPHelper.putBoolean(LoginActivity.this, "flag", flag);
+                    }
 
 //                  判断是否是超级管理员，如果是就显示所有按钮
                     Boolean isSuper = userInfor.getIsSuper();
                     SPHelper.putBoolean(LoginActivity.this, "isSuper", isSuper);
-
 
 //                 操作工跟测试员的判断，这与“生产管理”显示的模块有关
                     Boolean isOperator = userInfor.getIsOperator();
                     Boolean isTest = userInfor.getIsTest();
                     SPHelper.putBoolean(LoginActivity.this, "isOperator", isOperator);
                     SPHelper.putBoolean(LoginActivity.this, "isTest", isTest);
-
 
 //                  得到用户id,原料检验的时候需要提交该id,并且在我的资料Fragment也会用到
                     int id = userInfor.getId();
@@ -225,7 +228,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     mLoginButton.setClickable(false);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-
                 } else {
                     Toast.makeText(LoginActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                     etUserName.setText(strUserName);
